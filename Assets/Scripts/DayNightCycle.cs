@@ -83,8 +83,17 @@ public class DayNightCycle : MonoBehaviour
         //UnityEngine.Debug.Log(currentMarkTime);
         //UnityEngine.Debug.Log(lerpedRotation);
 
-        if (lerpedRotation >= 360.0f) lerpedRotation = lerpedRotation - 360.0f;
+        if (lerpedRotation >= 360.0f)
+        {
+            lerpedRotation = lerpedRotation - 360.0f;
+        }
+
         lightObj.transform.eulerAngles = new Vector3(lerpedRotation, 0.0f, 0.0f);
+
+        UnityEngine.Debug.Log("current euler angle: " + lightObj.transform.eulerAngles.x);
+        if (lightObj.transform.eulerAngles.x >= 360.0f) { 
+            UnityEngine.Debug.Log("Greater than 360.0f: " + lightObj.transform.eulerAngles.x);
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
