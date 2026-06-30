@@ -39,6 +39,8 @@ public class DayNightCycle : MonoBehaviour
     [SerializeField]
     private float cycleLength = 24;
 
+    private float defaultCycleLength = 24;
+
     private float currentCycleTime;
     private int currentMarkIndex, nextMarkIndex;
     private float currentMarkTime, nextMarkTime;
@@ -49,16 +51,22 @@ public class DayNightCycle : MonoBehaviour
     [SerializeField] private Light lightObj;
 
     // setters and getters for cycle
-    public void SetCycle(float cycle) { cycleLength = cycle; }
-    public float GetCycle() { return cycleLength; }
-
     public void SetCycleTime(float newTime) {
         cycleLength = newTime;
 
         RecalibrateTime();
     }
 
+    public float GetCycleTime() { return cycleLength; }
+
+    // getter for current speed
+    public float CurrentSpeed() {
+        return (defaultCycleLength / cycleLength);
+    }
+
     private void RecalibrateTime() {
+        // TODO: RECALIBRATE CURRENTCYCLETIME HERE FOR COHESION
+
         currentMarkTime = marks[currentMarkIndex].timeRatio * cycleLength;
         nextMarkTime = marks[nextMarkIndex].timeRatio * cycleLength;
     }
@@ -72,6 +80,8 @@ public class DayNightCycle : MonoBehaviour
     }
 
     private void RotateLight() {
+        // TODO: FIGURE OUT WHY THE LERP DOES NOT LERP
+        // insert angery pepe meme
         float currentRot = marks[currentMarkIndex].xRotation;
         float nextRot = marks[nextMarkIndex].xRotation;
 
