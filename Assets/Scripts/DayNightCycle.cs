@@ -1,3 +1,12 @@
+/*
+* @file      DayNightCycle.cs
+* @author    Ng Woon Ning (woonning.ng@digipen.edu)
+* @brief
+*   This file contains the Day Night cycle of the simulation.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+ */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,6 +51,7 @@ public class DayNightCycle : MonoBehaviour
     private float defaultCycleLength = 24;
 
     private float currentCycleTime;
+    private float currentCycleTimeRatio; // keep track of this instead?
     private int currentMarkIndex, nextMarkIndex;
     private float currentMarkTime, nextMarkTime;
 
@@ -82,6 +92,9 @@ public class DayNightCycle : MonoBehaviour
     private void RotateLight() {
         // TODO: FIGURE OUT WHY THE LERP DOES NOT LERP
         // insert angery pepe meme
+        // the issue comes when next < curr soooooooo
+        // WHY DOES THE EULER NOT EULER UNITY REEEEEEEEEEEEEEEEE
+        // doing this project has reminded me of why i hate unity so much tbh
         float currentRot = marks[currentMarkIndex].xRotation;
         float nextRot = marks[nextMarkIndex].xRotation;
 
