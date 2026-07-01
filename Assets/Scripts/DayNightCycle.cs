@@ -51,7 +51,7 @@ public class DayNightCycle : MonoBehaviour
     private float defaultCycleLength = 24;
 
     private float currentCycleTime;
-    private float currentCycleTimeRatio; // keep track of this instead?
+    //private float currentCycleTimeRatio; // keep track of this instead?
     private int currentMarkIndex, nextMarkIndex;
     private float currentMarkTime, nextMarkTime;
 
@@ -62,23 +62,40 @@ public class DayNightCycle : MonoBehaviour
 
     // setters and getters for cycle
     public void SetCycleTime(float newTime) {
+        float currentRatio = currentCycleTime / cycleLength;
         cycleLength = newTime;
+        currentCycleTime = currentRatio * cycleLength;
 
-        RecalibrateTime();
+        // indices are still valid (ratio preserved = same segment)
+        // just rescale the times to match new cycleLength
+        currentMarkTime = marks[currentMarkIndex].timeRatio * cycleLength;
+        nextMarkTime = marks[nextMarkIndex].timeRatio * cycleLength;
     }
 
     public float GetCycleTime() { return cycleLength; }
+
+    // @TODO: not sure how the sim will do this, but we see?
+    public void SetTimeFromSim(float simTimeRatio)
+    {
+        currentCycleTime = simTimeRatio * cycleLength;
+        if (currentCycleTime >= GetAdjustedNextTime())
+        {
+            CycleMarks();
+        }
+        RotateLight();
+    }
 
     // getter for current speed
     public float CurrentSpeed() {
         return (defaultCycleLength / cycleLength);
     }
 
-    private void RecalibrateTime() {
-        // TODO: RECALIBRATE CURRENTCYCLETIME HERE FOR COHESION
-
-        currentMarkTime = marks[currentMarkIndex].timeRatio * cycleLength;
-        nextMarkTime = marks[nextMarkIndex].timeRatio * cycleLength;
+    private float GetAdjustedNextTime()
+    {
+        // if next mark is behind us in time, it's in the next cycle
+        return nextMarkTime < currentMarkTime
+            ? nextMarkTime + cycleLength
+            : nextMarkTime;
     }
 
     private void CycleMarks() { 
@@ -98,18 +115,19 @@ public class DayNightCycle : MonoBehaviour
         float currentRot = marks[currentMarkIndex].xRotation;
         float nextRot = marks[nextMarkIndex].xRotation;
 
-        float lerpedRotation = Mathf.Lerp(
-            currentRot,
-            nextRot,
-            (nextMarkTime - currentCycleTime) / nextMarkTime
-        );
+        float adjustedNextTime = GetAdjustedNextTime();
+
+        float t = (currentCycleTime - currentMarkTime)
+            / (adjustedNextTime - currentMarkTime);
+
         //UnityEngine.Debug.Log(currentMarkTime);
         //UnityEngine.Debug.Log(lerpedRotation);
 
-        if (lerpedRotation >= 360.0f)
-        {
-            lerpedRotation = lerpedRotation - 360.0f;
-        }
+        float delta = nextRot - currentRot;
+        if (delta < -180f) nextRot += 360f;
+        if (delta > 180f) nextRot -= 360f;
+
+        float lerpedRotation = Mathf.Lerp(currentRot, nextRot, t) % 360f;
 
         lightObj.transform.eulerAngles = new Vector3(lerpedRotation, 0.0f, 0.0f);
 
@@ -129,21 +147,16 @@ public class DayNightCycle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        currentCycleTime = (currentCycleTime + Time.deltaTime) % cycleLength;
+        currentCycleTime += Time.deltaTime;
 
-        // passed a mark?
-        // for now we just use absolute rotations; the actual dynamic cycling
-        // comes later OTL
-        if (Mathf.Abs(currentCycleTime - nextMarkTime) < TIME_CHECK_EPSILON)
+        // check BEFORE modulo resets it
+        if (currentCycleTime >= GetAdjustedNextTime())
         {
-            DayNightMark next = marks[nextMarkIndex];
-            //GetComponent<Light>().colour = next.colour;
-            //GetComponent<Light>().intensity = next.intensity;
-
             CycleMarks();
         }
 
-        // perform lerping for time
+        currentCycleTime %= cycleLength; // now safe to wrap
+
         RotateLight();
     }
 }
