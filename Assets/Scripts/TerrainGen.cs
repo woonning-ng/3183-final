@@ -47,9 +47,10 @@ public class TerrainGen : MonoBehaviour
     //Biome function will return the enum? of the gameobject to spawn?
     Terrain_cus Biome(float height, float moist){
         //Values can be customizable
-        if (height < 0.1f && moist > 0.8f) return Terrain_cus.WATER;
-        else if (height < 0.5f && moist < 0.3f) return Terrain_cus.SAND;
-        else if (height > 0.8f && moist > 0.8f) return Terrain_cus.SNOW;
+        //-1 to 1 range
+        if (height < 0.6f && moist > 0.6f) return Terrain_cus.WATER;
+        else if (height < 0.6f && moist < -0.2f) return Terrain_cus.SAND;
+        else if (height > 0.6f && moist > 0.6f) return Terrain_cus.SNOW;
         else return Terrain_cus.GRASS;
     }
     void Start(){

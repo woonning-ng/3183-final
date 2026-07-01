@@ -47,12 +47,12 @@ public class PerlinNoise
         int A = p[X] + Z;
         int B = p[X + 1] + Z;
 
-        float raw = Lerp(v, Lerp(u, Grad(p[A], x, z),
+        return Lerp(v, Lerp(u, Grad(p[A], x, z),
                                     Grad(p[B], x - 1, z)),
                         Lerp(u, Grad(p[A + 1], x, z - 1),
                                     Grad(p[B + 1], x - 1, z - 1)));
 
-        return (raw + 1.0f) * 0.5f;
+        //return (raw + 1.0f) * 0.5f;
 
         //Temp return 
         //return 0.0f;
