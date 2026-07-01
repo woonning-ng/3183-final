@@ -1,11 +1,12 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static PerlinNoise;
 
 //References:
 //https://www.redblobgames.com/maps/terrain-from-noise/
 
-enum Terrain
+enum Terrain_cus
 {
     WATER,
     SAND,
@@ -18,6 +19,10 @@ public class TerrainGen : MonoBehaviour
 {
     static int max_width = 64;
     static int max_height = 64;
+    public GameObject water_prefab;
+    public GameObject sand_prefab;
+    public GameObject grass_prefab;
+    public GameObject snow_prefab;
     //2d array to store the perlin noise values
     //The 2d array is [x, z] and the float within is the y value
     //Y value have to be converted to int as we are going for minecraft style
@@ -32,7 +37,7 @@ public class TerrainGen : MonoBehaviour
                 //There are other stuff that can customise the terrain
                 //Octave and frequency
                 //For now, a simple implementation of Terrain gen with perlin noise
-                float nx = j / max_width - 0.5f, ny = i / max_height - 0.5f;
+                float nx = (float)j / max_width - 0.5f, ny = (float)i / max_height - 0.5f;
                 data[i, j] = Noise(nx, ny);
                 moisture[i, j] = Noise(nx, ny);
             }
@@ -40,20 +45,40 @@ public class TerrainGen : MonoBehaviour
 
     }
     //Biome function will return the enum? of the gameobject to spawn?
-    Terrain Biome(float height, float moist){
+    Terrain_cus Biome(float height, float moist){
         //Values can be customizable
-        if (height < 0.1f && moist > 0.8f) return Terrain.WATER;
-        else if (height < 0.5f && moist < 0.3f) return Terrain.SAND;
-        else if (height > 0.8f && moist > 0.8f) return Terrain.SNOW;
-        else return Terrain.GRASS;
+        if (height < 0.1f && moist > 0.8f) return Terrain_cus.WATER;
+        else if (height < 0.5f && moist < 0.3f) return Terrain_cus.SAND;
+        else if (height > 0.8f && moist > 0.8f) return Terrain_cus.SNOW;
+        else return Terrain_cus.GRASS;
     }
     void Start(){
+        
         GenerateRandomMap();
         for(int i=0; i< max_height; i++)
         {
             for(int j=0; j<max_width; j++)
             {
-                Biome(data[i, j], moisture[i, j]);
+                //This will help to determine which terain to generate
+                Terrain_cus a = Biome(data[i, j], moisture[i, j]);
+                Vector3 pos = new Vector3(i, (int)(data[i, j]*10.0f), j);
+                switch (a)
+                {
+                    case Terrain_cus.WATER:
+                        Instantiate(water_prefab, pos, Quaternion.identity);
+                        break;
+                    case Terrain_cus.SAND:
+                        Instantiate(sand_prefab, pos, Quaternion.identity);
+                        break;
+                    case Terrain_cus.GRASS:
+                        Instantiate(grass_prefab, pos, Quaternion.identity);
+                        break;
+                    case Terrain_cus.SNOW:
+                        Instantiate(snow_prefab, pos, Quaternion.identity);
+                        break;
+
+
+                }
             }
         }
     }

@@ -26,6 +26,12 @@ public class PerlinNoise
     //The one below contains the 2D version of the algo
     //https://thewizardapprentice.com/2025/10/27/breaking-down-perlin-noise-reference-implementation/
 
+    static PerlinNoise()
+    {
+        Init();
+    }
+        
+
     static public float Noise(float x, float z)
     {
         int X = (int)Mathf.Floor(x) & 255;
@@ -37,14 +43,16 @@ public class PerlinNoise
         float u = Fade(x);
         float v = Fade(z);
 
-        Init();
+        //Init();
         int A = p[X] + Z;
         int B = p[X + 1] + Z;
 
-        return Lerp(v, Lerp(u, Grad(p[A], x, z),
+        float raw = Lerp(v, Lerp(u, Grad(p[A], x, z),
                                     Grad(p[B], x - 1, z)),
-                        Lerp(u,Grad(p[A + 1], x, z - 1),
+                        Lerp(u, Grad(p[A + 1], x, z - 1),
                                     Grad(p[B + 1], x - 1, z - 1)));
+
+        return (raw + 1.0f) * 0.5f;
 
         //Temp return 
         //return 0.0f;
@@ -91,11 +99,10 @@ public class PerlinNoise
    };
     static void Init()
     {
-        for(int i=0; i<256; i++)
+        for (int i = 0; i < 256; i++)
         {
             p[256 + i] = p[i] = permutation[i];
         }
     }
-
 
 }
