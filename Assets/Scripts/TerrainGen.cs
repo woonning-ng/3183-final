@@ -45,6 +45,11 @@ public class TerrainGen : MonoBehaviour
         return (int)(data[(int)x, (int)z] * 10.0f);
     }
 
+    public bool GetAccessibility(int x, int z)
+    {
+        return accessible[x, z];
+    }
+
     void GenerateRandomMap() {
         for (int i = 0; i < max_height; i++) {
             for (int j = 0; j < max_width; j++) {
