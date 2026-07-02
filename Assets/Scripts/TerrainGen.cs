@@ -30,6 +30,8 @@ public class TerrainGen : MonoBehaviour
     float[,] data = new float[max_width, max_height];
     float[,] moisture = new float[max_width, max_height];
 
+    public float GetWidth() { return max_width; }
+    public float GetHeight() { return max_height; }
 
     void GenerateRandomMap() {
         for (int i = 0; i < max_height; i++) {

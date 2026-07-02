@@ -14,9 +14,11 @@ using TMPro;
 public class GlobalParamsDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject globalManager;
+    [SerializeField] private CameraSystem cameraSys;
 
     // items to update
     [SerializeField] private TextMeshProUGUI simSpeedText;
+    [SerializeField] private TextMeshProUGUI cameraText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,6 +33,10 @@ public class GlobalParamsDisplay : MonoBehaviour
         if (dnc != null)
         {
             simSpeedText.text = dnc.CurrentSpeed().ToString("f2") + "x";
+        }
+
+        if (cameraSys != null) {
+            cameraText.text = cameraSys.GetMode();
         }
     }
 }

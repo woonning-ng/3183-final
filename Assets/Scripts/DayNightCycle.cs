@@ -131,10 +131,10 @@ public class DayNightCycle : MonoBehaviour
 
         lightObj.transform.eulerAngles = new Vector3(lerpedRotation, 0.0f, 0.0f);
 
-        UnityEngine.Debug.Log("current euler angle: " + lightObj.transform.eulerAngles.x);
-        if (lightObj.transform.eulerAngles.x >= 360.0f) { 
-            UnityEngine.Debug.Log("Greater than 360.0f: " + lightObj.transform.eulerAngles.x);
-        }
+        //UnityEngine.Debug.Log("current euler angle: " + lightObj.transform.eulerAngles.x);
+        //if (lightObj.transform.eulerAngles.x >= 360.0f) { 
+        //    UnityEngine.Debug.Log("Greater than 360.0f: " + lightObj.transform.eulerAngles.x);
+        //}
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
