@@ -469,6 +469,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Grass
       objectReference: {fileID: 0}
+    - target: {fileID: 3465141943559156757, guid: 171b2c8e66e00e74bbadf15e689b5f85, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -571,6 +575,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Water
       objectReference: {fileID: 0}
+    - target: {fileID: 8811956941173204196, guid: 182cd8770fd851a428638e88f9a680cc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -658,6 +666,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Snow
       objectReference: {fileID: 0}
+    - target: {fileID: 6654256606769088257, guid: 8a57bd9af350ff34b91dbc9926b01b93, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -705,6 +717,10 @@ PrefabInstance:
     - target: {fileID: 143297009162095029, guid: 38df726bf61297c4899cbb52ea2f4b94, type: 3}
       propertyPath: m_Name
       value: Sand
+      objectReference: {fileID: 0}
+    - target: {fileID: 143297009162095029, guid: 38df726bf61297c4899cbb52ea2f4b94, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6267867079963773348, guid: 38df726bf61297c4899cbb52ea2f4b94, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1414,6 +1430,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie
       objectReference: {fileID: 0}
+    - target: {fileID: 469753088222280374, guid: aa26354de71dba644a37a9680bb57cbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6170656660958588735, guid: aa26354de71dba644a37a9680bb57cbc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1625,6 +1645,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Block
       objectReference: {fileID: 0}
+    - target: {fileID: 4184406610702153784, guid: ab88cd1a7ca2bd54d9d3108b0a514150, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1719,17 +1743,17 @@ SceneRoots:
   - {fileID: 114565421}
   - {fileID: 6324821312339761785}
   - {fileID: 832575519}
-  - {fileID: 1711100116}
-  - {fileID: 2932899750103222198}
-  - {fileID: 6615633348213070875}
-  - {fileID: 6509742240267493191}
-  - {fileID: 1020430398}
-  - {fileID: 1508277530}
-  - {fileID: 1377495820}
-  - {fileID: 1723229689}
-  - {fileID: 5843486637533666005}
   - {fileID: 1841989345}
   - {fileID: 1725682276044095605}
   - {fileID: 945252644}
   - {fileID: 1677787396941311161}
   - {fileID: 1902951907}
+  - {fileID: 1711100116}
+  - {fileID: 6615633348213070875}
+  - {fileID: 5843486637533666005}
+  - {fileID: 6509742240267493191}
+  - {fileID: 1020430398}
+  - {fileID: 1508277530}
+  - {fileID: 1377495820}
+  - {fileID: 1723229689}
+  - {fileID: 2932899750103222198}
