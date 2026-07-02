@@ -17,10 +17,6 @@ using UnityEngine.Rendering;
 //     have to be made.
 // --> our simulation time can also vary so this should be tied into it too
 
-// add in:
-// onChange for cycle time change, or a normalised ver to speed up sim
-// lerping for day night cycle
-
 public class DayNightCycle : MonoBehaviour
 {
     // at this time of day, what should the light attributes be?
