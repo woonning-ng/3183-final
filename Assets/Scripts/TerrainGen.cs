@@ -32,6 +32,9 @@ public class TerrainGen : MonoBehaviour
 
     public float GetWidth() { return max_width; }
     public float GetHeight() { return max_height; }
+    public float GetY(float x, float z) {
+        return (int)(data[(int)x, (int)z] * 10.0f);
+    }
 
     void GenerateRandomMap() {
         for (int i = 0; i < max_height; i++) {

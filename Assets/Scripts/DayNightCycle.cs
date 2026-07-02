@@ -8,13 +8,6 @@
  */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Globalization;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Rendering;
 
