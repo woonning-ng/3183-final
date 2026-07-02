@@ -1,3 +1,4 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -36,6 +37,7 @@ public class TerrainGen : MonoBehaviour
 
     float[,] data = new float[max_width, max_height];
     float[,] moisture = new float[max_width, max_height];
+    bool[,] accessible = new bool[max_width, max_height];
 
     public float GetWidth() { return max_width; }
     public float GetHeight() { return max_height; }
@@ -60,6 +62,8 @@ public class TerrainGen : MonoBehaviour
                 data[i, j] /= (1.0f + 0.5f + 0.25f);
                 //data[i, j] = Mathf.Pow(data[i, j], exp);
                 moisture[i, j] = Noise(nx, ny);
+                //set all to true first
+                accessible[i, j] = true;
             }
         }
 
@@ -80,6 +84,7 @@ public class TerrainGen : MonoBehaviour
 
         if(height < -0.3f)
         {
+            
             return Terrain_cus.WATER;
         }
         else if(height >= -0.3f && height < 0.5f)
@@ -123,6 +128,8 @@ public class TerrainGen : MonoBehaviour
                 switch (a)
                 {
                     case Terrain_cus.WATER:
+                        //Only water would make the path inaccessible
+                        accessible[i, j] = false;
                         Instantiate(water_prefab, pos, Quaternion.identity);
                         break;
                     case Terrain_cus.SAND:
