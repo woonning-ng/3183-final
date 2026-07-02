@@ -37,8 +37,6 @@ public class CameraSystem : MonoBehaviour
 
     private float speedMultiplier = 0.0f;
 
-    private float totalRun = 1.0f; // genuinely what is this even for? can i do away w it?
-
     public void ResetWhenTopDown() {
         // reset camera's params when top down pressed
         TerrainGen tg = terrainGen.GetComponent<TerrainGen>();
@@ -189,12 +187,11 @@ public class CameraSystem : MonoBehaviour
             p.y = Mathf.Clamp(p.y, -maxShift, maxShift);
             p.z = Mathf.Clamp(p.z, -maxShift, maxShift);
             // Angryboy: Use these to ensure that Y-plane is affected by the shift key as well
-            speedMultiplier = totalRun * runMultiplier * Time.deltaTime;
+            speedMultiplier = runMultiplier * Time.deltaTime;
             speedMultiplier = Mathf.Clamp(speedMultiplier, -maxShift, maxShift);
         }
         else
         {
-            totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
             p = p * moveSpeed;
             speedMultiplier = moveSpeed * Time.deltaTime; // Angryboy: More "correct" speed
         }
