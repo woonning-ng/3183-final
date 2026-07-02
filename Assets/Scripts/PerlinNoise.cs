@@ -15,6 +15,8 @@ using UnityEngine.Rendering.Universal.Internal;
 
 //2D noise can implement basic terrains but cannot do so for caves and overhang systems
 
+//Need to add helper function to call and renegerate terrain on button click
+
 public class Grid
 {
     int row, col;
