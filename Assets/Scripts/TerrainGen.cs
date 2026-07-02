@@ -17,8 +17,8 @@ enum Terrain_cus
 //64 x 64
 public class TerrainGen : MonoBehaviour
 {
-    static int max_width = 64;
-    static int max_height = 64;
+    static int max_width = 128;
+    static int max_height = 128;
     public GameObject water_prefab;
     public GameObject sand_prefab;
     public GameObject grass_prefab;
@@ -85,6 +85,6 @@ public class TerrainGen : MonoBehaviour
     }
 
     void Update(){
-
+        //Empty for now
     }
 }
