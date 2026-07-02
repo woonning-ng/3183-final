@@ -50,6 +50,8 @@ public class DayNightCycle : MonoBehaviour
 
     private const float TIME_CHECK_EPSILON = 0.1f;
 
+    bool paused = false;
+
     // settable light obj (in our case, the global light)
     [SerializeField] private Light lightObj;
 
@@ -140,16 +142,19 @@ public class DayNightCycle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        currentCycleTime += Time.deltaTime;
-
-        // check BEFORE modulo resets it
-        if (currentCycleTime >= GetAdjustedNextTime())
+        if (!paused)
         {
-            CycleMarks();
+            currentCycleTime += Time.deltaTime;
+
+            // check BEFORE modulo resets it
+            if (currentCycleTime >= GetAdjustedNextTime())
+            {
+                CycleMarks();
+            }
+
+            currentCycleTime %= cycleLength; // now safe to wrap
+
+            RotateLight();
         }
-
-        currentCycleTime %= cycleLength; // now safe to wrap
-
-        RotateLight();
     }
 }

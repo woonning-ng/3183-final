@@ -119,54 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &77200060
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 77200062}
-  - component: {fileID: 77200061}
-  m_Layer: 0
-  m_Name: TerrainManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &77200061
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 77200060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9b2bfaaab4fd9a4fb23e02570b91323, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  water_prefab: {fileID: 8811956941173204196, guid: 182cd8770fd851a428638e88f9a680cc, type: 3}
-  sand_prefab: {fileID: 143297009162095029, guid: 38df726bf61297c4899cbb52ea2f4b94, type: 3}
-  grass_prefab: {fileID: 3465141943559156757, guid: 171b2c8e66e00e74bbadf15e689b5f85, type: 3}
-  snow_prefab: {fileID: 6654256606769088257, guid: 8a57bd9af350ff34b91dbc9926b01b93, type: 3}
---- !u!4 &77200062
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 77200060}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &88690340
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,7 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8f1eeb62d15db345804055218da2864, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainGen: {fileID: 77200060}
+  terrainGen: {fileID: 1273906574}
 --- !u!108 &410087040 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 9190441966725357751, guid: 727e64dc431cf8d4aa20ac96b4f83f5e, type: 3}
@@ -538,6 +490,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afc3d97c3bc05248979fae3bb568f8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1273906577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273906574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9b2bfaaab4fd9a4fb23e02570b91323, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  water_prefab: {fileID: 8811956941173204196, guid: 182cd8770fd851a428638e88f9a680cc, type: 3}
+  sand_prefab: {fileID: 143297009162095029, guid: 38df726bf61297c4899cbb52ea2f4b94, type: 3}
+  grass_prefab: {fileID: 3465141943559156757, guid: 171b2c8e66e00e74bbadf15e689b5f85, type: 3}
+  snow_prefab: {fileID: 6654256606769088257, guid: 8a57bd9af350ff34b91dbc9926b01b93, type: 3}
+--- !u!114 &1273906578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273906574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8464386fadb8fc94aba77669408f55d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SimulatedRunNo: 1
 --- !u!1001 &1377495820
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -624,7 +605,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileVisualiser: {fileID: 143297008377768689}
-  terrainGen: {fileID: 77200060}
+  terrainGen: {fileID: 1273906574}
 --- !u!1001 &1508277530
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -948,7 +929,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3706168492947819924, guid: 13d3718635ae2d04fbf1844b155041fd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1273906578}
+    - targetCorrespondingSourceObject: {fileID: 3706168492947819924, guid: 13d3718635ae2d04fbf1844b155041fd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1273906577}
   m_SourcePrefab: {fileID: 100100000, guid: 13d3718635ae2d04fbf1844b155041fd, type: 3}
 --- !u!1001 &1725682276044095605
 PrefabInstance:
@@ -1555,23 +1542,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8891832114461419573, guid: 727e64dc431cf8d4aa20ac96b4f83f5e, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.6830127
+      value: -0.9277135
       objectReference: {fileID: 0}
     - target: {fileID: 8891832114461419573, guid: 727e64dc431cf8d4aa20ac96b4f83f5e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.6830127
+      value: -0.26899877
       objectReference: {fileID: 0}
     - target: {fileID: 8891832114461419573, guid: 727e64dc431cf8d4aa20ac96b4f83f5e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.18301266
+      value: 0.24858005
       objectReference: {fileID: 0}
     - target: {fileID: 8891832114461419573, guid: 727e64dc431cf8d4aa20ac96b4f83f5e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.18301266
+      value: -0.07207799
       objectReference: {fileID: 0}
     - target: {fileID: 8891832114461419573, guid: 727e64dc431cf8d4aa20ac96b4f83f5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 270
+      value: 392.34
       objectReference: {fileID: 0}
     - target: {fileID: 8891832114461419573, guid: 727e64dc431cf8d4aa20ac96b4f83f5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -1746,4 +1733,3 @@ SceneRoots:
   - {fileID: 945252644}
   - {fileID: 1677787396941311161}
   - {fileID: 1902951907}
-  - {fileID: 77200062}

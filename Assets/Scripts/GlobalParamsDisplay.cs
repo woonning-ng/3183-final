@@ -23,7 +23,8 @@ public class GlobalParamsDisplay : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        // screen resolution setting
+        Screen.SetResolution(1920, 1080, false);
     }
 
     // Update is called once per frame

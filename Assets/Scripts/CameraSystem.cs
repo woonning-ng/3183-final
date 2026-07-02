@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // https://discussions.unity.com/t/enum-as-a-function-param-in-a-button-onclick/214010
-
+// https://dev.to/matthewodle/simple-3d-camera-movement-1lcj
 
 // very difficult to see human at a 128 x 128 scale. add markers on screen?
 // is there a way to visualise the pathfinding, the agent's decision, etc?
@@ -22,6 +22,7 @@ public class CameraSystem : MonoBehaviour
     // params like zoom, moving, etc here idk
     private bool shiftPressed = false;
     private float camSpeed = 0.2f;
+    private float scrollSpeed = 10.0f;
     private float runMultiplier = 3.0f;
 
     public void ResetWhenTopDown() {
@@ -30,12 +31,16 @@ public class CameraSystem : MonoBehaviour
         Vector3 position = transform.position;
 
         // calculate y here based on how large the map is
+        position.y = 120.0f;
 
         // x and z are straightforward
         position.x = tg.GetWidth() / 2.0f;
         position.z = tg.GetHeight() / 2.0f;
 
         transform.position = position;
+
+        // reset rotation of camera as well
+        transform.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
     }
 
     public void ResetWhenFree() { 
@@ -98,6 +103,12 @@ public class CameraSystem : MonoBehaviour
         else if (Input.GetKey(KeyCode.D))
         {
             horizontal = 1.0f;
+        }
+
+        // change y
+        if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        {
+            transform.position += scrollSpeed * new Vector3(0, -Input.GetAxis("Mouse ScrollWheel"), 0);
         }
 
         Vector3 position = transform.position;
