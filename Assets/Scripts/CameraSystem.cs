@@ -5,6 +5,10 @@ using UnityEngine.InputSystem;
 
 // https://discussions.unity.com/t/enum-as-a-function-param-in-a-button-onclick/214010
 
+
+// very difficult to see human at a 128 x 128 scale. add markers on screen?
+// is there a way to visualise the pathfinding, the agent's decision, etc?
+
 public class CameraSystem : MonoBehaviour
 {
 
