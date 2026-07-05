@@ -19,7 +19,7 @@ public class HumanVisualiser : MonoBehaviour
 
         float yVal = terrainGen.GetComponent<TerrainGen>().GetY(transform.position.x, transform.position.z);
 
-        UnityEngine.Debug.Log("current cell y pos: " + yVal);
+        //UnityEngine.Debug.Log("current cell y pos: " + yVal);
 
         Vector3 tilePos = tileVisualiser.GetComponent<Transform>().position;
         tilePos.x = (int)transform.position.x;
