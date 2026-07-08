@@ -36,7 +36,7 @@ public struct PathRequest
 
 public class Astar
 {
-    private const int GRID_SIZE = 40;
+    private const int GRID_SIZE = 128;   // terrain is 128
     private const int CLUSTER_SIZE = 10;
 
     private Grid grid;
