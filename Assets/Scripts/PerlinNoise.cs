@@ -17,10 +17,10 @@ using UnityEngine.Rendering.Universal.Internal;
 
 //Need to add helper function to call and renegerate terrain on button click
 
-public class Grid
-{
-    int row, col;
-}
+//public class Grid
+//{
+//    int row, col;
+//}
 
 public class PerlinNoise
 {
