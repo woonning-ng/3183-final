@@ -332,6 +332,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrainGen: {fileID: 1273906574}
+  camSpeed: 10
+  runMultiplier: 20
+  scrollSpeed: 1000
+  moveSpeed: 10
+  lookSpeed: 2
+  maxShift: 100
 --- !u!108 &410087040 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 9190441966725357751, guid: 727e64dc431cf8d4aa20ac96b4f83f5e, type: 3}
