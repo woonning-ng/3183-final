@@ -644,7 +644,6 @@ MonoBehaviour:
   debugColoring: 0
   autoWander: 1
   maxPlacementAttempts: 30
-  terrainGen: {fileID: 1273906574}
 --- !u!1001 &1508277530
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -939,7 +938,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   max_row: 128
   max_col: 128
-  mapSizeInWorld: 100
+  mapSizeInWorld: 128
+  terrainGen: {fileID: 1273906577}
 --- !u!4 &1957155139
 Transform:
   m_ObjectHideFlags: 0
@@ -1847,7 +1847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4184406610702153784, guid: ab88cd1a7ca2bd54d9d3108b0a514150, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1952,6 +1952,7 @@ SceneRoots:
   - {fileID: 1677787396941311161}
   - {fileID: 1902951907}
   - {fileID: 1711100116}
+  - {fileID: 1957155139}
   - {fileID: 6615633348213070875}
   - {fileID: 5843486637533666005}
   - {fileID: 6509742240267493191}
@@ -1962,4 +1963,3 @@ SceneRoots:
   - {fileID: 2932899750103222198}
   - {fileID: 1829391884859674897}
   - {fileID: 2451440268010716894}
-  - {fileID: 1957155139}

@@ -4,7 +4,7 @@ using UnityEngine;
 public class Pathfinding : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Grid grid;
+    [SerializeField] private Grid grid; // now refs terrain gen by default
     // target Transform removed — replaced by a wandering goal
 
     [Header("Movement")]
@@ -24,7 +24,7 @@ public class Pathfinding : MonoBehaviour
     [SerializeField] private int maxPlacementAttempts = 30;
 
     // Terrain Gen GO needed for displacing person upwards
-    public TerrainGen terrainGen;
+    //public TerrainGen terrainGen;
 
     private Astar astar;
     private PathRequest request;
@@ -99,6 +99,7 @@ public class Pathfinding : MonoBehaviour
 
     private bool TryGetRandomWalkableTile(out GridPos result)
     {
+        UnityEngine.Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAA");
         for (int i = 0; i < maxPlacementAttempts; i++)
         {
             int row = UnityEngine.Random.Range(0, grid.max_row);
@@ -112,6 +113,8 @@ public class Pathfinding : MonoBehaviour
                 return true;
             }
         }
+
+        UnityEngine.Debug.Log("ABBABABABBABBAB"); // IT'S NOT EVEN BEING CALLED?
 
         result = default;
         return false;
@@ -131,7 +134,7 @@ public class Pathfinding : MonoBehaviour
 
         // need to flatten y here
         Vector3 waypoint = currentPath[currentWaypointIndex];
-        float waypointY = terrainGen.GetY(waypoint.x, waypoint.z) + 0.5f;
+        float waypointY = grid.terrainGen.GetY(waypoint.x, waypoint.z) + 0.5f;
 
         Vector3 flatCurrent = new Vector3(transform.position.x, 0f, transform.position.z);
         Vector3 flatTarget = new Vector3(waypoint.x, 0f, waypoint.z);
@@ -168,14 +171,14 @@ public class Pathfinding : MonoBehaviour
         // lol i tried, it's not the smoothest, how do i make it smooth then
         for (int i = 0; i < currentPath.Count; i++)
         {
-            float i_y = terrainGen.GetY(currentPath[i].x, currentPath[i].z) + 0.5f;
+            float i_y = grid.terrainGen.GetY(currentPath[i].x, currentPath[i].z) + 0.5f;
             Vector3 pathYDisp = new Vector3(currentPath[i].x, i_y, currentPath[i].z);
 
             Gizmos.DrawSphere(pathYDisp, 0.2f);
 
             if (i + 1 < currentPath.Count)
             {
-                float i1_y = terrainGen.GetY(currentPath[i + 1].x, currentPath[i + 1].z) + 0.5f;
+                float i1_y = grid.terrainGen.GetY(currentPath[i + 1].x, currentPath[i + 1].z) + 0.5f;
                 Vector3 path1YDisp = new Vector3(currentPath[i + 1].x, i1_y, currentPath[i + 1].z);
 
                 Gizmos.DrawLine(pathYDisp, path1YDisp);

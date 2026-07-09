@@ -29,12 +29,14 @@ public class Grid : MonoBehaviour
     public int max_col = 128;
 
     [Header("World Size")]
-    public float mapSizeInWorld = 100f;
+    public float blockSize = 1f;
+    private float mapSizeInWorld => max_row * blockSize; // assumes square grid
 
     private Vector3[,] positions;
     private bool[,] walls;
 
     public static Grid Instance;
+    public TerrainGen terrainGen; // needed for querying
 
     private void Awake()
     {
@@ -44,6 +46,19 @@ public class Grid : MonoBehaviour
         walls = new bool[max_row, max_col];
 
         GeneratePositions();
+    }
+
+    private void Start()
+    {
+        // set the walls here
+        for (int row = 0; row < max_row; row++)
+        {
+
+            for (int col = 0; col < max_col; col++)
+            {
+                SetWall(row, col, !terrainGen.GetAccessible(row, col)); // invert condition
+            }
+        }
     }
 
     public void GeneratePositions()

@@ -45,6 +45,11 @@ public class TerrainGen : MonoBehaviour
         return (int)(data[(int)x, (int)z] * 10.0f);
     }
 
+    public bool GetAccessible(float x, float z)
+    {
+        return accessible[(int)x, (int)z];
+    }
+
     void GenerateRandomMap() {
         for (int i = 0; i < max_height; i++) {
             for (int j = 0; j < max_width; j++) {
@@ -115,7 +120,7 @@ public class TerrainGen : MonoBehaviour
     {
         return 2.0f * (0.5f - Mathf.Abs(0.5f - Noise(nx, nz)));
     }
-    void Start(){
+    void Awake(){ // awake
         
         GenerateRandomMap();
         for(int i=0; i< max_height; i++)
