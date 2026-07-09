@@ -153,6 +153,11 @@ public class TerrainGen : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        // note: can probably invoke pathfinding here to test out terrain validity...?
+    }
+
     void Update(){
         //Empty for now
     }
