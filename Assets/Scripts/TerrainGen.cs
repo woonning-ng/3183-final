@@ -1,7 +1,8 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
+//using UnityEngine.UIElements;
 using static PerlinNoise;
 
 //References:
@@ -31,6 +32,10 @@ public class TerrainGen : MonoBehaviour
     public GameObject sand_prefab;
     public GameObject grass_prefab;
     public GameObject snow_prefab;
+
+
+    //Add some boolean to check if it is toggled?
+    public GameObject m_toggle;
     //2d array to store the perlin noise values
     //The 2d array is [x, z] and the float within is the y value
     //Y value have to be converted to int as we are going for minecraft style
@@ -156,8 +161,17 @@ public class TerrainGen : MonoBehaviour
         }
     }
     void Awake(){ // awake
+ 
 
-        Randomize_permutation();
+        //does not work yet, have to find a way to save the changes throughout the scenes
+        Toggle tog = m_toggle.GetComponent<Toggle>();
+        
+
+        if (tog.isOn)
+        {
+            Randomize_permutation();
+        }
+        
         GenerateRandomMap();
         InstantiateTerrain();
         
@@ -170,6 +184,7 @@ public class TerrainGen : MonoBehaviour
 
     void Update(){
         //Empty for now
+        
     }
 
     void RegenTerrain()
