@@ -123,11 +123,27 @@ public class Pathfinding : MonoBehaviour
 
     private void FollowPath()
     {
-        if (currentWaypointIndex >= currentPath.Count)
-        {
-            currentPath.Clear();
-            return;
+        if (currentWaypointIndex >= currentPath.Count) { 
+            currentPath.Clear(); return; 
         }
+
+        // so......what's up. why does the flat not flat
+
+        // need to flatten y here
+        //Vector3 waypoint = currentPath[currentWaypointIndex];
+        //float waypointY = terrainGen.GetY(waypoint.x, waypoint.z);
+
+        //Vector3 flatCurrent = new Vector3(transform.position.x, 0f, transform.position.z);
+        //Vector3 flatTarget = new Vector3(waypoint.x, 0f, waypoint.z);
+
+        //Vector3 flatMoved = Vector3.MoveTowards(flatCurrent, flatTarget, moveSpeed * Time.deltaTime);
+
+        //transform.position = new Vector3(flatMoved.x, waypointY, flatMoved.z);
+
+        //if (Vector3.Distance(transform.position, waypoint) <= waypointReachDistance)
+        //{
+        //    currentWaypointIndex++;
+        //}
 
         Vector3 waypoint = currentPath[currentWaypointIndex];
 
@@ -149,16 +165,16 @@ public class Pathfinding : MonoBehaviour
         // lol i tried, it's not the smoothest, how do i make it smooth then
         for (int i = 0; i < currentPath.Count; i++)
         {
-            float i_y = terrainGen.GetY(currentPath[i].x, currentPath[i].z);
-            float i1_y = terrainGen.GetY(currentPath[i + 1].x, currentPath[i + 1].z);
-
+            float i_y = terrainGen.GetY(currentPath[i].x, currentPath[i].z) + 0.5f;
             Vector3 pathYDisp = new Vector3(currentPath[i].x, i_y, currentPath[i].z);
-            Vector3 path1YDisp = new Vector3(currentPath[i + 1].x, i_y, currentPath[i + 1].z);
 
             Gizmos.DrawSphere(pathYDisp, 0.2f);
 
             if (i + 1 < currentPath.Count)
             {
+                float i1_y = terrainGen.GetY(currentPath[i + 1].x, currentPath[i + 1].z) + 0.5f;
+                Vector3 path1YDisp = new Vector3(currentPath[i + 1].x, i1_y, currentPath[i + 1].z);
+
                 Gizmos.DrawLine(pathYDisp, path1YDisp);
             }
         }
