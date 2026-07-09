@@ -120,16 +120,16 @@ public class TerrainGen : MonoBehaviour
     {
         return 2.0f * (0.5f - Mathf.Abs(0.5f - Noise(nx, nz)));
     }
-    void Awake(){ // awake
-        
-        GenerateRandomMap();
-        for(int i=0; i< max_height; i++)
+
+    void InstantiateTerrain()
+    {
+        for (int i = 0; i < max_height; i++)
         {
-            for(int j=0; j<max_width; j++)
+            for (int j = 0; j < max_width; j++)
             {
                 //This will help to determine which terain to generate
                 Terrain_cus a = Biome(data[i, j], moisture[i, j]);
-                Vector3 pos = new Vector3(i, (int)(data[i, j]*10.0f), j);
+                Vector3 pos = new Vector3(i, (int)(data[i, j] * 10.0f), j);
                 switch (a)
                 {
                     case Terrain_cus.WATER:
@@ -152,6 +152,12 @@ public class TerrainGen : MonoBehaviour
             }
         }
     }
+    void Awake(){ // awake
+        
+        GenerateRandomMap();
+        InstantiateTerrain();
+        
+    }
 
     private void Start()
     {
@@ -160,5 +166,11 @@ public class TerrainGen : MonoBehaviour
 
     void Update(){
         //Empty for now
+    }
+
+    void RegenTerrain()
+    {
+        GenerateRandomMap();
+        InstantiateTerrain();
     }
 }
