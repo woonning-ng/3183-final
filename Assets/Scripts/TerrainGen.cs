@@ -51,7 +51,7 @@ public class TerrainGen : MonoBehaviour
     }
 
     void GenerateRandomMap() {
-        Randomize_permutation();
+        //Randomize_permutation();
         //Randomize_permutation();
         //Randomize_permutation();
         for (int i = 0; i < max_height; i++) {
@@ -156,8 +156,8 @@ public class TerrainGen : MonoBehaviour
         }
     }
     void Awake(){ // awake
-        
-        
+
+        Randomize_permutation();
         GenerateRandomMap();
         InstantiateTerrain();
         
