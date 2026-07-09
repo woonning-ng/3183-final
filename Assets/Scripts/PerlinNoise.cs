@@ -1,3 +1,6 @@
+using NUnit.Framework.Internal;
+using System.Security.Cryptography;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal.Internal;
@@ -100,6 +103,21 @@ public class PerlinNoise
    49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
    138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
    };
+
+    static public void Randomize_permutation()
+    {
+        //NOT WORKING
+        //Trying shuffling 
+        for(int i=0; i< 256; i++)
+        {
+            int tmp = p[i];
+            
+            int randomIndex = UnityEngine.Random.Range(i, 256);
+
+            p[i] = p[randomIndex];
+            p[randomIndex] = tmp;
+        }
+    }
     static void Init()
     {
         for (int i = 0; i < 256; i++)
