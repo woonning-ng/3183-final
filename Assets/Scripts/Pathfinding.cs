@@ -130,30 +130,33 @@ public class Pathfinding : MonoBehaviour
         // so......what's up. why does the flat not flat
 
         // need to flatten y here
+        Vector3 waypoint = currentPath[currentWaypointIndex];
+        float waypointY = terrainGen.GetY(waypoint.x, waypoint.z) + 0.5f;
+
+        Vector3 flatCurrent = new Vector3(transform.position.x, 0f, transform.position.z);
+        Vector3 flatTarget = new Vector3(waypoint.x, 0f, waypoint.z);
+
+        Vector3 flatMoved = Vector3.MoveTowards(flatCurrent, flatTarget, moveSpeed * Time.deltaTime);
+
+        transform.position = new Vector3(flatMoved.x, waypointY, flatMoved.z);
+
+        // track xz movement only, y irrelevant
+        float flatDistance = Vector3.Distance(flatMoved, flatTarget);
+
+        if (flatDistance <= waypointReachDistance)
+        {
+            currentWaypointIndex++;
+        }
+
         //Vector3 waypoint = currentPath[currentWaypointIndex];
-        //float waypointY = terrainGen.GetY(waypoint.x, waypoint.z);
 
-        //Vector3 flatCurrent = new Vector3(transform.position.x, 0f, transform.position.z);
-        //Vector3 flatTarget = new Vector3(waypoint.x, 0f, waypoint.z);
-
-        //Vector3 flatMoved = Vector3.MoveTowards(flatCurrent, flatTarget, moveSpeed * Time.deltaTime);
-
-        //transform.position = new Vector3(flatMoved.x, waypointY, flatMoved.z);
+        // i don't think i can use their innate moretowwards here? i think i need a custom movetowards for y disp
+        //transform.position = Vector3.MoveTowards(transform.position, waypoint, moveSpeed * Time.deltaTime);
 
         //if (Vector3.Distance(transform.position, waypoint) <= waypointReachDistance)
         //{
         //    currentWaypointIndex++;
         //}
-
-        Vector3 waypoint = currentPath[currentWaypointIndex];
-
-        // i don't think i can use their innate moretowwards here? i think i need a custom movetowards for y disp
-        transform.position = Vector3.MoveTowards(transform.position, waypoint, moveSpeed * Time.deltaTime);
-
-        if (Vector3.Distance(transform.position, waypoint) <= waypointReachDistance)
-        {
-            currentWaypointIndex++;
-        }
     }
 
     private void OnDrawGizmos()
