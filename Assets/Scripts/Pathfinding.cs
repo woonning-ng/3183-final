@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class Pathfinding : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Grid grid;
-    [SerializeField] private Transform target;
+    // target Transform removed — replaced by a wandering goal
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
@@ -21,9 +19,9 @@ public class Pathfinding : MonoBehaviour
     [SerializeField] private bool singleStep = false;
     [SerializeField] private bool debugColoring = false;
 
-    [Header("Input")]
-    [SerializeField] private KeyCode requestPathKey = KeyCode.Space;
-    [SerializeField] private bool autoRequestPath = false;
+    [Header("Wander Settings")]
+    [SerializeField] private bool autoWander = true;
+    [SerializeField] private int maxPlacementAttempts = 30;
 
     private Astar astar;
     private PathRequest request;
@@ -53,20 +51,26 @@ public class Pathfinding : MonoBehaviour
 
     private void Update()
     {
-        if (target == null || grid == null) return;
+        if (grid == null) return;
 
-        if (Input.GetKeyDown(requestPathKey) || (autoRequestPath && currentPath.Count == 0)) { 
-            RequestPath(); 
+        if (autoWander && currentPath.Count == 0)
+        {
+            RequestWanderPath();
         }
 
-       
         FollowPath();
     }
 
-    private void RequestPath()
+    private void RequestWanderPath()
     {
+        GridPos startGridPos = grid.Get_GridPos(transform.position);
+        GridPos goalGridPos;
+
+        if (!TryGetRandomWalkableTile(out goalGridPos))
+            return; // grid is entirely walls, or we got unlucky — try again next frame
+
         request.start = transform.position;
-        request.goal = target.position;
+        request.goal = grid.Get_WorldPos(goalGridPos);
 
         request.heuristic = heuristic;
         request.weight = weight;
@@ -86,15 +90,41 @@ public class Pathfinding : MonoBehaviour
             currentWaypointIndex = 0;
             request.newRequest = false;
         }
+        // IMPOSSIBLE just means we picked an unreachable tile —
+        // currentPath stays empty, so we'll try a new random tile next frame
+    }
+
+    private bool TryGetRandomWalkableTile(out GridPos result)
+    {
+        for (int i = 0; i < maxPlacementAttempts; i++)
+        {
+            int row = UnityEngine.Random.Range(0, grid.max_row);
+            int col = UnityEngine.Random.Range(0, grid.max_col);
+
+            GridPos candidate = new GridPos(row, col);
+
+            if (grid.IsValid(candidate) && !grid.IsWall(candidate))
+            {
+                result = candidate;
+                return true;
+            }
+        }
+
+        result = default;
+        return false;
     }
 
     private void FollowPath()
     {
-        if (currentWaypointIndex >= currentPath.Count) return;
+        if (currentWaypointIndex >= currentPath.Count)
+        {
+            currentPath.Clear();
+            return;
+        }
 
         Vector3 waypoint = currentPath[currentWaypointIndex];
 
-        transform.position = Vector3.MoveTowards(transform.position,waypoint, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, waypoint, moveSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, waypoint) <= waypointReachDistance)
         {
