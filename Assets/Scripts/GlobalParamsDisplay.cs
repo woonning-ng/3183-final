@@ -8,8 +8,9 @@
 * @copyright Copyright (C) 2026 DigiPen Institute of Technology
  */
 
-using UnityEngine;
 using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GlobalParamsDisplay : MonoBehaviour
 {
@@ -19,6 +20,11 @@ public class GlobalParamsDisplay : MonoBehaviour
     // items to update
     [SerializeField] private TextMeshProUGUI simSpeedText;
     [SerializeField] private TextMeshProUGUI cameraText;
+
+    public void ReloadScene() {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(currentSceneName);
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
