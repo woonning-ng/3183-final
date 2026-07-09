@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +23,7 @@ public static class GlobalParam
 {
     public static bool m_random;
 
+    public static int simulatedRuns = 0;
 
 }
 
@@ -29,6 +31,10 @@ public static class GlobalParam
 public class GlobalParamManager : MonoBehaviour
 {
     public Toggle m_random_toggle;
+
+    [SerializeField] private TextMeshProUGUI SimRunsText;
+
+    public int GetSimRuns() { return GlobalParam.simulatedRuns; }
 
     void Awake()
     {
@@ -41,6 +47,8 @@ public class GlobalParamManager : MonoBehaviour
         {
             m_random_toggle.isOn = false;
         }
+
+        GlobalParam.simulatedRuns++; // just testing
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -61,6 +69,8 @@ public class GlobalParamManager : MonoBehaviour
         {
             GlobalParam.m_random = false;
         }
+
+        SimRunsText.text = GetSimRuns().ToString();
     }
 }
 
