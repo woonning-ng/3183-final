@@ -33,25 +33,60 @@ public class Pathfinding : MonoBehaviour
     private readonly List<Vector3> currentPath = new List<Vector3>();
     private int currentWaypointIndex;
 
-    private void Awake()
+    public bool HasArrived => currentWaypointIndex >= currentPath.Count;
+
+    //private void Awake()
+    //{
+    //    if (grid == null)
+    //        grid = Grid.Instance;
+
+    //    astar = new Astar(grid);
+
+    //    request = new PathRequest
+    //    {
+    //        path = new List<Vector3>(),
+    //        heuristic = heuristic,
+    //        weight = weight,
+    //        smoothing = smoothing,
+    //        rubberBanding = rubberBanding,
+    //        singleStep = singleStep,
+    //        debugColoring = debugColoring,
+    //        newRequest = true
+    //    };
+    //}
+
+    private void Start()
     {
-        if (grid == null)
-            grid = Grid.Instance;
-
+        if (grid == null) grid = Grid.Instance;
         astar = new Astar(grid);
+    }
 
-        request = new PathRequest
+    public void SetGoal(Vector3 goal)
+    {
+        PathRequest request = new PathRequest
         {
+            start = transform.position,
+            goal = goal,
             path = new List<Vector3>(),
             heuristic = heuristic,
             weight = weight,
             smoothing = smoothing,
             rubberBanding = rubberBanding,
-            singleStep = singleStep,
-            debugColoring = debugColoring,
+            singleStep = false,
             newRequest = true
         };
+
+        if (astar.ComputePath(ref request) == PathResult.COMPLETE)
+        {
+            currentPath.Clear();
+            foreach (Vector3 p in request.path)
+                currentPath.Add(new Vector3(p.x, grid.terrainGen.GetY(p.x, p.z), p.z));
+
+            currentWaypointIndex = 0;
+        }
     }
+
+    public void Tick() => FollowPath();
 
     private void Update()
     {
