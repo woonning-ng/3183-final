@@ -23,6 +23,9 @@ public class Pathfinding : MonoBehaviour
     [SerializeField] private bool autoWander = true;
     [SerializeField] private int maxPlacementAttempts = 30;
 
+    // Terrain Gen GO needed for displacing person upwards
+    public TerrainGen terrainGen;
+
     private Astar astar;
     private PathRequest request;
 
@@ -114,6 +117,10 @@ public class Pathfinding : MonoBehaviour
         return false;
     }
 
+    private void MoveTargetTowards(Vector3 currentPos, Vector3 targetPos, float speed) { 
+        // so basically its a movetowards BUT factoring in the y displacement due to the heightmap
+    }
+
     private void FollowPath()
     {
         if (currentWaypointIndex >= currentPath.Count)
@@ -124,6 +131,7 @@ public class Pathfinding : MonoBehaviour
 
         Vector3 waypoint = currentPath[currentWaypointIndex];
 
+        // i don't think i can use their innate moretowwards here? i think i need a custom movetowards for y disp
         transform.position = Vector3.MoveTowards(transform.position, waypoint, moveSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, waypoint) <= waypointReachDistance)
@@ -138,13 +146,20 @@ public class Pathfinding : MonoBehaviour
 
         Gizmos.color = Color.green;
 
+        // lol i tried, it's not the smoothest, how do i make it smooth then
         for (int i = 0; i < currentPath.Count; i++)
         {
-            Gizmos.DrawSphere(currentPath[i], 0.2f);
+            float i_y = terrainGen.GetY(currentPath[i].x, currentPath[i].z);
+            float i1_y = terrainGen.GetY(currentPath[i + 1].x, currentPath[i + 1].z);
+
+            Vector3 pathYDisp = new Vector3(currentPath[i].x, i_y, currentPath[i].z);
+            Vector3 path1YDisp = new Vector3(currentPath[i + 1].x, i_y, currentPath[i + 1].z);
+
+            Gizmos.DrawSphere(pathYDisp, 0.2f);
 
             if (i + 1 < currentPath.Count)
             {
-                Gizmos.DrawLine(currentPath[i], currentPath[i + 1]);
+                Gizmos.DrawLine(pathYDisp, path1YDisp);
             }
         }
     }

@@ -634,7 +634,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 1957155138}
-  target: {fileID: 1775213913}
   moveSpeed: 5
   waypointReachDistance: 0.1
   heuristic: 0
@@ -643,8 +642,9 @@ MonoBehaviour:
   rubberBanding: 1
   singleStep: 0
   debugColoring: 0
-  requestPathKey: 0
-  autoRequestPath: 0
+  autoWander: 1
+  maxPlacementAttempts: 30
+  terrainGen: {fileID: 1273906574}
 --- !u!1001 &1508277530
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -798,11 +798,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38df726bf61297c4899cbb52ea2f4b94, type: 3}
---- !u!4 &1775213913 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6170656660958588735, guid: aa26354de71dba644a37a9680bb57cbc, type: 3}
-  m_PrefabInstance: {fileID: 2932899750103222198}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1841989344
 GameObject:
   m_ObjectHideFlags: 0
