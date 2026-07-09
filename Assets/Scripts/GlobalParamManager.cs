@@ -16,6 +16,8 @@ using UnityEngine.UI;
 //GlobalParamManager will just update the GameObjects at Awake
 //On update for the manager, it will update the GlobalParams directly
 
+//If we want, the GlobalParamManager can be converted to singleton and use DontDestroyOnLoad
+
 public static class GlobalParam
 {
     public static bool m_random;
