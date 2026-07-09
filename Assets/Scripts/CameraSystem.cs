@@ -22,19 +22,33 @@ public class CameraSystem : MonoBehaviour
 
     public GameObject terrainGen;         // need this for sizing (camera)
 
-    // params like zoom, moving, etc here idk
-    private bool shiftPressed = false;
+    [Header("------- Top Down Camera Parameters -------")]
+    [SerializeField, Header("Speed when Moving")]
     private float camSpeed = 5.0f;
-    private float scrollSpeed = 20.0f;
+
+    [SerializeField, Header("Speed Multiplier when Running")]
     private float runMultiplier = 40.0f;
 
+    [SerializeField, Header("Speed when Scrolling")]
+    private float scrollSpeed = 80.0f;
+
+
+    [Header(" -------Free Camera Parameters -------")]
+    [SerializeField, Header("Speed when Running")]
     private float moveSpeed = 10.0f;
+
+    [SerializeField, Header("Speed when Looking Around")]
     private float lookSpeed = 2.0f;
-    private Vector3 lastMouse = new Vector3(255, 255, 255);
+
+    [SerializeField, Header("Maximum Speed when Running")]
     private float maxShift = 100.0f;
+
+
+    // params like zoom, moving, etc here idk
+    private bool shiftPressed = false;
+    private Vector3 lastMouse = new Vector3(255, 255, 255);
     private bool isRotating = false;
     private float rotationY = 0.0f;
-
     private float speedMultiplier = 0.0f;
 
     public void ResetWhenTopDown() {
@@ -116,11 +130,15 @@ public class CameraSystem : MonoBehaviour
     private void TopDownCameraMode() {
         UnityEngine.Debug.Log("in top down camera mode");
         // at least allow for zooming here and moving UDLR if needed
-        if (Input.GetKey(KeyCode.LeftShift)) {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
             shiftPressed = true;
         }
+        else {
+            shiftPressed = false;
+        }
 
-        float totalSpd = camSpeed * (shiftPressed ? runMultiplier : 1.0f);
+            float totalSpd = camSpeed * (shiftPressed ? runMultiplier : 1.0f);
         float horizontal = 0.0f; float vertical = 0.0f;
 
         // change z

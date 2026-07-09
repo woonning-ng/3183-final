@@ -45,9 +45,9 @@ public class TerrainGen : MonoBehaviour
         return (int)(data[(int)x, (int)z] * 10.0f);
     }
 
-    public bool GetAccessibility(int x, int z)
+    public bool GetAccessible(float x, float z)
     {
-        return accessible[x, z];
+        return accessible[(int)x, (int)z];
     }
 
     void GenerateRandomMap() {
@@ -120,7 +120,7 @@ public class TerrainGen : MonoBehaviour
     {
         return 2.0f * (0.5f - Mathf.Abs(0.5f - Noise(nx, nz)));
     }
-    void Start(){
+    void Awake(){ // awake
         
         GenerateRandomMap();
         for(int i=0; i< max_height; i++)
@@ -151,6 +151,11 @@ public class TerrainGen : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void Start()
+    {
+        // note: can probably invoke pathfinding here to test out terrain validity...?
     }
 
     void Update(){

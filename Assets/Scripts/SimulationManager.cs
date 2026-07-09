@@ -1,7 +1,19 @@
+using System;
 using UnityEngine;
 
 public class SimulationManager : MonoBehaviour
 {
+    // -------- handling sim time stuff here --------
+    public static SimulationManager Instance;
+
+    [SerializeField] private float baseCycleLength = 24f;
+    private float currentCycleLength;
+
+    public float SpeedMultiplier => baseCycleLength / currentCycleLength;
+
+    public event Action<float> OnSpeedChanged;
+    // -------- handling sim time stuff here --------
+
     public int SimulatedRunNo = 1;
 
     // stats related stuff here for information?
@@ -20,6 +32,20 @@ public class SimulationManager : MonoBehaviour
     public void StartNewSimulation() { 
         // reset various stuff here
     }
+
+
+    private void Awake()
+    {
+        Instance = this;
+        currentCycleLength = baseCycleLength;
+    }
+
+    public void SetCycleLength(float newLength)
+    {
+        currentCycleLength = newLength;
+        OnSpeedChanged?.Invoke(SpeedMultiplier);
+    }
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
