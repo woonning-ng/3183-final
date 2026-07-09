@@ -20,8 +20,10 @@ public class GlobalParamsDisplay : MonoBehaviour
     // items to update
     [SerializeField] private TextMeshProUGUI simSpeedText;
     [SerializeField] private TextMeshProUGUI cameraText;
+    [SerializeField] private TextMeshProUGUI currentTimeText;
+    [SerializeField] private TextMeshProUGUI isNightText;
 
-    public void ReloadScene() {
+    public void ReloadScene() { // can probably look into how to save data across scenes (singleton/instance? - a gameobj)
         string currentSceneName = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(currentSceneName);
     }
@@ -40,6 +42,12 @@ public class GlobalParamsDisplay : MonoBehaviour
         if (dnc != null)
         {
             simSpeedText.text = dnc.CurrentSpeed().ToString("f2") + "x";
+
+            isNightText.text = dnc.IsNight().ToString();
+
+            Vector3 currentTime = dnc.GetTime();
+
+            currentTimeText.text = currentTime.x.ToString("00") + ":" + currentTime.y.ToString("00") + ":" + currentTime.z.ToString("00");
         }
 
         if (cameraSys != null) {

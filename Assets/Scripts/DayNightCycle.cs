@@ -50,6 +50,34 @@ public class DayNightCycle : MonoBehaviour
 
     // settable light obj (in our case, the global light)
     [SerializeField] private Light lightObj;
+    
+    // Is it Night Time? (Needed for BTs for human behaviour)
+    public bool IsNight() {
+        // nighttime defined as: 6pm to 6am
+        // normalised in [0, 1] - [00:00, 23:59]
+        float currentRatio = currentCycleTime / cycleLength;
+
+        return (currentRatio <= (6.0f / 24.0f) || currentRatio >= (18.0f / 24.0f));
+    }
+
+    public Vector3 GetTime() {
+        // im sorry prasanna i am disgrace *cries in hlp1*
+        // convert current ratio to HH:MM:SS
+        float currentRatio = (currentCycleTime / cycleLength) * 24.0f;
+        //UnityEngine.Debug.Log("what is current ratio: " + currentRatio);
+
+        float hour = Mathf.Floor(currentRatio);
+        currentRatio -= hour;
+
+        // how to handle mins and seconds from the remaining fractions?
+        currentRatio *= 60.0f;
+        float minute = Mathf.Floor(currentRatio);
+        currentRatio -= minute;
+
+        float second = currentRatio * 60.0f;
+
+        return new Vector3(hour, minute, second);
+    }
 
     // setters and getters for cycle
     public void SetCycleTime(float newTime) {
@@ -151,6 +179,9 @@ public class DayNightCycle : MonoBehaviour
             currentCycleTime %= cycleLength; // now safe to wrap
 
             RotateLight();
+
+            //float currentRatio = currentCycleTime / cycleLength;
+            //UnityEngine.Debug.Log("Is it nighttime? " + "Current time: " + currentRatio + " - " + IsNight());
         }
     }
 }
