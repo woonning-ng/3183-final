@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 public class Pathfinding : MonoBehaviour
 {
@@ -97,9 +98,45 @@ public class Pathfinding : MonoBehaviour
         // currentPath stays empty, so we'll try a new random tile next frame
     }
 
+    private void MoveToCoordinate(Vector3 pos)
+    {
+        GridPos goalGridPos = grid.Get_GridPos(pos);
+        if (!grid.IsValid(goalGridPos) || !grid.IsWall(goalGridPos)) { // do not
+            return;
+        }
+
+        GridPos startGridPos = grid.Get_GridPos(transform.position);
+
+        request.start = transform.position;
+        request.goal = grid.Get_WorldPos(goalGridPos);
+
+        request.heuristic = heuristic;
+        request.weight = weight;
+        request.smoothing = smoothing;
+        request.rubberBanding = rubberBanding;
+        request.singleStep = singleStep;
+        request.debugColoring = debugColoring;
+        request.newRequest = true;
+
+        PathResult result = astar.ComputePath(ref request);
+
+        if (result == PathResult.COMPLETE)
+        {
+            currentPath.Clear();
+            currentPath.AddRange(request.path);
+
+            currentWaypointIndex = 0;
+            request.newRequest = false;
+        }
+        // IMPOSSIBLE just means we picked an unreachable tile —
+        // currentPath stays empty, so we'll try a new random tile next frame
+    }
+
+    // add in a move target here? but how do you consider IF the target moves? (for chasing down passive mobs)
+
     private bool TryGetRandomWalkableTile(out GridPos result)
     {
-        UnityEngine.Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAA");
+        //UnityEngine.Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAA");
         for (int i = 0; i < maxPlacementAttempts; i++)
         {
             int row = UnityEngine.Random.Range(0, grid.max_row);
@@ -114,7 +151,7 @@ public class Pathfinding : MonoBehaviour
             }
         }
 
-        UnityEngine.Debug.Log("ABBABABABBABBAB"); // IT'S NOT EVEN BEING CALLED?
+        //UnityEngine.Debug.Log("ABBABABABBABBAB"); // IT'S NOT EVEN BEING CALLED?
 
         result = default;
         return false;
