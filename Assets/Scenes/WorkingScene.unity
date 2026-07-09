@@ -946,7 +946,6 @@ MonoBehaviour:
   sand_prefab: {fileID: 143297009162095029, guid: 38df726bf61297c4899cbb52ea2f4b94, type: 3}
   grass_prefab: {fileID: 3465141943559156757, guid: 171b2c8e66e00e74bbadf15e689b5f85, type: 3}
   snow_prefab: {fileID: 6654256606769088257, guid: 8a57bd9af350ff34b91dbc9926b01b93, type: 3}
-  m_toggle: {fileID: 1709526866}
 --- !u!114 &1273906578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -961,6 +960,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseCycleLength: 24
   SimulatedRunNo: 1
+--- !u!114 &1273906580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273906574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2a78b8c26fd0484684b4a80c57bce2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_random_toggle: {fileID: 1709526868}
 --- !u!1 &1289040228
 GameObject:
   m_ObjectHideFlags: 0
@@ -1847,6 +1859,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3706168492947819924, guid: 13d3718635ae2d04fbf1844b155041fd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1273906577}
+    - targetCorrespondingSourceObject: {fileID: 3706168492947819924, guid: 13d3718635ae2d04fbf1844b155041fd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1273906580}
   m_SourcePrefab: {fileID: 100100000, guid: 13d3718635ae2d04fbf1844b155041fd, type: 3}
 --- !u!1001 &1725682276044095605
 PrefabInstance:
