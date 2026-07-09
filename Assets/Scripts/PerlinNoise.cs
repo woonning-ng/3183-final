@@ -106,8 +106,7 @@ public class PerlinNoise
 
     static public void Randomize_permutation()
     {
-        //NOT WORKING
-        //Trying shuffling 
+        //Shuffling algo 
         for(int i=0; i< 256; i++)
         {
             int tmp = p[i];
