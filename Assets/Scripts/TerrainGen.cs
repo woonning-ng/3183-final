@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 //using UnityEngine.UIElements;
 using static PerlinNoise;
+using static GlobalParam;
+
 
 //References:
 //https://www.redblobgames.com/maps/terrain-from-noise/
@@ -35,7 +37,9 @@ public class TerrainGen : MonoBehaviour
 
 
     //Add some boolean to check if it is toggled?
-    public GameObject m_toggle;
+    //public GameObject m_toggle;
+
+    //public Toggle m_toggle;
     //2d array to store the perlin noise values
     //The 2d array is [x, z] and the float within is the y value
     //Y value have to be converted to int as we are going for minecraft style
@@ -161,13 +165,9 @@ public class TerrainGen : MonoBehaviour
         }
     }
     void Awake(){ // awake
- 
-
-        //does not work yet, have to find a way to save the changes throughout the scenes
-        Toggle tog = m_toggle.GetComponent<Toggle>();
         
 
-        if (tog.isOn)
+        if (m_random)
         {
             Randomize_permutation();
         }
@@ -184,12 +184,6 @@ public class TerrainGen : MonoBehaviour
 
     void Update(){
         //Empty for now
-        
     }
 
-    void RegenTerrain()
-    {
-        GenerateRandomMap();
-        InstantiateTerrain();
-    }
 }
