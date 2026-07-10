@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 // https://dev.to/matthewodle/simple-3d-camera-movement-1lcj
 // https://gist.github.com/david-hodgetts/aee82a4e9f22b14b1b63
 // https://discussions.unity.com/t/fly-cam-simple-cam-script/428226
+// https://stackoverflow.com/questions/71232279/how-to-make-the-camera-follow-the-player-in-unity
 
 // very difficult to see human at a 128 x 128 scale. add markers on screen?
 // is there a way to visualise the pathfinding, the agent's decision, etc?
@@ -15,12 +16,14 @@ public class CameraSystem : MonoBehaviour
 
     public enum CameraMode { 
         TOPDOWN = 0,    // top down mode to view the map
-        FREE    = 1     // allowing user to move around
+        FREE    = 1,    // allowing user to move around
+        FOLLOW  = 2     // follow user 
     }
 
     CameraMode mode = CameraMode.TOPDOWN; // default is top down
 
     public GameObject terrainGen;         // need this for sizing (camera)
+    public GameObject humanTarget;        // follow human here
 
     [Header("------- Top Down Camera Parameters -------")]
     [SerializeField, Header("Speed when Moving")]
@@ -33,7 +36,7 @@ public class CameraSystem : MonoBehaviour
     private float scrollSpeed = 80.0f;
 
 
-    [Header(" -------Free Camera Parameters -------")]
+    [Header(" ------- Free Camera Parameters -------")]
     [SerializeField, Header("Speed when Running")]
     private float moveSpeed = 10.0f;
 
@@ -43,6 +46,13 @@ public class CameraSystem : MonoBehaviour
     [SerializeField, Header("Maximum Speed when Running")]
     private float maxShift = 100.0f;
 
+    [Header(" ------- Follow Camera Parameters -------")]
+    [SerializeField, Header("Speed when Looking Around")]
+    private float followLookSpeed = 5.0f;
+
+    [SerializeField, Header("Default Offset")]
+    private Vector3 offsetFromTarget = new Vector3(0.0f, 1.0f, 0.0f);
+
 
     // params like zoom, moving, etc here idk
     private bool shiftPressed = false;
@@ -50,6 +60,8 @@ public class CameraSystem : MonoBehaviour
     private bool isRotating = false;
     private float rotationY = 0.0f;
     private float speedMultiplier = 0.0f;
+
+    // direction vector for rotating camera
 
     public void ResetWhenTopDown() {
         // reset camera's params when top down pressed
@@ -75,6 +87,11 @@ public class CameraSystem : MonoBehaviour
         transform.eulerAngles = new Vector3(46.0f, 46.0f, 0.0f);
     }
 
+    public void ResetWhenFollow() {
+        // reset camera's params when follow pressed
+        transform.position = humanTarget.transform.position + offsetFromTarget;
+    }
+
     public void SetMode(int newMode) {
         UnityEngine.Debug.Log(newMode);
         switch (newMode)
@@ -88,6 +105,10 @@ public class CameraSystem : MonoBehaviour
                 mode = CameraMode.FREE;
                 ResetWhenFree();
                 break;
+            case 2:
+                mode = CameraMode.FOLLOW;
+                ResetWhenFollow();
+                break;
 
         }
     }
@@ -100,9 +121,13 @@ public class CameraSystem : MonoBehaviour
             default:               // free and default use the same
             case CameraMode.FREE:
                 return "Free";
+            case CameraMode.FOLLOW:
+                return "Follow";
 
         }
     }
+
+    public int GetModeInt() { return (int)mode; }
 
     private Vector3 GetBaseInput() {
         Vector3 baseVel = new Vector3(0.0f, 0.0f, 0.0f);
@@ -235,6 +260,12 @@ public class CameraSystem : MonoBehaviour
         transform.position = newPosition;
     }
 
+    public void FollowCameraMode() {
+        // needs to check for zoom AND moving around
+        
+        transform.position = humanTarget.transform.position + offsetFromTarget;
+    }
+
     // to put the camera back where it should be by default
     public void ResetCamera() {
         switch (mode)
@@ -245,6 +276,9 @@ public class CameraSystem : MonoBehaviour
             default:               // free and default use the same
             case CameraMode.FREE:
                 ResetWhenFree();
+                break;
+            case CameraMode.FOLLOW:
+                ResetWhenFollow();
                 break;
 
         }
@@ -267,6 +301,9 @@ public class CameraSystem : MonoBehaviour
             case CameraMode.FREE:
             default:
                 FreeCameraMode();
+                break;
+            case CameraMode.FOLLOW:
+                FollowCameraMode();
                 break;
 
         }

@@ -25,12 +25,16 @@ public static class GlobalParam
 
     public static int simulatedRuns = 0;
 
+    public static int cameraMode = 0; // top down is default
+
 }
 
 
 public class GlobalParamManager : MonoBehaviour
 {
     public Toggle m_random_toggle;
+
+    public Camera m_camera;
 
     [SerializeField] private TextMeshProUGUI SimRunsText;
 
@@ -49,6 +53,8 @@ public class GlobalParamManager : MonoBehaviour
         }
 
         GlobalParam.simulatedRuns++; // just testing
+
+        m_camera.GetComponent<CameraSystem>().SetMode(GlobalParam.cameraMode);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -71,6 +77,8 @@ public class GlobalParamManager : MonoBehaviour
         }
 
         SimRunsText.text = GetSimRuns().ToString();
+
+        GlobalParam.cameraMode = m_camera.GetComponent<CameraSystem>().GetModeInt();
     }
 }
 
