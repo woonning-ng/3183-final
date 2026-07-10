@@ -1,3 +1,4 @@
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.InputSystem;
 //using static UnityEditor.Searcher.SearcherWindow.Alignment;
@@ -7,6 +8,7 @@ using UnityEngine.InputSystem;
 // https://gist.github.com/david-hodgetts/aee82a4e9f22b14b1b63
 // https://discussions.unity.com/t/fly-cam-simple-cam-script/428226
 // https://stackoverflow.com/questions/71232279/how-to-make-the-camera-follow-the-player-in-unity
+// https://discussions.unity.com/t/rotate-camera-around-game-object-and-zoom-camera-into-same-game-object/720654/5
 
 // very difficult to see human at a 128 x 128 scale. add markers on screen?
 // is there a way to visualise the pathfinding, the agent's decision, etc?
@@ -63,33 +65,55 @@ public class CameraSystem : MonoBehaviour
 
     // direction vector for rotating camera
 
-    public void ResetWhenTopDown() {
-        // reset camera's params when top down pressed
-        TerrainGen tg = terrainGen.GetComponent<TerrainGen>();
-        Vector3 position = transform.position;
+    public bool bypassModeDefaults = false;
+    private bool previousBypass = false;
 
-        // calculate y here based on how large the map is
-        position.y = 120.0f; // temporary for now
-
-        // x and z are straightforward
-        position.x = tg.GetWidth() / 2.0f;
-        position.z = tg.GetHeight() / 2.0f;
-
-        transform.position = position;
-
-        // reset rotation of camera as well
-        transform.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
+    public void SetBypass(bool bypass) {
+        previousBypass = bypassModeDefaults;
+        bypassModeDefaults = bypass;
     }
 
-    public void ResetWhenFree() {
+    public void ReturnPreviousBypass() {
+        bypassModeDefaults = previousBypass;
+    }
+
+    public void ResetWhenTopDown() {
+        if (!bypassModeDefaults)
+        {
+            // reset camera's params when top down pressed
+            TerrainGen tg = terrainGen.GetComponent<TerrainGen>();
+            Vector3 position = transform.position;
+
+            // calculate y here based on how large the map is
+            position.y = 120.0f; // temporary for now
+
+            // x and z are straightforward
+            position.x = tg.GetWidth() / 2.0f;
+            position.z = tg.GetHeight() / 2.0f;
+
+            transform.position = position;
+
+            // reset rotation of camera as well
+            transform.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
+        }
+    }
+
+    public void ResetWhenFree()
+    {
         // reset camera's params when free pressed
-        transform.position = new Vector3(-10.0f, 50.0f, -10.0f);
-        transform.eulerAngles = new Vector3(46.0f, 46.0f, 0.0f);
+        if (!bypassModeDefaults) {
+            transform.position = new Vector3(-10.0f, 50.0f, -10.0f);
+            transform.eulerAngles = new Vector3(46.0f, 46.0f, 0.0f);
+        }
     }
 
     public void ResetWhenFollow() {
         // reset camera's params when follow pressed
         transform.position = humanTarget.transform.position + offsetFromTarget;
+
+        if (!bypassModeDefaults) { 
+            
+        }
     }
 
     public void SetMode(int newMode) {
@@ -264,6 +288,11 @@ public class CameraSystem : MonoBehaviour
         // needs to check for zoom AND moving around
         
         transform.position = humanTarget.transform.position + offsetFromTarget;
+
+        // rotate around based on mouse pos
+        transform.RotateAround(humanTarget.transform.position, new Vector3(0.0f, -1.0f, 0.0f), 20 * Time.deltaTime * followLookSpeed);
+
+        // zoom in and out based on mouse wheel
     }
 
     // to put the camera back where it should be by default

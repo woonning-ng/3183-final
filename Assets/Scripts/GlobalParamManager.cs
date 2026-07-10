@@ -26,6 +26,9 @@ public static class GlobalParam
     public static int simulatedRuns = 0;
 
     public static int cameraMode = 0; // top down is default
+    public static bool cameraBypassDefault = false;
+    public static Vector3 cameraPos = new Vector3(64.0f, 120.0f, 64.0f);
+    public static Vector3 cameraDir = new Vector3(90.0f, 0.0f, 0.0f);
 
 }
 
@@ -33,6 +36,7 @@ public static class GlobalParam
 public class GlobalParamManager : MonoBehaviour
 {
     public Toggle m_random_toggle;
+    public Toggle m_cam_bypass_toggle;
 
     public Camera m_camera;
 
@@ -52,9 +56,21 @@ public class GlobalParamManager : MonoBehaviour
             m_random_toggle.isOn = false;
         }
 
+        if (m_cam_bypass_toggle.isOn)
+        {
+            GlobalParam.cameraBypassDefault = true;
+        }
+        else
+        {
+            GlobalParam.cameraBypassDefault = false;
+        }
+
         GlobalParam.simulatedRuns++; // just testing
 
         m_camera.GetComponent<CameraSystem>().SetMode(GlobalParam.cameraMode);
+        m_camera.GetComponent<CameraSystem>().bypassModeDefaults = GlobalParam.cameraBypassDefault;
+        m_camera.GetComponent<Transform>().transform.position = GlobalParam.cameraPos;
+        if (GlobalParam.cameraMode != 2) m_camera.GetComponent<Transform>().transform.eulerAngles = GlobalParam.cameraDir;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -76,9 +92,22 @@ public class GlobalParamManager : MonoBehaviour
             GlobalParam.m_random = false;
         }
 
+        if (m_cam_bypass_toggle.isOn)
+        {
+            GlobalParam.cameraBypassDefault = true;
+        }
+        else
+        {
+            GlobalParam.cameraBypassDefault = false;
+        }
+
         SimRunsText.text = GetSimRuns().ToString();
 
         GlobalParam.cameraMode = m_camera.GetComponent<CameraSystem>().GetModeInt();
+        GlobalParam.cameraPos = m_camera.GetComponent<Transform>().transform.position;
+        GlobalParam.cameraDir = m_camera.GetComponent<Transform>().transform.eulerAngles;
+
+        m_camera.GetComponent<CameraSystem>().bypassModeDefaults = GlobalParam.cameraBypassDefault;
     }
 }
 
