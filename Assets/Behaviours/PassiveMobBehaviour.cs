@@ -9,13 +9,17 @@ public class PassiveMobBehaviour : MonoBehaviour
     private BTNode root;
 
     // not recommended but
-    bool markedForDeath = false;
+    bool markedForDeath = false; // conditional, for bt
+    bool canCull = false;        // for system to cull it
 
     // actions: wander, idle, die
 
     private void Awake()
     {
         root = new ActionNode(() => Wander());
+
+        // the passive mob will wander, and stay still, looking around at times. its behaviour is very simple
+        // if it is marked for death, make it play the dead behaviour and then let the system despawn it
     }
 
     private void Start()

@@ -15,6 +15,12 @@ public class ZombieBehaviour : MonoBehaviour
     private void Awake()
     {
         root = new ActionNode(() => Wander());
+
+        // the zombie will wander, and stay still, looking around at times
+        // unless a human is within a certain radius of it, in which it will then give chase for about 5s
+        // give zombie a timeout for chasing
+
+        // zombie has no markedfordeath or cancull because system will automatically remove every zombie upon daytime
     }
 
     private void Start()
