@@ -8,6 +8,10 @@ public class ZombieBehaviour : MonoBehaviour
 
     private BTNode root;
 
+    bool markedForDeath = false; // unused field for now
+
+    // actions: wander, idle, chase(?)
+
     private void Awake()
     {
         root = new ActionNode(() => Wander());

@@ -8,6 +8,11 @@ public class PassiveMobBehaviour : MonoBehaviour
 
     private BTNode root;
 
+    // not recommended but
+    bool markedForDeath = false;
+
+    // actions: wander, idle, die
+
     private void Awake()
     {
         root = new ActionNode(() => Wander());

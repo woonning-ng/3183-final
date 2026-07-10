@@ -8,6 +8,9 @@ public class HumanBehaviour : MonoBehaviour
 
     private BTNode root;
 
+    // actions:
+    // wander, seek shelter, run to safety, look for food, kill passive mob, fall asleep, die
+
     private void Awake()
     {
         root = new ActionNode(() => Wander());

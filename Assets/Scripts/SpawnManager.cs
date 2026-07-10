@@ -22,8 +22,9 @@ public class SpawnManager : MonoBehaviour
     public void KillAllZombies() {
         foreach (GameObject go in zombies) {
             Destroy(go);
-            zombies.Clear();
         }
+
+        zombies.Clear();
     }
 
     private void Start()
@@ -34,5 +35,15 @@ public class SpawnManager : MonoBehaviour
     private void Update()
     {
         // should be managing entities here
+
+        // check if a passive mob has been marked for death by player
+        // despawn the passive mob if needed
+
+        // zombie checks
+        // check 1: check if it's night
+        // if it is nighttime, allwo zombies to spawn at an interval
+
+        // otherwise if it is daytime
+        // check to see if the size of the zombie vector is > 0. if it is, kill all zombies
     }
 }
