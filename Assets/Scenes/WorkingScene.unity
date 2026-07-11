@@ -2794,8 +2794,8 @@ MonoBehaviour:
   zbRespawn: 0
   passiveMobs: []
   zombies: []
-  passiveMobPrefab: {fileID: 0}
-  zombiePrefab: {fileID: 0}
+  passiveMobPrefab: {fileID: 5304165759477115286, guid: 2e60c7fda7e825a4698816e97833da82, type: 3}
+  zombiePrefab: {fileID: 469753088222280374, guid: aa26354de71dba644a37a9680bb57cbc, type: 3}
 --- !u!1 &1278063837
 GameObject:
   m_ObjectHideFlags: 0

@@ -27,13 +27,13 @@ public class SpawnManager : MonoBehaviour
 
     // spawn passive mob fn
     public void SpawnPassiveMob() {
-        if (passiveMobs.Capacity < maxMobs) {
+        if (passiveMobs.Count < maxMobs) {
             // spawn it at 0 0 0 for now
             GameObject mob = Instantiate(passiveMobPrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
             // set script specific fields sobs
             mob.GetComponent<PassiveMobBehaviour>().pathfinding = mob.GetComponent<Pathfinding>();
-            mob.GetComponent<Pathfinding>().SetGrid(GameObject.Find("Grid").GetComponent<Grid>());
+            mob.GetComponent<Pathfinding>().SetGrid(Grid.Instance);
 
             passiveMobs.Add(mob);
         }
@@ -41,14 +41,14 @@ public class SpawnManager : MonoBehaviour
 
     // spawn zombie fn
     public void SpawnZombie() {
-        if (zombies.Capacity < maxZombies)
+        if (zombies.Count < maxZombies)
         {
             // spawn it at 0 0 0 for now
             GameObject mob = Instantiate(zombiePrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
             // set script specific fields sobs
-            mob.GetComponent<PassiveMobBehaviour>().pathfinding = mob.GetComponent<Pathfinding>();
-            mob.GetComponent<Pathfinding>().SetGrid(GameObject.Find("Grid").GetComponent<Grid>());
+            mob.GetComponent<ZombieBehaviour>().pathfinding = mob.GetComponent<Pathfinding>();
+            mob.GetComponent<Pathfinding>().SetGrid(Grid.Instance);
 
             zombies.Add(mob);
         }
