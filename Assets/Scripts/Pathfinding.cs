@@ -55,6 +55,8 @@ public class Pathfinding : MonoBehaviour
     //    };
     //}
 
+    public void SetGrid(Grid grid) {  this.grid = grid; }
+
     private void Start()
     {
         if (grid == null) grid = Grid.Instance;

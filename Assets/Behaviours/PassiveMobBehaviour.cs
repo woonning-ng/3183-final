@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class PassiveMobBehaviour : MonoBehaviour
 {
-    [SerializeField] private Pathfinding pathfinding;
-    [SerializeField] private Grid grid;
+    [SerializeField] public Pathfinding pathfinding;
+    [SerializeField] public Grid grid;
     [SerializeField] private int maxPlacementAttempts = 30;
 
     private BTNode root;

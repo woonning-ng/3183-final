@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6170656660958588735}
+  - component: {fileID: -4299763178237895637}
+  - component: {fileID: -3989234278875012499}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -32,6 +34,44 @@ Transform:
   - {fileID: 6839988641495067798}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4299763178237895637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 469753088222280374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 638857464d00ced4f8ceee8d615c4749, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathfinding: {fileID: 0}
+  grid: {fileID: 0}
+  maxPlacementAttempts: 30
+--- !u!114 &-3989234278875012499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 469753088222280374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2c142b496bf5fe4292b78bbbdd3b266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 0}
+  moveSpeed: 5
+  waypointReachDistance: 0.1
+  heuristic: 0
+  weight: 1
+  smoothing: 1
+  rubberBanding: 1
+  singleStep: 0
+  debugColoring: 0
+  autoWander: 1
+  maxPlacementAttempts: 30
 --- !u!1001 &6441902358610332541
 PrefabInstance:
   m_ObjectHideFlags: 0
