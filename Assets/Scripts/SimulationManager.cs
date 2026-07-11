@@ -5,6 +5,7 @@ public class SimulationManager : MonoBehaviour
 {
     // -------- handling sim time stuff here --------
     public static SimulationManager Instance;
+    public GameObject dayNightCycle;
 
     [SerializeField] private float baseCycleLength = 24f;
     private float currentCycleLength;
@@ -24,6 +25,8 @@ public class SimulationManager : MonoBehaviour
     private float totalTimeElapsed = 0.0f;
 
     // need to get the other managers and relevant stuff for pausing
+
+    public DayNightCycle GetDNC() { return dayNightCycle.GetComponent<DayNightCycle>(); }
 
     public void FinishRun() {
         SimulatedRunNo++;

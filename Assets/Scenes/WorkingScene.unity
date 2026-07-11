@@ -2083,6 +2083,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8464386fadb8fc94aba77669408f55d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dayNightCycle: {fileID: 1273906574}
   baseCycleLength: 24
   SimulatedRunNo: 1
 --- !u!114 &1273906580
@@ -2948,6 +2949,27 @@ MonoBehaviour:
   pathfinding: {fileID: 1474190903}
   grid: {fileID: 1957155138}
   maxPlacementAttempts: 30
+  maxHunger: 100
+  maxEnergy: 100
+  maxSafety: 100
+  hunger: 0
+  energy: 0
+  safety: 0
+  safetyPriorityThreshold: 20
+  hungerHuntThreshold: 40
+  hungerDecayRate: 0.5
+  nightZombieSafetyMultiplier: 2
+  shelterEnergyRegen: 3
+  nightSafetyDecay: 1
+  sleepEnergyRegen: 1.5
+  hungerRestoreAmount: 20
+  repathTimer: 10
+  repathInterval: 10
+  eatDistance: 5
+  shelterLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  shelterSearchRadius: 200
 --- !u!1001 &1508277530
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3545,6 +3567,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2042472375 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8182366381297779794, guid: 8974ed13ccef08246ad6392c60190f25, type: 3}
+  m_PrefabInstance: {fileID: 1829391884859674897}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &2042472377
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2042472375}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 3.5024757, z: 1}
+  m_Center: {x: 0, y: 1.754971, z: 0}
 --- !u!224 &2066805969 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8163865788629234494, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
@@ -4367,7 +4415,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8182366381297779794, guid: 8974ed13ccef08246ad6392c60190f25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2042472377}
   m_SourcePrefab: {fileID: 100100000, guid: 8974ed13ccef08246ad6392c60190f25, type: 3}
 --- !u!1001 &2451440268010716894
 PrefabInstance:

@@ -22,6 +22,10 @@ public class PassiveMobBehaviour : MonoBehaviour
         // if it is marked for death, make it play the dead behaviour and then let the system despawn it
     }
 
+    public void MarkDead() {
+        markedForDeath = true;
+    }
+
     private void Start()
     {
         if (grid == null) grid = Grid.Instance;
