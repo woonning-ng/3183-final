@@ -37,7 +37,10 @@ public class HumanBehaviour : MonoBehaviour
     private GameObject huntTarget; // passive mob
     public float eatDistance = 5.0f;
 
+    public float energyDecayRate = 1.0f; // perhaps can add a multiplier when theres other stuff gg on
+
     // TODO: clean up all these later omg
+    // also how to make it be linked to sim time rather than just time deltatime
 
     public enum HumanState { Wandering, Hunting, SeekingShelter, Sheltering, Sleeping }
     private HumanState currentState;
@@ -136,6 +139,10 @@ public class HumanBehaviour : MonoBehaviour
 
         bool isSafe = currentState == HumanState.Sheltering; // arrived only, not SeekingShelter
         bool isNight = SimulationManager.Instance.GetDNC().IsNight();
+
+        if (currentState != HumanState.Sleeping || isSafe) {
+            energy -= energyDecayRate * Time.deltaTime;
+        }
 
         if (isSafe)
         {
