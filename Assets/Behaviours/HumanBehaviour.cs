@@ -93,7 +93,7 @@ public class HumanBehaviour : MonoBehaviour
         // if human hunger drops to 0, human dies, restart sim
 
         root = new Selector(
-            new Sequence(new ConditionNode(() => energy <= 0f), new ActionNode(Sleep)),
+            new Sequence(new ConditionNode(() => (currentState == HumanState.Sleeping)), new ActionNode(Sleep)),
 
             // low safety: shelter takes priority over hunger - EvaluateAndAct??
             new Sequence(
@@ -140,8 +140,12 @@ public class HumanBehaviour : MonoBehaviour
         bool isSafe = currentState == HumanState.Sheltering; // arrived only, not SeekingShelter
         bool isNight = SimulationManager.Instance.GetDNC().IsNight();
 
-        if (currentState != HumanState.Sleeping || isSafe) {
+        if (currentState != HumanState.Sleeping || !isSafe) {
             energy -= energyDecayRate * Time.deltaTime;
+        }
+
+        if (energy <= 0.0f) {
+            currentState = HumanState.Sleeping;
         }
 
         if (isSafe)
@@ -153,11 +157,6 @@ public class HumanBehaviour : MonoBehaviour
             float lossMultiplier = ZombieNearby() ? nightZombieSafetyMultiplier : 1f;
             safety -= nightSafetyDecay * lossMultiplier * Time.deltaTime;
             safety = Mathf.Max(safety, 0f);
-        }
-
-        if (energy <= 0f)
-        {
-            currentState = HumanState.Sleeping; // forced, overrides BT this frame
         }
     }
 
@@ -188,8 +187,13 @@ public class HumanBehaviour : MonoBehaviour
         currentState = HumanState.Sleeping;
         energy += sleepEnergyRegen * Time.deltaTime;
 
+        UnityEngine.Debug.Log("hooman is sleeping");
+
         if (energy >= maxEnergy * 0.5f)
+        {
+            currentState = HumanState.Wandering; // remove it from sleep mode
             return NodeResult.Success; // "wakes up when energy is halfway full"
+        }
 
         return NodeResult.Running;
     }
