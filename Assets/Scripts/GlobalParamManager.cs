@@ -1,6 +1,9 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
+using static TerrainGen;
 
 //There are a few ways that we can do this
 
@@ -21,7 +24,14 @@ using UnityEngine.UI;
 
 public static class GlobalParam
 {
-    public static bool m_random;
+    public static bool m_random = true;
+    //public static List<Terrain_cus> terrain_map;
+    //public static List<>
+    public static int max_width = 128;
+    public static int max_height = 128;
+
+    public static Terrain_cus[,] terrain_map = new Terrain_cus[max_width, max_height];
+    public static Terrain_obj[,] terrain_objs = new Terrain_obj[max_width, max_height];
 
     public static int simulatedRuns = 0;
 

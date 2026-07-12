@@ -88,8 +88,12 @@ public class CameraSystem : MonoBehaviour
             position.y = 120.0f; // temporary for now
 
             // x and z are straightforward
-            position.x = tg.GetWidth() / 2.0f;
-            position.z = tg.GetHeight() / 2.0f;
+            //position.x = tg.GetWidth() / 2.0f;
+            //position.z = tg.GetHeight() / 2.0f;
+
+            // using the globalparam max width and max height
+            position.x = GlobalParam.max_width / 2.0f;
+            position.z = GlobalParam.max_height / 2.0f;
 
             transform.position = position;
 
