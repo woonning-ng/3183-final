@@ -1,6 +1,5 @@
-using Unity.Burst.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class HumanBehaviour : MonoBehaviour
 {
@@ -50,26 +49,43 @@ public class HumanBehaviour : MonoBehaviour
     [SerializeField] private LayerMask shelterLayer;
     [SerializeField] private float shelterSearchRadius = 200f; // effectively "whole map" if shelters are sparse
 
-    private Transform currentShelterTarget;
+    private Vector3 currentShelterTarget;
 
-    private bool TryFindNearestShelter(out Transform shelter)
+    public string GetHumanState() {
+        switch (currentState)
+        {
+            case HumanState.Wandering: return "Wandering";
+            case HumanState.Hunting: return "Hunting";
+            case HumanState.SeekingShelter: return "Seeking Shelter";
+            case HumanState.Sheltering: return "Sheltering";
+            case HumanState.Sleeping: return "Sleeping";
+            default: return "Unknown";
+        }
+    }
+
+    private bool TryFindNearestShelter(out Vector3 shelter)
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, shelterSearchRadius, shelterLayer);
+        // get all safe spaces in the map
+        List<Vector3> shelters = Grid.Instance.terrainGen.GetAllSafe();
 
-        shelter = null;
+        shelter = new Vector3(-1, -1, -1);
         float closestDist = float.MaxValue;
 
-        foreach (var hit in hits)
+        foreach (var hit in shelters)
         {
-            float dist = Vector3.Distance(transform.position, hit.transform.position);
+            // take into account the FLAT distance here for both
+            Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
+            Vector3 flatShelter = new Vector3(hit.x, 0.0f, hit.z);
+
+            float dist = Vector3.Distance(flatHuman, flatShelter);
             if (dist < closestDist)
             {
                 closestDist = dist;
-                shelter = hit.transform;
+                shelter = hit; // use absolute
             }
         }
 
-        return shelter != null;
+        return shelter != new Vector3(-1, -1, -1);
     }
 
     private void Awake()
@@ -210,7 +226,7 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Hunt()
     {
-        currentShelterTarget = null; // invalidate stale shelter target on interrupt
+        currentShelterTarget = new Vector3(-1, -1, -1); // invalidate stale shelter target on interrupt
         currentState = HumanState.Hunting;
 
         if (huntTarget == null && !TryFindHuntTarget(out huntTarget))
@@ -236,14 +252,18 @@ public class HumanBehaviour : MonoBehaviour
         return NodeResult.Running;
     }
 
-    private bool AtShelter(Transform shelter, float arriveDistance = 1.5f)
+    private bool AtShelter(Vector3 shelter, float arriveDistance = 1.5f)
     {
-        return Vector3.Distance(transform.position, shelter.position) <= arriveDistance;
+        // once again, flat dist
+        Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
+        Vector3 flatShelter = new Vector3(shelter.x, 0.0f, shelter.z);
+
+        return Vector3.Distance(flatHuman, flatShelter) <= arriveDistance;
     }
 
     private NodeResult Shelter()
     {
-        if (currentShelterTarget == null)
+        if (currentShelterTarget == new Vector3(-1, -1, -1))
         {
             currentState = HumanState.SeekingShelter; // exposed, no target yet
             if (!TryFindNearestShelter(out currentShelterTarget))
@@ -257,7 +277,7 @@ public class HumanBehaviour : MonoBehaviour
             repathTimer -= SimulationManager.Instance.GetDNC().SimDeltaTime;
             if (repathTimer <= 0f)
             {
-                pathfinding.SetGoal(currentShelterTarget.position);
+                pathfinding.SetGoal(currentShelterTarget);
                 repathTimer = repathInterval;
             }
             return NodeResult.Running;

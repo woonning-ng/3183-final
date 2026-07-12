@@ -1,7 +1,7 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Collections.Generic;
 //using UnityEngine.UIElements;
 using static PerlinNoise;
 using static GlobalParam;
@@ -76,6 +76,20 @@ public class TerrainGen : MonoBehaviour
     public bool GetSafe(float x, float z)
     {
         return safe[(int)x, (int)z];
+    }
+
+    public List<Vector3> GetAllSafe() {
+        List<Vector3> safehouses = new List<Vector3>();
+
+        for (int i = 0; i < max_height; i++)
+        {
+            for (int j = 0; j < max_width; j++)
+            {
+                if (GetSafe(i, j)) { safehouses.Add(new Vector3(i, GetY(i, j), j)); }
+            }
+        }
+
+        return safehouses;
     }
 
     void GenerateRandomMap() {

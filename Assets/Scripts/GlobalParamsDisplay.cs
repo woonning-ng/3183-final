@@ -16,12 +16,18 @@ public class GlobalParamsDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject globalManager;
     [SerializeField] private CameraSystem cameraSys;
+    [SerializeField] private HumanBehaviour human;
 
     // items to update
     [SerializeField] private TextMeshProUGUI simSpeedText;
     [SerializeField] private TextMeshProUGUI cameraText;
     [SerializeField] private TextMeshProUGUI currentTimeText;
     [SerializeField] private TextMeshProUGUI isNightText;
+
+    [SerializeField] private TextMeshProUGUI humanHunger;
+    [SerializeField] private TextMeshProUGUI humanEnergy;
+    [SerializeField] private TextMeshProUGUI humanSafety;
+    [SerializeField] private TextMeshProUGUI humanState;
 
     public void ReloadScene() { // can probably look into how to save data across scenes (singleton/instance? - a gameobj)
         string currentSceneName = SceneManager.GetActiveScene().name;
@@ -52,6 +58,13 @@ public class GlobalParamsDisplay : MonoBehaviour
 
         if (cameraSys != null) {
             cameraText.text = cameraSys.GetMode();
+        }
+
+        if (human != null) {
+            humanHunger.text = human.hunger.ToString("f2") + "/" + human.maxHunger.ToString("f2");
+            humanEnergy.text = human.energy.ToString("f2") + "/" + human.maxEnergy.ToString("f2");
+            humanSafety.text = human.safety.ToString("f2") + "/" + human.maxSafety.ToString("f2");
+            humanState.text = human.GetHumanState();
         }
     }
 }
