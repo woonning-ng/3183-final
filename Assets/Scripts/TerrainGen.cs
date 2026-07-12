@@ -34,7 +34,7 @@ public class TerrainGen : MonoBehaviour
     public GameObject sand_prefab;
     public GameObject grass_prefab;
     public GameObject snow_prefab;
-
+    public GameObject tree_prefab;
 
     //Add some boolean to check if it is toggled?
     //public GameObject m_toggle;
@@ -60,11 +60,18 @@ public class TerrainGen : MonoBehaviour
     }
 
     void GenerateRandomMap() {
+
+        float[] octaveOffset = new float[3];
+        octaveOffset[0] = 1.0f;
+        octaveOffset[1] = 0.5f;
+        octaveOffset[2] = 0.25f;
         //Randomize_permutation();
         //Randomize_permutation();
         //Randomize_permutation();
-        for (int i = 0; i < max_height; i++) {
-            for (int j = 0; j < max_width; j++) {
+        for (int i = 0; i < max_height; i++)
+        {
+            for (int j = 0; j < max_width; j++)
+            {
                 //Some other customization options:
                 //1. Ridge noise (abs the values to make the elevation go higher?)
 
@@ -72,11 +79,23 @@ public class TerrainGen : MonoBehaviour
                 //Octave and frequency
                 //For now, a simple implementation of Terrain gen with perlin noise
                 //float nx = (float)j / max_width - 0.5f, ny = (float)i / max_height - 0.5f;
-                float nx = (float)j / max_width * frequency, ny = (float)i/ max_height *frequency;
-                data[i, j] = 1.0f * Ridgenoise(nx * 1.0f, ny * 1.0f);
-                data[i,j] += 0.5f * Ridgenoise(nx * 2.0f, ny * 2.0f);
-                data[i, j] += 0.25f * Ridgenoise(nx * 4.0f, ny * 4.0f);
-                data[i, j] /= (1.0f + 0.5f + 0.25f);
+                float nx = (float)j / max_width * frequency, ny = (float)i / max_height * frequency;
+                //data[i, j] = 1.0f * Ridgenoise(nx * 1.0f, ny * 1.0f);
+                //data[i, j] += 0.5f * Ridgenoise(nx * 2.0f, ny * 2.0f);
+                //data[i, j] += 0.25f * Ridgenoise(nx * 4.0f, ny * 4.0f);
+                //data[i, j] /= (1.0f + 0.5f + 0.25f);
+
+                float octaveTotal = 0.0f;
+
+                for(int k = 0; k < octaveOffset.Length; k++)
+                {
+                    float octaveInv = 1.0f/ octaveOffset[k];
+                    data[i, j] += octaveOffset[k] * Ridgenoise(nx * octaveInv, ny * octaveInv);
+                    octaveTotal += octaveOffset[k];
+                }
+
+                data[i, j] /= octaveTotal;
+
                 //data[i, j] = Mathf.Pow(data[i, j], exp);
                 moisture[i, j] = Noise(nx, ny);
                 //set all to true first
@@ -110,7 +129,7 @@ public class TerrainGen : MonoBehaviour
             {
                 return Terrain_cus.SAND;
             }
-            return Terrain_cus.GRASS;
+            //return Terrain_cus.GRASS;
         }
         else if(height >= 0.5f)
         {
@@ -120,6 +139,8 @@ public class TerrainGen : MonoBehaviour
             //}
             //return Terrain_cus.GRASS;
         }
+
+        
         
         return Terrain_cus.GRASS;
         //if (height < 0.5f && moist > 0.4f) return Terrain_cus.WATER;
@@ -153,7 +174,21 @@ public class TerrainGen : MonoBehaviour
                         Instantiate(sand_prefab, pos, Quaternion.identity);
                         break;
                     case Terrain_cus.GRASS:
+                        
+
                         Instantiate(grass_prefab, pos, Quaternion.identity);
+
+                        //okay time to think of how to spawn tree and shelters
+                        //maybe for now a randomizer?
+                        //probability have to be low tho
+                        //0.25% prob for now?
+                        int tree = UnityEngine.Random.Range(1, 8);
+                        if (tree == 2)
+                        {
+                            //Vector3 tree_pos = new Vector3(pos.x, pos.y + 1, pos.z);
+                            Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
+                        }
+
                         break;
                     case Terrain_cus.SNOW:
                         Instantiate(snow_prefab, pos, Quaternion.identity);
