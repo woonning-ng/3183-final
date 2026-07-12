@@ -42,6 +42,10 @@ public class TerrainGen : MonoBehaviour
     public GameObject grass_prefab;
     public GameObject snow_prefab;
     public GameObject tree_prefab;
+    public GameObject shelter_prefab;
+
+    int shelter_count = 0;
+    static int max_shelter = 3;
 
     //Add some boolean to check if it is toggled?
     //public GameObject m_toggle;
@@ -54,8 +58,9 @@ public class TerrainGen : MonoBehaviour
     float[,] data = new float[GlobalParam.max_width, GlobalParam.max_height];
     float[,] moisture = new float[GlobalParam.max_width, GlobalParam.max_height];
     bool[,] accessible = new bool[GlobalParam.max_width, GlobalParam.max_height];
+    bool[,] safe = new bool[GlobalParam.max_width, GlobalParam.max_height];
 
-    
+
 
     //public float GetWidth() { return max_width; }
     //public float GetHeight() { return max_height; }
@@ -66,6 +71,11 @@ public class TerrainGen : MonoBehaviour
     public bool GetAccessible(float x, float z)
     {
         return accessible[(int)x, (int)z];
+    }
+
+    public bool GetSafe(float x, float z)
+    {
+        return safe[(int)x, (int)z];
     }
 
     void GenerateRandomMap() {
@@ -109,6 +119,8 @@ public class TerrainGen : MonoBehaviour
                 moisture[i, j] = Noise(nx, ny);
                 //set all to true first
                 accessible[i, j] = true;
+                //set all to false first
+                safe[i, j] = false;
             }
         }
 
@@ -177,6 +189,19 @@ public class TerrainGen : MonoBehaviour
                 
             }
         }
+
+        if(shelter_count < max_shelter && height >= -0.3f)
+        {
+            int shelter = UnityEngine.Random.Range(1, 1000);
+            if (shelter == 5)
+            {
+                shelter_count++;
+                return Terrain_obj.SHELTER;
+            }
+        }
+
+        
+
         return Terrain_obj.NONE;
     }
 
@@ -193,13 +218,39 @@ public class TerrainGen : MonoBehaviour
             {
                 //This will help to determine which terain to generate
                 //Terrain_cus a = Biome(data[i, j], moisture[i, j]);
-                if (GlobalParam.m_random)
+                //No matter if its random or not, have to populate the data if simulatedruns is 0
+                if (GlobalParam.m_random || GlobalParam.simulatedRuns == 0)
                 {
                     GlobalParam.terrain_map[i, j] = Biome(data[i, j], moisture[i, j]);
                     //Terrain_obj b = Objects(data[i, j], moisture[i, j]);
                     GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
+
+                    //if shelter count is zero, spawn in a shelter at a random location
+                    if(shelter_count == 0)
+                    {
+                        int x = UnityEngine.Random.Range(0, GlobalParam.max_height-1);
+                        int z = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
+
+                        while (!accessible[x, z])
+                        {
+                            x = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
+                            z = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
+                        }
+
+                        GlobalParam.terrain_objs[x, z] = Terrain_obj.SHELTER;
+                        shelter_count++;
+                    }
                 }
-                
+                //No matter if its random or not, have to populate the data
+                //if(GlobalParam.simulatedRuns == 0)
+                //{
+                //    GlobalParam.terrain_map[i, j] = Biome(data[i, j], moisture[i, j]);
+                //    //Terrain_obj b = Objects(data[i, j], moisture[i, j]);
+                //    GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
+                //}
+
+
+
                 Vector3 pos = new Vector3(i, (int)(data[i, j] * 10.0f), j);
                 switch (GlobalParam.terrain_map[i,j])
                 {
@@ -224,6 +275,27 @@ public class TerrainGen : MonoBehaviour
 
                 }
 
+                if (GlobalParam.m_random || simulatedRuns==0)
+                {
+                    //if shelter count is zero, spawn in a shelter at a random location
+                    if (shelter_count == 0)
+                    {
+                        int x = UnityEngine.Random.Range(0, 127);
+                        int z = UnityEngine.Random.Range(0, 127);
+
+                        while (!accessible[x, z])
+                        {
+                            x = UnityEngine.Random.Range(0, 127);
+                            z = UnityEngine.Random.Range(0, 127);
+                        }
+
+                        GlobalParam.terrain_objs[x, z] = Terrain_obj.SHELTER;
+                        shelter_count++;
+                    }
+                }
+
+                
+
                 switch (GlobalParam.terrain_objs[i, j])
                 {
                     case Terrain_obj.TREE:
@@ -231,6 +303,9 @@ public class TerrainGen : MonoBehaviour
                         Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
                         break;
                     case Terrain_obj.SHELTER:
+                        
+                        safe[i, j] = true;
+                        Instantiate(shelter_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
                         break;
                 }
             }

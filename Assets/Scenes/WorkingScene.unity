@@ -3598,6 +3598,7 @@ MonoBehaviour:
   grass_prefab: {fileID: 3465141943559156757, guid: 171b2c8e66e00e74bbadf15e689b5f85, type: 3}
   snow_prefab: {fileID: 6654256606769088257, guid: 8a57bd9af350ff34b91dbc9926b01b93, type: 3}
   tree_prefab: {fileID: 1917752960}
+  shelter_prefab: {fileID: 2042472375}
 --- !u!114 &1273906578
 MonoBehaviour:
   m_ObjectHideFlags: 0
