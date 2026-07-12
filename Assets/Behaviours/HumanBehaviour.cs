@@ -185,7 +185,7 @@ public class HumanBehaviour : MonoBehaviour
     private NodeResult Sleep()
     {
         currentState = HumanState.Sleeping;
-        energy += sleepEnergyRegen * Time.deltaTime;
+        energy += sleepEnergyRegen * SimulationManager.Instance.GetDNC().SimDeltaTime;
 
         UnityEngine.Debug.Log("hooman is sleeping");
 
@@ -216,7 +216,7 @@ public class HumanBehaviour : MonoBehaviour
             return NodeResult.Success;
         }
 
-        repathTimer -= Time.deltaTime;
+        repathTimer -= SimulationManager.Instance.GetDNC().SimDeltaTime;
         if (repathTimer <= 0f)
         {
             pathfinding.SetGoal(huntTarget.transform.position);
@@ -244,7 +244,7 @@ public class HumanBehaviour : MonoBehaviour
         {
             currentState = HumanState.SeekingShelter; // still travelling, still exposed
 
-            repathTimer -= Time.deltaTime;
+            repathTimer -= SimulationManager.Instance.GetDNC().SimDeltaTime;
             if (repathTimer <= 0f)
             {
                 pathfinding.SetGoal(currentShelterTarget.position);
