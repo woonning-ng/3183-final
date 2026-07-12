@@ -73,6 +73,11 @@ public class TerrainGen : MonoBehaviour
         return accessible[(int)x, (int)z];
     }
 
+    public bool GetSafe(float x, float z)
+    {
+        return safe[(int)x, (int)z];
+    }
+
     void GenerateRandomMap() {
 
         float[] octaveOffset = new float[3];
