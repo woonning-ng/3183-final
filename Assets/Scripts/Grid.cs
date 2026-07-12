@@ -131,10 +131,20 @@ public class Grid : MonoBehaviour
         }
     }
 
-    Vector3 TryGetValidSpawn() {
-        for (int i = 0; i < 100; i++) { 
-            
+    public Vector3 TryGetValidSpawn(int maxAttempts = 100) {
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            float x = UnityEngine.Random.Range(0, Grid.Instance.max_row);
+            float z = UnityEngine.Random.Range(0, Grid.Instance.max_col);
+
+            if (terrainGen.GetAccessible(x, z))
+            {
+                Vector3 result = new Vector3(x, terrainGen.GetY(x, z) + 0.5f, z);
+                return result;
+            }
         }
+
+        return new Vector3(0f, 0f, 0f);
     }
 
     private void OnDrawGizmosSelected()

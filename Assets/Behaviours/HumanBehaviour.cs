@@ -39,6 +39,8 @@ public class HumanBehaviour : MonoBehaviour
 
     public float energyDecayRate = 1.0f; // perhaps can add a multiplier when theres other stuff gg on
 
+    bool placeHuman = false;
+
     // TODO: clean up all these later omg
     // also how to make it be linked to sim time rather than just time deltatime
 
@@ -112,13 +114,18 @@ public class HumanBehaviour : MonoBehaviour
     private void Start()
     {
         if (grid == null) grid = Grid.Instance;
-
-        // spawn human at a valid spot
-        transform.position = grid.TryGetValidSpawn();
+        placeHuman = true;
     }
 
     private void Update()
     {
+        if (placeHuman) // no choice but to drop it here ig
+        {
+            // spawn human at a valid spot
+            transform.position = grid.TryGetValidSpawn();
+            placeHuman = false;
+        }
+
         if (isDead) return;
 
         TickStats();

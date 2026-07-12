@@ -3597,8 +3597,8 @@ MonoBehaviour:
   sand_prefab: {fileID: 143297009162095029, guid: 38df726bf61297c4899cbb52ea2f4b94, type: 3}
   grass_prefab: {fileID: 3465141943559156757, guid: 171b2c8e66e00e74bbadf15e689b5f85, type: 3}
   snow_prefab: {fileID: 6654256606769088257, guid: 8a57bd9af350ff34b91dbc9926b01b93, type: 3}
-  tree_prefab: {fileID: 1917752960}
-  shelter_prefab: {fileID: 2042472375}
+  tree_prefab: {fileID: 5374019932645976786, guid: ab66aa37e4845414199393a5ceefc272, type: 3}
+  shelter_prefab: {fileID: 8182366381297779794, guid: 8974ed13ccef08246ad6392c60190f25, type: 3}
 --- !u!114 &1273906578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5673,11 +5673,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1917752960 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5374019932645976786, guid: ab66aa37e4845414199393a5ceefc272, type: 3}
-  m_PrefabInstance: {fileID: 2451440268010716894}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1957155137
 GameObject:
   m_ObjectHideFlags: 0

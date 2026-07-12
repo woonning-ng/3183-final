@@ -29,7 +29,8 @@ public class SpawnManager : MonoBehaviour
     public void SpawnPassiveMob() {
         if (passiveMobs.Count < maxMobs) {
             // spawn it at 0 0 0 for now
-            GameObject mob = Instantiate(passiveMobPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            Vector3 spawnPt = Grid.Instance.TryGetValidSpawn();
+            GameObject mob = Instantiate(passiveMobPrefab, spawnPt, Quaternion.identity);
 
             // set script specific fields sobs
             mob.GetComponent<PassiveMobBehaviour>().pathfinding = mob.GetComponent<Pathfinding>();
@@ -44,7 +45,8 @@ public class SpawnManager : MonoBehaviour
         if (zombies.Count < maxZombies)
         {
             // spawn it at 0 0 0 for now
-            GameObject mob = Instantiate(zombiePrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            Vector3 spawnPt = Grid.Instance.TryGetValidSpawn();
+            GameObject mob = Instantiate(zombiePrefab, spawnPt, Quaternion.identity);
 
             // set script specific fields sobs
             mob.GetComponent<ZombieBehaviour>().pathfinding = mob.GetComponent<Pathfinding>();
