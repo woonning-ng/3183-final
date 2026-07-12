@@ -8,11 +8,16 @@ public class ZombieBehaviour : MonoBehaviour
 
     private BTNode root;
 
+    public float zombieChaseTimer = 5.0f;
+    public float zomdieChaseDuration = 5.0f;
+
     // bool markedForDeath = false; // unused field for now
 
     // actions: wander, idle, chase(?)
     public enum ZombieState { Wandering, Idling, Chasing }
     private ZombieState currentState;
+
+    public GameObject humanTarget;
 
     private void Awake()
     {
@@ -23,6 +28,15 @@ public class ZombieBehaviour : MonoBehaviour
         // give zombie a timeout for chasing
 
         // zombie has no markedfordeath or cancull because system will automatically remove every zombie upon daytime
+        root = new Selector(
+            // zombie priorities
+            // 1. only chase human if it is near one and duration is more than 0.0f.
+            new Sequence(new ConditionNode(() => IsNearHuman() && zomdieChaseDuration >= 0.0f), new ActionNode(ChaseHuman)),
+
+            // 2. otherwise, choose to idle or 
+
+            new ActionNode(Wander)
+        );
     }
 
     private void Start()

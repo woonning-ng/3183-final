@@ -198,11 +198,24 @@ public class HumanBehaviour : MonoBehaviour
     }
 
     private bool TryFindHuntTarget(out GameObject target) {
-        //currentState = HumanState.Hunting;
-
-        // TODO: how find
+        float closestDist = float.MaxValue;
         target = null;
-        return false;
+
+        foreach (var mob in SpawnManager.Instance.passiveMobs)
+        {
+            // take into account the FLAT distance here for both
+            Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
+            Vector3 flatMob = new Vector3(mob.transform.position.x, 0.0f, mob.transform.position.z);
+
+            float dist = Vector3.Distance(flatHuman, flatMob);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                target = mob;
+            }
+        }
+
+        return target != null;
     }
 
     private NodeResult Wander()

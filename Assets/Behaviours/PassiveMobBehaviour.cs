@@ -22,6 +22,7 @@ public class PassiveMobBehaviour : MonoBehaviour
 
         // the passive mob will wander, and stay still, looking around at times. its behaviour is very simple
         // if it is marked for death, make it play the dead behaviour and then let the system despawn it
+
     }
 
     public void MarkDead() {

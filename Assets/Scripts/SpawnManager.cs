@@ -23,6 +23,10 @@ public class SpawnManager : MonoBehaviour
     public GameObject passiveMobPrefab;
     public GameObject zombiePrefab;
 
+    public GameObject human;
+
+    public static SpawnManager Instance;
+
     // spawn passive mob fn
     public void SpawnPassiveMob() {
         if (passiveMobs.Count < maxMobs) {
@@ -48,6 +52,7 @@ public class SpawnManager : MonoBehaviour
 
             // set script specific fields sobs
             mob.GetComponent<ZombieBehaviour>().pathfinding = mob.GetComponent<Pathfinding>();
+            mob.GetComponent<ZombieBehaviour>().humanTarget = human; // set human as target so that it can detect if human is nearbby
             mob.GetComponent<Pathfinding>().SetGrid(Grid.Instance);
 
             zombies.Add(mob);
@@ -61,6 +66,14 @@ public class SpawnManager : MonoBehaviour
         }
 
         zombies.Clear();
+    }
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Instance = this;
+        }
     }
 
     private void Start()
