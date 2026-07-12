@@ -112,6 +112,9 @@ public class HumanBehaviour : MonoBehaviour
     private void Start()
     {
         if (grid == null) grid = Grid.Instance;
+
+        // spawn human at a valid spot
+        transform.position = grid.TryGetValidSpawn();
     }
 
     private void Update()

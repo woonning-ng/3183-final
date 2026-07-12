@@ -131,6 +131,12 @@ public class Grid : MonoBehaviour
         }
     }
 
+    Vector3 TryGetValidSpawn() {
+        for (int i = 0; i < 100; i++) { 
+            
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (positions == null)

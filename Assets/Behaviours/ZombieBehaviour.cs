@@ -8,7 +8,7 @@ public class ZombieBehaviour : MonoBehaviour
 
     private BTNode root;
 
-    bool markedForDeath = false; // unused field for now
+    // bool markedForDeath = false; // unused field for now
 
     // actions: wander, idle, chase(?)
 
