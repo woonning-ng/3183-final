@@ -4852,6 +4852,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7915510692598490081, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
   m_PrefabInstance: {fileID: 6615633348213070875}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1474190901 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1995799805820321593, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+  m_PrefabInstance: {fileID: 6615633348213070875}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474190900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3004b1941ecbd7c48a09ae55ad2d5ccf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1476196025
 GameObject:
   m_ObjectHideFlags: 0
@@ -6088,8 +6099,8 @@ RectTransform:
   m_Children:
   - {fileID: 24870591}
   - {fileID: 878545936}
-  - {fileID: 2104041294}
   - {fileID: 92715308}
+  - {fileID: 2104041294}
   - {fileID: 2007311710}
   m_Father: {fileID: 1328236033}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6396,6 +6407,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
+      propertyPath: human
+      value: 
+      objectReference: {fileID: 1474190901}
+    - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
       propertyPath: cameraSys
       value: 
       objectReference: {fileID: 330585548}
@@ -6403,6 +6418,22 @@ PrefabInstance:
       propertyPath: cameraText
       value: 
       objectReference: {fileID: 1384089621}
+    - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
+      propertyPath: humanState
+      value: 
+      objectReference: {fileID: 1863038172}
+    - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
+      propertyPath: humanEnergy
+      value: 
+      objectReference: {fileID: 1271166920}
+    - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
+      propertyPath: humanHunger
+      value: 
+      objectReference: {fileID: 1301720620}
+    - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
+      propertyPath: humanSafety
+      value: 
+      objectReference: {fileID: 1278063839}
     - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
       propertyPath: isNightText
       value: 
