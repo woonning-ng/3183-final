@@ -1,9 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Selector : BTNode
 {
-    private readonly BTNode[] children;
-    public Selector(params BTNode[] children) => this.children = children;
+    private List<BTNode> children;
+
+    public Selector(params BTNode[] nodes)
+    {
+        children = new List<BTNode>(nodes);
+    }
 
     public override NodeResult Tick()
     {

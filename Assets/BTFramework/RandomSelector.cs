@@ -1,18 +1,36 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RandomSelector : BTNode
 {
-    private readonly BTNode[] children;
-    public RandomSelector(params BTNode[] children) => this.children = children;
+    private List<BTNode> children;
+
+    public RandomSelector(params BTNode[] nodes)
+    {
+        children = new List<BTNode>(nodes);
+    }
 
     public override NodeResult Tick()
     {
-        foreach (var child in children)
+        var shuffled = new List<BTNode>(children);
+        Shuffle(shuffled);
+
+        foreach (var child in shuffled)
         {
-            NodeResult result = child.Tick();
+            var result = child.Tick();
             if (result != NodeResult.Failure)
-                return result; // Success or Running stops the search
+                return result; // Running or Success — stop here
         }
-        return NodeResult.Failure;
+
+        return NodeResult.Failure; // everything failed
+    }
+
+    private void Shuffle(List<BTNode> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
     }
 }

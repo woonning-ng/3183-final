@@ -36,6 +36,8 @@ public class PassiveMobBehaviour : MonoBehaviour
 
     private void Update()
     {
+        if (markedForDeath) return;
+
         root.Tick();
         pathfinding.Tick();
     }
