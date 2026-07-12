@@ -10,7 +10,7 @@ using static GlobalParam;
 //References:
 //https://www.redblobgames.com/maps/terrain-from-noise/
 
-enum Terrain_cus
+public enum Terrain_cus
 {
     WATER,
     SAND,
@@ -18,7 +18,7 @@ enum Terrain_cus
     SNOW
 }
 
-enum Terrain_obj
+public enum Terrain_obj
 {
     SHELTER,
     TREE,
@@ -28,8 +28,8 @@ enum Terrain_obj
 //64 x 64
 public class TerrainGen : MonoBehaviour
 {
-    static int max_width = 128;
-    static int max_height = 128;
+    //static int max_width = 128;
+    //static int max_height = 128;
     //this frequency is to make it more rough or smoother
     //The higher the frequency value is, the more rough the terrain would be
     //The lower frequency value would make the terrain more smooth
@@ -51,12 +51,14 @@ public class TerrainGen : MonoBehaviour
     //The 2d array is [x, z] and the float within is the y value
     //Y value have to be converted to int as we are going for minecraft style
 
-    float[,] data = new float[max_width, max_height];
-    float[,] moisture = new float[max_width, max_height];
-    bool[,] accessible = new bool[max_width, max_height];
+    float[,] data = new float[GlobalParam.max_width, GlobalParam.max_height];
+    float[,] moisture = new float[GlobalParam.max_width, GlobalParam.max_height];
+    bool[,] accessible = new bool[GlobalParam.max_width, GlobalParam.max_height];
 
-    public float GetWidth() { return max_width; }
-    public float GetHeight() { return max_height; }
+    
+
+    //public float GetWidth() { return max_width; }
+    //public float GetHeight() { return max_height; }
     public float GetY(float x, float z) {
         return (int)(data[(int)x, (int)z] * 10.0f);
     }
@@ -190,10 +192,16 @@ public class TerrainGen : MonoBehaviour
             for (int j = 0; j < max_width; j++)
             {
                 //This will help to determine which terain to generate
-                Terrain_cus a = Biome(data[i, j], moisture[i, j]);
-                Terrain_obj b = Objects(data[i, j], moisture[i, j]);
+                //Terrain_cus a = Biome(data[i, j], moisture[i, j]);
+                if (GlobalParam.m_random)
+                {
+                    GlobalParam.terrain_map[i, j] = Biome(data[i, j], moisture[i, j]);
+                    //Terrain_obj b = Objects(data[i, j], moisture[i, j]);
+                    GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
+                }
+                
                 Vector3 pos = new Vector3(i, (int)(data[i, j] * 10.0f), j);
-                switch (a)
+                switch (GlobalParam.terrain_map[i,j])
                 {
                     case Terrain_cus.WATER:
                         //Only water would make the path inaccessible
@@ -208,9 +216,6 @@ public class TerrainGen : MonoBehaviour
 
                         Instantiate(grass_prefab, pos, Quaternion.identity);
 
-                        
-                        
-
                         break;
                     case Terrain_cus.SNOW:
                         Instantiate(snow_prefab, pos, Quaternion.identity);
@@ -219,7 +224,7 @@ public class TerrainGen : MonoBehaviour
 
                 }
 
-                switch (b)
+                switch (GlobalParam.terrain_objs[i, j])
                 {
                     case Terrain_obj.TREE:
                         accessible[i, j] = false;
@@ -237,9 +242,10 @@ public class TerrainGen : MonoBehaviour
         if (m_random)
         {
             Randomize_permutation();
+            
         }
-        
         GenerateRandomMap();
+
         InstantiateTerrain();
         
     }
