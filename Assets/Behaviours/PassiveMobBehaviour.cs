@@ -13,6 +13,8 @@ public class PassiveMobBehaviour : MonoBehaviour
     bool canCull = false;        // for system to cull it
 
     // actions: wander, idle, die
+    public enum MobState { Wandering, Idling, Dying }
+    private MobState currentState;
 
     private void Awake()
     {

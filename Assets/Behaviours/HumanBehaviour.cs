@@ -26,6 +26,7 @@ public class HumanBehaviour : MonoBehaviour
     public float hungerDecayRate = 0.5f; // per tick?
     public float nightZombieSafetyMultiplier = 2.0f;
     public float shelterEnergyRegen = 3.0f;
+    public float shelterSafetyRegen = 3.0f;
     public float nightSafetyDecay = 1.0f;
     public float sleepEnergyRegen = 1.5f;
     public float hungerRestoreAmount = 20.0f;
@@ -44,10 +45,10 @@ public class HumanBehaviour : MonoBehaviour
     // also how to make it be linked to sim time rather than just time deltatime
 
     public enum HumanState { Wandering, Hunting, SeekingShelter, Sheltering, Sleeping }
-    private HumanState currentState;
+    private HumanState currentState = HumanState.Wandering;
 
-    [SerializeField] private LayerMask shelterLayer;
-    [SerializeField] private float shelterSearchRadius = 200f; // effectively "whole map" if shelters are sparse
+    //[SerializeField] private LayerMask shelterLayer;
+    //[SerializeField] private float shelterSearchRadius = 200f; // effectively "whole map" if shelters are sparse
 
     private Vector3 currentShelterTarget;
 
@@ -94,6 +95,8 @@ public class HumanBehaviour : MonoBehaviour
         hunger = maxHunger;
         energy = maxEnergy;
         safety = maxSafety;
+        repathTimer = 0.0f;
+        currentShelterTarget = new Vector3(-1, -1, -1);
 
         // bt stuff here
 
@@ -110,12 +113,14 @@ public class HumanBehaviour : MonoBehaviour
 
         // if human hunger drops to 0, human dies, restart sim
 
+        // how do i use the human states to do this instead?
+
         root = new Selector(
             new Sequence(new ConditionNode(() => (currentState == HumanState.Sleeping)), new ActionNode(Sleep)),
 
             // low safety: shelter takes priority over hunger - EvaluateAndAct??
             new Sequence(
-                new ConditionNode(() => safety <= safetyPriorityThreshold && SimulationManager.Instance.GetDNC().IsNight()),
+                new ConditionNode(() => ((safety <= safetyPriorityThreshold) && (SimulationManager.Instance.GetDNC().IsNight()))),
                 new ActionNode(Shelter)
             ),
 
@@ -177,6 +182,7 @@ public class HumanBehaviour : MonoBehaviour
         if (isSafe)
         {
             energy = Mathf.Min(energy + shelterEnergyRegen * SimulationManager.Instance.GetDNC().SimDeltaTime, maxEnergy);
+            safety = Mathf.Min(safety + shelterSafetyRegen * SimulationManager.Instance.GetDNC().SimDeltaTime, maxSafety);
         }
         else if (isNight)
         {
@@ -192,6 +198,8 @@ public class HumanBehaviour : MonoBehaviour
     }
 
     private bool TryFindHuntTarget(out GameObject target) {
+        //currentState = HumanState.Hunting;
+
         // TODO: how find
         target = null;
         return false;
@@ -199,6 +207,8 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Wander()
     {
+        currentState = HumanState.Wandering;
+
         if (!pathfinding.HasArrived)
             return NodeResult.Running;
 
@@ -254,6 +264,8 @@ public class HumanBehaviour : MonoBehaviour
 
     private bool AtShelter(Vector3 shelter, float arriveDistance = 1.5f)
     {
+        currentState = HumanState.Sheltering;
+
         // once again, flat dist
         Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
         Vector3 flatShelter = new Vector3(shelter.x, 0.0f, shelter.z);

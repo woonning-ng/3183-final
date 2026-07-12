@@ -11,6 +11,8 @@ public class ZombieBehaviour : MonoBehaviour
     // bool markedForDeath = false; // unused field for now
 
     // actions: wander, idle, chase(?)
+    public enum ZombieState { Wandering, Idling, Chasing }
+    private ZombieState currentState;
 
     private void Awake()
     {
