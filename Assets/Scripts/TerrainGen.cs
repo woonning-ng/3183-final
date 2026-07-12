@@ -18,6 +18,13 @@ enum Terrain_cus
     SNOW
 }
 
+enum Terrain_obj
+{
+    SHELTER,
+    TREE,
+    NONE
+}
+
 //64 x 64
 public class TerrainGen : MonoBehaviour
 {
@@ -125,7 +132,7 @@ public class TerrainGen : MonoBehaviour
         }
         else if(height >= -0.3f && height < 0.5f)
         {
-            if(moist <= -0.2f )
+            if(moist <= -0.1f )
             {
                 return Terrain_cus.SAND;
             }
@@ -149,6 +156,28 @@ public class TerrainGen : MonoBehaviour
         //else return Terrain_cus.GRASS;
     }
 
+    Terrain_obj Objects(float height, float moist)
+    {
+        if(height >= -0.3f && height < 0.5f)
+        {
+            if (moist>-0.1f)
+            {
+                //okay time to think of how to spawn tree and shelters
+                //maybe for now a randomizer?
+                //probability have to be low tho
+                //0.1% prob for now?
+                int tree = UnityEngine.Random.Range(1, 10);
+                if (tree == 2)
+                {
+                    
+                    return Terrain_obj.TREE;
+                }
+                
+            }
+        }
+        return Terrain_obj.NONE;
+    }
+
     static float Ridgenoise(float nx, float nz)
     {
         return 2.0f * (0.5f - Mathf.Abs(0.5f - Noise(nx, nz)));
@@ -162,6 +191,7 @@ public class TerrainGen : MonoBehaviour
             {
                 //This will help to determine which terain to generate
                 Terrain_cus a = Biome(data[i, j], moisture[i, j]);
+                Terrain_obj b = Objects(data[i, j], moisture[i, j]);
                 Vector3 pos = new Vector3(i, (int)(data[i, j] * 10.0f), j);
                 switch (a)
                 {
@@ -178,16 +208,8 @@ public class TerrainGen : MonoBehaviour
 
                         Instantiate(grass_prefab, pos, Quaternion.identity);
 
-                        //okay time to think of how to spawn tree and shelters
-                        //maybe for now a randomizer?
-                        //probability have to be low tho
-                        //0.25% prob for now?
-                        int tree = UnityEngine.Random.Range(1, 8);
-                        if (tree == 2)
-                        {
-                            //Vector3 tree_pos = new Vector3(pos.x, pos.y + 1, pos.z);
-                            Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
-                        }
+                        
+                        
 
                         break;
                     case Terrain_cus.SNOW:
@@ -195,6 +217,16 @@ public class TerrainGen : MonoBehaviour
                         break;
 
 
+                }
+
+                switch (b)
+                {
+                    case Terrain_obj.TREE:
+                        accessible[i, j] = false;
+                        Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
+                        break;
+                    case Terrain_obj.SHELTER:
+                        break;
                 }
             }
         }
