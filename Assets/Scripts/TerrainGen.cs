@@ -182,9 +182,10 @@ public class TerrainGen : MonoBehaviour
                         //maybe for now a randomizer?
                         //probability have to be low tho
                         //0.25% prob for now?
-                        int tree = UnityEngine.Random.Range(1, 8);
+                        int tree = UnityEngine.Random.Range(1, 10);
                         if (tree == 2)
                         {
+                            accessible[i, j] = false;
                             //Vector3 tree_pos = new Vector3(pos.x, pos.y + 1, pos.z);
                             Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
                         }
