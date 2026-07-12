@@ -62,7 +62,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
-  moveSpeed: 5
+  moveSpeed: 20
   waypointReachDistance: 0.1
   heuristic: 0
   weight: 1

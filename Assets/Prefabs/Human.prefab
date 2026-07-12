@@ -9,6 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5248762008485679929}
+  - component: {fileID: 4376007838050145984}
+  - component: {fileID: 7778565301917876684}
+  - component: {fileID: 1995799805820321593}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -32,6 +35,80 @@ Transform:
   - {fileID: 7486286280926804195}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4376007838050145984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915510692598490081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 295658d8045a0a244807a6531be52a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileVisualiser: {fileID: 0}
+  terrainGen: {fileID: 0}
+--- !u!114 &7778565301917876684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915510692598490081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2c142b496bf5fe4292b78bbbdd3b266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 0}
+  moveSpeed: 20
+  waypointReachDistance: 0.1
+  heuristic: 0
+  weight: 1
+  smoothing: 1
+  rubberBanding: 1
+  singleStep: 0
+  debugColoring: 0
+  autoWander: 1
+  maxPlacementAttempts: 30
+--- !u!114 &1995799805820321593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915510692598490081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3004b1941ecbd7c48a09ae55ad2d5ccf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathfinding: {fileID: 7778565301917876684}
+  grid: {fileID: 0}
+  maxPlacementAttempts: 30
+  maxHunger: 100
+  maxEnergy: 100
+  maxSafety: 100
+  hunger: 0
+  energy: 0
+  safety: 0
+  safetyPriorityThreshold: 20
+  hungerHuntThreshold: 40
+  hungerDecayRate: 0.5
+  nightZombieSafetyMultiplier: 2
+  shelterEnergyRegen: 3
+  nightSafetyDecay: 1
+  sleepEnergyRegen: 1.5
+  hungerRestoreAmount: 20
+  repathTimer: 10
+  repathInterval: 10
+  eatDistance: 5
+  energyDecayRate: 1
+  shelterLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  shelterSearchRadius: 200
 --- !u!1001 &6948518522942709512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62,11 +139,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77da6b12026a6db438a979cc451d8a09, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77da6b12026a6db438a979cc451d8a09, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77da6b12026a6db438a979cc451d8a09, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

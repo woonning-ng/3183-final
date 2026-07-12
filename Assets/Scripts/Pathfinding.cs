@@ -213,7 +213,7 @@ public class Pathfinding : MonoBehaviour
         Vector3 flatCurrent = new Vector3(transform.position.x, 0f, transform.position.z);
         Vector3 flatTarget = new Vector3(waypoint.x, 0f, waypoint.z);
 
-        Vector3 flatMoved = Vector3.MoveTowards(flatCurrent, flatTarget, moveSpeed * Time.deltaTime);
+        Vector3 flatMoved = Vector3.MoveTowards(flatCurrent, flatTarget, moveSpeed * SimulationManager.Instance.GetDNC().SimDeltaTime);
 
         transform.position = new Vector3(flatMoved.x, waypointY, flatMoved.z);
 

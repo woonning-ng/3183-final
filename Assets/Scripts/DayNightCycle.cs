@@ -50,7 +50,10 @@ public class DayNightCycle : MonoBehaviour
 
     // settable light obj (in our case, the global light)
     [SerializeField] private Light lightObj;
-    
+
+    // simulation's delta time
+    public float SimDeltaTime => Time.deltaTime * CurrentSpeed();
+
     // Is it Night Time? (Needed for BTs for human behaviour)
     public bool IsNight() {
         // nighttime defined as: 6pm to 6am

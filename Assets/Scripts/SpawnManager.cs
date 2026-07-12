@@ -72,8 +72,8 @@ public class SpawnManager : MonoBehaviour
     private void Update()
     {
         // should be managing entities here
-        zbRespawn -= Time.deltaTime; // need to be sim time. how to do
-        pmRespawn -= Time.deltaTime;
+        zbRespawn -= SimulationManager.Instance.GetDNC().SimDeltaTime;
+        pmRespawn -= SimulationManager.Instance.GetDNC().SimDeltaTime;
 
 
         // check if a passive mob has been marked for death by player

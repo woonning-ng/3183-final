@@ -128,7 +128,7 @@ public class HumanBehaviour : MonoBehaviour
 
     private void TickStats()
     {
-        hunger -= hungerDecayRate * Time.deltaTime;
+        hunger -= hungerDecayRate * SimulationManager.Instance.GetDNC().SimDeltaTime;
         hunger = Mathf.Max(hunger, 0f);
 
         if (hunger <= 0f)
@@ -141,7 +141,7 @@ public class HumanBehaviour : MonoBehaviour
         bool isNight = SimulationManager.Instance.GetDNC().IsNight();
 
         if (currentState != HumanState.Sleeping || !isSafe) {
-            energy -= energyDecayRate * Time.deltaTime;
+            energy -= energyDecayRate * SimulationManager.Instance.GetDNC().SimDeltaTime;
         }
 
         if (energy <= 0.0f) {
@@ -150,12 +150,12 @@ public class HumanBehaviour : MonoBehaviour
 
         if (isSafe)
         {
-            energy = Mathf.Min(energy + shelterEnergyRegen * Time.deltaTime, maxEnergy);
+            energy = Mathf.Min(energy + shelterEnergyRegen * SimulationManager.Instance.GetDNC().SimDeltaTime, maxEnergy);
         }
         else if (isNight)
         {
             float lossMultiplier = ZombieNearby() ? nightZombieSafetyMultiplier : 1f;
-            safety -= nightSafetyDecay * lossMultiplier * Time.deltaTime;
+            safety -= nightSafetyDecay * lossMultiplier * SimulationManager.Instance.GetDNC().SimDeltaTime;
             safety = Mathf.Max(safety, 0f);
         }
     }

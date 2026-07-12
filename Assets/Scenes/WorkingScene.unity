@@ -3863,80 +3863,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7915510692598490081, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
   m_PrefabInstance: {fileID: 6615633348213070875}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1474190902
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1474190900}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 295658d8045a0a244807a6531be52a43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileVisualiser: {fileID: 143297008377768689}
-  terrainGen: {fileID: 1273906574}
---- !u!114 &1474190903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1474190900}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2c142b496bf5fe4292b78bbbdd3b266, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  grid: {fileID: 1957155138}
-  moveSpeed: 5
-  waypointReachDistance: 0.1
-  heuristic: 0
-  weight: 1
-  smoothing: 1
-  rubberBanding: 1
-  singleStep: 0
-  debugColoring: 0
-  autoWander: 1
-  maxPlacementAttempts: 30
---- !u!114 &1474190905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1474190900}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3004b1941ecbd7c48a09ae55ad2d5ccf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pathfinding: {fileID: 1474190903}
-  grid: {fileID: 1957155138}
-  maxPlacementAttempts: 30
-  maxHunger: 100
-  maxEnergy: 100
-  maxSafety: 100
-  hunger: 0
-  energy: 0
-  safety: 0
-  safetyPriorityThreshold: 20
-  hungerHuntThreshold: 40
-  hungerDecayRate: 0.5
-  nightZombieSafetyMultiplier: 2
-  shelterEnergyRegen: 3
-  nightSafetyDecay: 1
-  sleepEnergyRegen: 1.5
-  hungerRestoreAmount: 20
-  repathTimer: 10
-  repathInterval: 10
-  eatDistance: 5
-  energyDecayRate: 1
-  shelterLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  shelterSearchRadius: 200
 --- !u!1001 &1508277530
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5903,6 +5829,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1995799805820321593, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 1957155138}
+    - target: {fileID: 4376007838050145984, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+      propertyPath: terrainGen
+      value: 
+      objectReference: {fileID: 1273906574}
+    - target: {fileID: 4376007838050145984, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+      propertyPath: tileVisualiser
+      value: 
+      objectReference: {fileID: 143297008377768689}
     - target: {fileID: 5248762008485679929, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5944,14 +5882,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7486286280926804195, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 7486286280926804195, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 7486286280926804195, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
@@ -5959,10 +5889,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7486286280926804195, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
+    - target: {fileID: 7778565301917876684, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 1957155138}
     - target: {fileID: 7915510692598490081, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
       propertyPath: m_Name
       value: Human
@@ -5970,16 +5900,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7915510692598490081, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1474190902}
-    - targetCorrespondingSourceObject: {fileID: 7915510692598490081, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1474190903}
-    - targetCorrespondingSourceObject: {fileID: 7915510692598490081, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1474190905}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
