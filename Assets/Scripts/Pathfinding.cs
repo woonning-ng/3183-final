@@ -217,6 +217,14 @@ public class Pathfinding : MonoBehaviour
 
         transform.position = new Vector3(flatMoved.x, waypointY, flatMoved.z);
 
+        // look at target spot
+        Vector3 moveDir = flatTarget - flatCurrent;
+        if (moveDir.sqrMagnitude > 0.001f)
+        {
+            Vector3 lookDir = new Vector3(moveDir.x, 0f, moveDir.z); // keep upright, no pitch
+            transform.rotation = Quaternion.LookRotation(lookDir);
+        }
+
         // track xz movement only, y irrelevant
         float flatDistance = Vector3.Distance(flatMoved, flatTarget);
 
