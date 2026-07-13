@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using static GlobalParam;
@@ -120,25 +121,38 @@ public class TerrainGen : MonoBehaviour
                 //Octave and frequency
                 //For now, a simple implementation of Terrain gen with perlin noise
                 //float nx = (float)j / max_width - 0.5f, ny = (float)i / max_height - 0.5f;
-                float nx = (float)j / max_width * frequency, ny = (float)i / max_height * frequency;
+                float nx = (float)j / max_width , ny = (float)i / max_height;
+                if (GlobalParam.m_frequency)
+                {
+                    nx *= frequency;
+                    ny *= frequency;
+                }
+                
+
                 //data[i, j] = 1.0f * Ridgenoise(nx * 1.0f, ny * 1.0f);
                 //data[i, j] += 0.5f * Ridgenoise(nx * 2.0f, ny * 2.0f);
                 //data[i, j] += 0.25f * Ridgenoise(nx * 4.0f, ny * 4.0f);
                 //data[i, j] /= (1.0f + 0.5f + 0.25f);
-
-                float octaveTotal = 0.0f;
-
-                for(int k = 0; k < octaveOffset.Length; k++)
+                if (GlobalParam.m_octave)
                 {
-                    float octaveInv = 1.0f/ octaveOffset[k];
-                    data[i, j] += octaveOffset[k] * Ridgenoise(nx * octaveInv, ny * octaveInv);
-                    octaveTotal += octaveOffset[k];
+                    float octaveTotal = 0.0f;
+
+                    for (int k = 0; k < octaveOffset.Length; k++)
+                    {
+                        float octaveInv = 1.0f / octaveOffset[k];
+                        data[i, j] += octaveOffset[k] * Ridgenoise(nx * octaveInv, ny * octaveInv);
+                        octaveTotal += octaveOffset[k];
+                    }
+
+                    data[i, j] /= octaveTotal;
+                }
+                else
+                {
+                    data[i, j] = Noise(nx, ny);
                 }
 
-                data[i, j] /= octaveTotal;
-
-                //data[i, j] = Mathf.Pow(data[i, j], exp);
-                moisture[i, j] = Noise(nx, ny);
+                    //data[i, j] = Mathf.Pow(data[i, j], exp);
+                    moisture[i, j] = Noise(nx, ny);
                 //set all to true first
                 accessible[i, j] = true;
                 //set all to false first
