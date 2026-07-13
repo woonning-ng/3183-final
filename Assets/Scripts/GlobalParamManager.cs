@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 using static TerrainGen;
+using UnityEngine.Assertions.Must;
 
 //There are a few ways that we can do this
 
@@ -25,6 +26,8 @@ using static TerrainGen;
 public static class GlobalParam
 {
     public static bool m_random = true;
+    public static bool m_frequency = true;
+    public static bool m_octave = true;
     //public static List<Terrain_cus> terrain_map;
     //public static List<>
     public static int max_width = 128;
@@ -47,6 +50,8 @@ public static class GlobalParam
 public class GlobalParamManager : MonoBehaviour
 {
     public Toggle m_random_toggle;
+    public Toggle m_freq_toggle;
+    public Toggle m_octave_toggle;
     public Toggle m_cam_bypass_toggle;
     public Toggle m_dead_popup_toggle;
 
@@ -66,6 +71,24 @@ public class GlobalParamManager : MonoBehaviour
         else
         {
             m_random_toggle.isOn = false;
+        }
+
+        if (GlobalParam.m_frequency)
+        {
+            m_freq_toggle.isOn = true;
+        }
+        else
+        {
+            m_freq_toggle.isOn = false;
+        }
+
+        if (GlobalParam.m_octave)
+        {
+            m_octave_toggle.isOn = true;
+        }
+        else
+        {
+            m_octave_toggle.isOn = false;
         }
 
         if (m_cam_bypass_toggle.isOn)
@@ -111,6 +134,24 @@ public class GlobalParamManager : MonoBehaviour
         else
         {
             GlobalParam.m_random = false;
+        }
+
+        if (m_freq_toggle.isOn)
+        {
+            GlobalParam.m_frequency = true;
+        }
+        else
+        {
+            GlobalParam.m_frequency = false;
+        }
+
+        if (m_octave_toggle.isOn)
+        {
+            GlobalParam.m_octave = true;
+        }
+        else
+        {
+            GlobalParam.m_octave = false;
         }
 
         if (m_cam_bypass_toggle.isOn)
