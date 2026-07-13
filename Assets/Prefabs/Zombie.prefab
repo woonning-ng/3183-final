@@ -49,6 +49,17 @@ MonoBehaviour:
   pathfinding: {fileID: 0}
   grid: {fileID: 0}
   maxPlacementAttempts: 30
+  idleTime: 5
+  maxIdleTime: 5
+  zombieChaseTimer: 5
+  zombieChaseDuration: 5
+  zombieChaseCooldown: 4
+  zombieChaseCurrentCooldown: 4
+  repathTimer: 10
+  repathInterval: 10
+  currentState: 0
+  humanTarget: {fileID: 0}
+  humanDetectionRadius: 55
 --- !u!114 &-3989234278875012499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,7 +81,7 @@ MonoBehaviour:
   rubberBanding: 1
   singleStep: 0
   debugColoring: 0
-  autoWander: 1
+  autoWander: 0
   maxPlacementAttempts: 30
 --- !u!1001 &6441902358610332541
 PrefabInstance:

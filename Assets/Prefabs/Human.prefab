@@ -70,7 +70,7 @@ MonoBehaviour:
   rubberBanding: 1
   singleStep: 0
   debugColoring: 0
-  autoWander: 1
+  autoWander: 0
   maxPlacementAttempts: 30
 --- !u!114 &1995799805820321593
 MonoBehaviour:
@@ -93,22 +93,24 @@ MonoBehaviour:
   hunger: 0
   energy: 0
   safety: 0
+  idleTime: 0.5
+  maxIdleTime: 0.5
   safetyPriorityThreshold: 20
   hungerHuntThreshold: 40
   hungerDecayRate: 0.5
   nightZombieSafetyMultiplier: 2
   shelterEnergyRegen: 3
+  shelterSafetyRegen: 3
   nightSafetyDecay: 1
   sleepEnergyRegen: 1.5
   hungerRestoreAmount: 20
+  safetyRegen: 0.05
   repathTimer: 10
   repathInterval: 10
   eatDistance: 5
   energyDecayRate: 1
-  shelterLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  shelterSearchRadius: 200
+  zombieDetectionRadius: 20
+  currentState: 0
 --- !u!1001 &6948518522942709512
 PrefabInstance:
   m_ObjectHideFlags: 0

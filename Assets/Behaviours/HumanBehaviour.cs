@@ -31,6 +31,7 @@ public class HumanBehaviour : MonoBehaviour
     public float nightSafetyDecay = 1.0f;
     public float sleepEnergyRegen = 1.5f;
     public float hungerRestoreAmount = 20.0f;
+    public float safetyRegen = 1.0f;
 
     public float repathTimer = 0.0f;
     public float repathInterval = 1.0f;
@@ -173,6 +174,7 @@ public class HumanBehaviour : MonoBehaviour
         // energy floor check FIRST — so isSafe below reflects the state we're actually about to act on this frame
         if (energy <= 0.0f && currentState != HumanState.Sleeping)
         {
+            UnityEngine.Debug.Log("force human to sleep");
             currentState = HumanState.Sleeping;
             huntTarget = null;              // clear so we don't resume a stale hunt on wake
             currentShelterTarget = NoShelter; // clear so we don't resume a stale shelter path on wake
@@ -190,6 +192,12 @@ public class HumanBehaviour : MonoBehaviour
         if (currentState == HumanState.Sleeping)
         {
             energy = Mathf.Min(energy + sleepEnergyRegen * dt, maxEnergy);
+        }
+
+        // help this dumbass regain safety
+        if (!cachedIsNight) {
+            safety += nightSafetyDecay * safetyRegen * dt;
+            safety = Mathf.Min(maxSafety, safety);
         }
 
         if (isSafe)
@@ -246,7 +254,7 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Wander()
     {
-        //UnityEngine.Debug.Log("human is trying to wander");
+        UnityEngine.Debug.Log("human is trying to wander");
         // if not already wandering, set and find goal
         if (currentState != HumanState.Wandering)
         {
@@ -295,7 +303,11 @@ public class HumanBehaviour : MonoBehaviour
         bool night = SimulationManager.Instance.GetDNC().IsNight();
         float before = energy;
         energy = Mathf.Min(energy + sleepEnergyRegen * dt, maxEnergy);
-        Debug.Log($"[Sleep] night={night} dt={dt} before={before} after={energy}");
+        UnityEngine.Debug.Log("the dumbass human is sleeping");
+        //Debug.Log($"[Sleep] night={night} dt={dt} before={before} after={energy}");
+
+        currentState = HumanState.Sleeping;
+        currentShelterTarget = NoShelter; huntTarget = null;
 
         // Only wake up when FULLY rested
         if (energy >= maxEnergy)

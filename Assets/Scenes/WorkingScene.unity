@@ -7460,6 +7460,10 @@ PrefabInstance:
       propertyPath: grid
       value: 
       objectReference: {fileID: 1957155138}
+    - target: {fileID: 7778565301917876684, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+      propertyPath: autoWander
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7915510692598490081, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
       propertyPath: m_Name
       value: Human
