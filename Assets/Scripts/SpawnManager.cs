@@ -70,7 +70,7 @@ public class SpawnManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance == null) // what if i kill myself right now
         {
             Instance = this;
         }
