@@ -457,22 +457,22 @@ public class TerrainGen : MonoBehaviour
         //FOR DEBUG, CAN REMOVE ONCE ITS STABLE
         //______________________________________________________________
 
-        filepath = "C:/Users/Lemin/Documents/TerrainGen.txt";
+        //filepath = "C:/Users/Lemin/Documents/TerrainGen.txt";
 
-        string output = "";
-        for (int i = 0; i < GlobalParam.max_width; i++)
-        {
+        //string output = "";
+        //for (int i = 0; i < GlobalParam.max_width; i++)
+        //{
 
-            output += "| ";
-            for (int j = 0; j < GlobalParam.max_height; j++)
-            {
+        //    output += "| ";
+        //    for (int j = 0; j < GlobalParam.max_height; j++)
+        //    {
 
-                output += traversal[i, j] + " ";
-            }
+        //        output += traversal[i, j] + " ";
+        //    }
 
-            output += "|\n";
-        }
-        System.IO.File.AppendAllText(filepath, output);
+        //    output += "|\n";
+        //}
+        //System.IO.File.AppendAllText(filepath, output);
         //________________________________________________________________
 
     }
