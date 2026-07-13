@@ -37,6 +37,7 @@ public static class GlobalParam
 
     public static int cameraMode = 0; // top down is default
     public static bool cameraBypassDefault = false;
+    public static bool showDeadPopup = false;
     public static Vector3 cameraPos = new Vector3(64.0f, 120.0f, 64.0f);
     public static Vector3 cameraDir = new Vector3(90.0f, 0.0f, 0.0f);
 
@@ -47,6 +48,7 @@ public class GlobalParamManager : MonoBehaviour
 {
     public Toggle m_random_toggle;
     public Toggle m_cam_bypass_toggle;
+    public Toggle m_dead_popup_toggle;
 
     public Camera m_camera;
 
@@ -73,6 +75,15 @@ public class GlobalParamManager : MonoBehaviour
         else
         {
             GlobalParam.cameraBypassDefault = false;
+        }
+
+        if (m_dead_popup_toggle.isOn)
+        {
+            GlobalParam.showDeadPopup = true;
+        }
+        else
+        {
+            GlobalParam.showDeadPopup = false;
         }
 
         GlobalParam.simulatedRuns++; // just testing
@@ -109,6 +120,15 @@ public class GlobalParamManager : MonoBehaviour
         else
         {
             GlobalParam.cameraBypassDefault = false;
+        }
+
+        if (m_dead_popup_toggle.isOn)
+        {
+            GlobalParam.showDeadPopup = true;
+        }
+        else
+        {
+            GlobalParam.showDeadPopup = false;
         }
 
         SimRunsText.text = GetSimRuns().ToString();

@@ -11,6 +11,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GlobalParamsDisplay : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class GlobalParamsDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI humanEnergy;
     [SerializeField] private TextMeshProUGUI humanSafety;
     [SerializeField] private TextMeshProUGUI humanState;
+
+    [SerializeField] private GameObject humanDiedScreen;
 
     public void ReloadScene() { // can probably look into how to save data across scenes (singleton/instance? - a gameobj)
         string currentSceneName = SceneManager.GetActiveScene().name;
@@ -65,6 +68,11 @@ public class GlobalParamsDisplay : MonoBehaviour
             humanEnergy.text = human.energy.ToString("f2") + "/" + human.maxEnergy.ToString("f2");
             humanSafety.text = human.safety.ToString("f2") + "/" + human.maxSafety.ToString("f2");
             humanState.text = human.GetHumanState();
+
+            humanDiedScreen.SetActive(human.IsHumanDead());
         }
+
+        // nvm
+        //if (humanDiedScreen.GetComponentInChildren<Toggle>().isOn) { ReloadScene(); } // auto reload if checked
     }
 }

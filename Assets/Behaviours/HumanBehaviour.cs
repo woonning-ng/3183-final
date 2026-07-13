@@ -52,6 +52,7 @@ public class HumanBehaviour : MonoBehaviour
 
     private Vector3 currentShelterTarget;
 
+    public bool IsHumanDead() { return isDead; }
     public string GetHumanState() {
         switch (currentState)
         {
