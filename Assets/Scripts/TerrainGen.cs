@@ -5,6 +5,7 @@ using System.Collections.Generic;
 //using UnityEngine.UIElements;
 using static PerlinNoise;
 using static GlobalParam;
+using System.IO;
 
 
 //References:
@@ -25,7 +26,8 @@ public enum Terrain_obj
     NONE
 }
 
-//64 x 64
+//128 x 128
+
 public class TerrainGen : MonoBehaviour
 {
     //static int max_width = 128;
@@ -47,6 +49,8 @@ public class TerrainGen : MonoBehaviour
     int shelter_count = 0;
     static int max_shelter = 3;
 
+    public Pathfinding pathfinding;
+
     //Add some boolean to check if it is toggled?
     //public GameObject m_toggle;
 
@@ -59,6 +63,9 @@ public class TerrainGen : MonoBehaviour
     float[,] moisture = new float[GlobalParam.max_width, GlobalParam.max_height];
     bool[,] accessible = new bool[GlobalParam.max_width, GlobalParam.max_height];
     bool[,] safe = new bool[GlobalParam.max_width, GlobalParam.max_height];
+
+    //for map traversal checks
+    int[,] traversal = new int[GlobalParam.max_width, GlobalParam.max_height];
 
 
 
@@ -135,6 +142,8 @@ public class TerrainGen : MonoBehaviour
                 accessible[i, j] = true;
                 //set all to false first
                 safe[i, j] = false;
+                //set all to 1 first
+                traversal[i, j] = 1;
             }
         }
 
@@ -271,6 +280,7 @@ public class TerrainGen : MonoBehaviour
                     case Terrain_cus.WATER:
                         //Only water would make the path inaccessible
                         accessible[i, j] = false;
+                        traversal[i, j] = 0;
                         Instantiate(water_prefab, pos, Quaternion.identity);
                         break;
                     case Terrain_cus.SAND:
@@ -314,6 +324,7 @@ public class TerrainGen : MonoBehaviour
                 {
                     case Terrain_obj.TREE:
                         accessible[i, j] = false;
+                        traversal[i, j] = 0;
                         Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
                         break;
                     case Terrain_obj.SHELTER:
@@ -325,6 +336,57 @@ public class TerrainGen : MonoBehaviour
             }
         }
     }
+    
+
+    //reference
+    //https://www.enjoyalgorithms.com/blog/flood-fill-problem
+    void floodfill()
+    {
+
+        
+       
+
+        int[] offsets = new int[] { -1, 0, 1, 0, -1 };
+
+        Queue<(int x, int z)> queue = new Queue<(int x, int z)>();
+
+        //ok something is wrong with the queue
+        queue.Enqueue(new (0,0));
+        //UnityEngine.Debug.Log("YESSSSSS\n");
+        while (queue.Count > 0)
+        {
+            
+            (int x, int z) = queue.Dequeue();
+            //int curr_x = x + neighbouroffsets[0].x;
+            if (traversal[x,z] == 2)
+            {
+                continue;
+            }
+
+            if (traversal[x,z] != 0)
+            {
+                traversal[x, z] = 2;
+            }
+             
+
+            for(int i =0; i<offsets.Length-1; i++)
+            {
+                if (x + offsets[i] >=0 && x + offsets[i] < GlobalParam.max_width
+                    && z + offsets[i+1] >=0 && z + offsets[i+1] < GlobalParam.max_height&&
+                    traversal[x + offsets[i],z + offsets[i+1]] == 1)
+                {
+                    queue.Enqueue(new(x + offsets[i], z + offsets[i + 1]));
+                }
+            }
+            
+        }
+
+        //UnityEngine.Debug.Log("ENDDDDDDD\n");
+
+
+
+    }
+
     void Awake(){ // awake
         
 
@@ -336,12 +398,36 @@ public class TerrainGen : MonoBehaviour
         GenerateRandomMap();
 
         InstantiateTerrain();
-        
+        //UnityEngine.Debug.Log("THIS IS THE OUTPUT!!!!\n");
+
     }
 
-    private void Start()
+    private string filepath;
+
+
+    void Start()
     {
         // note: can probably invoke pathfinding here to test out terrain validity...?
+        //Flood fill works now but now to build the actual bridge
+        floodfill();
+        filepath = "C:/Users/Lemin/Documents/TerrainGen.txt";
+
+        string output = "";
+        for(int i=0; i< GlobalParam.max_width; i++)
+        {
+
+            output += "| ";
+            for(int j=0; j<GlobalParam.max_height; j++)
+            {
+
+                output += traversal[i, j] + " ";
+            }
+
+            output += "|\n";
+        }
+        System.IO.File.AppendAllText(filepath, output);
+
+
     }
 
     void Update(){
