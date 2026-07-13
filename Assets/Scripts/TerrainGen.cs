@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
-using System.Collections.Generic;
+using static GlobalParam;
 //using UnityEngine.UIElements;
 using static PerlinNoise;
-using static GlobalParam;
-using System.IO;
+using static UnityEditor.PlayerSettings;
 
 
 //References:
@@ -324,7 +325,7 @@ public class TerrainGen : MonoBehaviour
                 {
                     case Terrain_obj.TREE:
                         accessible[i, j] = false;
-                        traversal[i, j] = 0;
+                        //traversal[i, j] = 0;
                         Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
                         break;
                     case Terrain_obj.SHELTER:
@@ -342,23 +343,35 @@ public class TerrainGen : MonoBehaviour
     //https://www.enjoyalgorithms.com/blog/flood-fill-problem
     void floodfill()
     {
-
         
-       
-
-        int[] offsets = new int[] { -1, 0, 1, 0, -1 };
+        //Change to 8 direction checks as 4 direction could not handle diagonals
+        //That was the issue
+        int[] offsetx = new int[] { -1, 1, 0, 0, -1, -1, 1, 1 };
+        int[] offsetz = new int[] { 0, 0, -1, 1, -1, 1, -1, 1 };
 
         Queue<(int x, int z)> queue = new Queue<(int x, int z)>();
 
-        //ok something is wrong with the queue
-        queue.Enqueue(new (0,0));
-        //UnityEngine.Debug.Log("YESSSSSS\n");
+        //Find the first value tile to start the floodfill
+        for(int i=0; i< GlobalParam.max_width; i++)
+        {
+            for(int j=0; j< GlobalParam.max_height; j++)
+            {
+                if (traversal[i,j] != 0)
+                {
+                    queue.Enqueue(new(i, j));
+                    break;
+                }
+            }
+            break;
+        }
+
+        //The actual queue for floodfill
         while (queue.Count > 0)
         {
             
             (int x, int z) = queue.Dequeue();
-            //int curr_x = x + neighbouroffsets[0].x;
-            if (traversal[x,z] == 2)
+
+            if (traversal[x, z] == 2)
             {
                 continue;
             }
@@ -369,22 +382,42 @@ public class TerrainGen : MonoBehaviour
             }
              
 
-            for(int i =0; i<offsets.Length-1; i++)
+            
+            for(int k = 0; k < offsetx.Length; k++)
             {
-                if (x + offsets[i] >=0 && x + offsets[i] < GlobalParam.max_width
-                    && z + offsets[i+1] >=0 && z + offsets[i+1] < GlobalParam.max_height&&
-                    traversal[x + offsets[i],z + offsets[i+1]] == 1)
+                int curr_x = x + offsetx[k];
+                int curr_z = z + offsetz[k];
+                if (curr_x >=0 && curr_x < GlobalParam.max_width && curr_z >=0 && curr_z < GlobalParam.max_height
+                    && traversal[curr_x, curr_z] == 1)
                 {
-                    queue.Enqueue(new(x + offsets[i], z + offsets[i + 1]));
+                    queue.Enqueue(new(curr_x, curr_z));
                 }
             }
+                
+            
             
         }
 
-        //UnityEngine.Debug.Log("ENDDDDDDD\n");
 
 
 
+    }
+
+    bool CheckUnreachable()
+    {
+        for(int i=0; i< GlobalParam.max_width; i++)
+        {
+            for(int j =0; j < GlobalParam.max_height; j++)
+            {
+                if (traversal[i,j] == 1)
+                {
+
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     void Awake(){ // awake
@@ -400,6 +433,12 @@ public class TerrainGen : MonoBehaviour
         InstantiateTerrain();
         //UnityEngine.Debug.Log("THIS IS THE OUTPUT!!!!\n");
 
+        floodfill();
+        if (CheckUnreachable())
+        {
+            UnityEngine.Debug.Log("UNREACHABLE");
+        }
+
     }
 
     private string filepath;
@@ -413,27 +452,27 @@ public class TerrainGen : MonoBehaviour
 
         //Honestly maybe can just merge the start and awake for this as I dont really need pathfinding?
         //ok merge the start and awake to just build a completed map instead.
-        floodfill();
+        //floodfill();
 
         //FOR DEBUG, CAN REMOVE ONCE ITS STABLE
         //______________________________________________________________
-        
-        //filepath = "C:/Users/Lemin/Documents/TerrainGen.txt";
 
-        //string output = "";
-        //for(int i=0; i< GlobalParam.max_width; i++)
-        //{
+        filepath = "C:/Users/Lemin/Documents/TerrainGen.txt";
 
-        //    output += "| ";
-        //    for(int j=0; j<GlobalParam.max_height; j++)
-        //    {
+        string output = "";
+        for (int i = 0; i < GlobalParam.max_width; i++)
+        {
 
-        //        output += traversal[i, j] + " ";
-        //    }
+            output += "| ";
+            for (int j = 0; j < GlobalParam.max_height; j++)
+            {
 
-        //    output += "|\n";
-        //}
-        //System.IO.File.AppendAllText(filepath, output);
+                output += traversal[i, j] + " ";
+            }
+
+            output += "|\n";
+        }
+        System.IO.File.AppendAllText(filepath, output);
         //________________________________________________________________
 
     }
