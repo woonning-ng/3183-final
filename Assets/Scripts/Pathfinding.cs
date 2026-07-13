@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 public class Pathfinding : MonoBehaviour
 {
@@ -35,25 +34,25 @@ public class Pathfinding : MonoBehaviour
 
     public bool HasArrived => currentWaypointIndex >= currentPath.Count;
 
-    //private void Awake()
-    //{
-    //    if (grid == null)
-    //        grid = Grid.Instance;
+    private void Awake()
+    {
+        if (grid == null)
+            grid = Grid.Instance;
 
-    //    astar = new Astar(grid);
+        astar = new Astar(grid);
 
-    //    request = new PathRequest
-    //    {
-    //        path = new List<Vector3>(),
-    //        heuristic = heuristic,
-    //        weight = weight,
-    //        smoothing = smoothing,
-    //        rubberBanding = rubberBanding,
-    //        singleStep = singleStep,
-    //        debugColoring = debugColoring,
-    //        newRequest = true
-    //    };
-    //}
+        request = new PathRequest
+        {
+            path = new List<Vector3>(),
+            heuristic = heuristic,
+            weight = weight,
+            smoothing = smoothing,
+            rubberBanding = rubberBanding,
+            singleStep = singleStep,
+            debugColoring = debugColoring,
+            newRequest = true
+        };
+    }
 
     public void SetGrid(Grid grid) {  this.grid = grid; }
 

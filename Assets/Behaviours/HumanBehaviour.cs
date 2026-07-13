@@ -240,6 +240,7 @@ public class HumanBehaviour : MonoBehaviour
             }
         }
 
+        UnityEngine.Debug.Log("found a target? " + target == null);
         return target != null;
     }
 
@@ -312,6 +313,7 @@ public class HumanBehaviour : MonoBehaviour
         // don't touch currentState yet — only commit once we know there's a real target
         if (huntTarget == null && !TryFindHuntTarget(out huntTarget))
             return NodeResult.Failure; // falls through to Wander this same tick, cleanly
+        UnityEngine.Debug.Log("found a target it seems");
 
         currentState = HumanState.Hunting;
         currentShelterTarget = NoShelter; // invalidate stale shelter target on interrupt

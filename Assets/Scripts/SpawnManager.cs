@@ -120,6 +120,7 @@ public class SpawnManager : MonoBehaviour
         foreach (var mob in passiveMobs) {
             if (mob.GetComponent<PassiveMobBehaviour>().IsDead()) {
                 Destroy(mob);
+                passiveMobs.Remove(mob);
             }
         }
     }
