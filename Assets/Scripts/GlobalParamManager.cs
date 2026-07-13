@@ -28,6 +28,7 @@ public static class GlobalParam
     public static bool m_random = true;
     public static bool m_frequency = true;
     public static bool m_octave = true;
+    public static bool m_ridge = true;
     //public static List<Terrain_cus> terrain_map;
     //public static List<>
     public static int max_width = 128;
@@ -52,6 +53,7 @@ public class GlobalParamManager : MonoBehaviour
     public Toggle m_random_toggle;
     public Toggle m_freq_toggle;
     public Toggle m_octave_toggle;
+    public Toggle m_ridge_toggle;
     public Toggle m_cam_bypass_toggle;
     public Toggle m_dead_popup_toggle;
 
@@ -89,6 +91,15 @@ public class GlobalParamManager : MonoBehaviour
         else
         {
             m_octave_toggle.isOn = false;
+        }
+
+        if (GlobalParam.m_ridge)
+        {
+            m_ridge_toggle.isOn = true;
+        }
+        else
+        {
+            m_ridge_toggle.isOn = false;
         }
 
         if (m_cam_bypass_toggle.isOn)
@@ -152,6 +163,15 @@ public class GlobalParamManager : MonoBehaviour
         else
         {
             GlobalParam.m_octave = false;
+        }
+
+        if (m_ridge_toggle.isOn)
+        {
+            GlobalParam.m_ridge = true;
+        }
+        else
+        {
+            GlobalParam.m_ridge = false;
         }
 
         if (m_cam_bypass_toggle.isOn)

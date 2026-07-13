@@ -140,15 +140,31 @@ public class TerrainGen : MonoBehaviour
                     for (int k = 0; k < octaveOffset.Length; k++)
                     {
                         float octaveInv = 1.0f / octaveOffset[k];
-                        data[i, j] += octaveOffset[k] * Ridgenoise(nx * octaveInv, ny * octaveInv);
-                        octaveTotal += octaveOffset[k];
+                        if (GlobalParam.m_ridge)
+                        {
+                            data[i, j] += octaveOffset[k] * Ridgenoise(nx * octaveInv, ny * octaveInv);
+                        }
+                        else
+                        {
+                            data[i, j] += octaveOffset[k] * Noise(nx * octaveInv, ny * octaveInv);
+
+                        }
+                            octaveTotal += octaveOffset[k];
                     }
 
                     data[i, j] /= octaveTotal;
                 }
                 else
                 {
-                    data[i, j] = Noise(nx, ny);
+                    if (GlobalParam.m_ridge)
+                    {
+                        data[i, j] = Ridgenoise(nx, ny);
+                    }
+                    else
+                    {
+                        data[i, j] = Noise(nx, ny);
+                    }
+                        
                 }
 
                     //data[i, j] = Mathf.Pow(data[i, j], exp);
