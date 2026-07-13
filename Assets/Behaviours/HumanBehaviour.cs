@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class HumanBehaviour : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class HumanBehaviour : MonoBehaviour
     bool isDead = false;
 
     public float safetyPriorityThreshold = 20.0f;
-    public float hungerHuntThreshold = 40.0f;
+    public float hungerHuntThreshold = 60.0f;
     public float hungerDecayRate = 0.5f; // per tick?
     public float nightZombieSafetyMultiplier = 2.0f;
     public float shelterEnergyRegen = 3.0f;
@@ -40,6 +41,7 @@ public class HumanBehaviour : MonoBehaviour
     public float energyDecayRate = 1.0f; // perhaps can add a multiplier when theres other stuff gg on
 
     bool placeHuman = false;
+    public float zombieDetectionRadius = 20.0f;
 
     // TODO: clean up all these later omg
     // also how to make it be linked to sim time rather than just time deltatime
@@ -117,16 +119,18 @@ public class HumanBehaviour : MonoBehaviour
         // how do i use the human states to do this instead?
 
         root = new Selector(
+            // forced sleep sequence if human runs out of energy
             new Sequence(new ConditionNode(() => (currentState == HumanState.Sleeping)), new ActionNode(Sleep)),
 
             // low safety: shelter takes priority over hunger - EvaluateAndAct??
-            new Sequence(
-                new ConditionNode(() => ((safety <= safetyPriorityThreshold) && (SimulationManager.Instance.GetDNC().IsNight()))),
-                new ActionNode(Shelter)
-            ),
+            //new Sequence(
+            //    new ConditionNode(() => ((safety <= safetyPriorityThreshold) && (SimulationManager.Instance.GetDNC().IsNight()))),
+            //    new ActionNode(Shelter)
+            //),
+            // commenting out th above chunk first because im confused
 
             // otherwise: normal hunger-first priority
-            new Sequence(new ConditionNode(() => hunger < hungerHuntThreshold), new ActionNode(Hunt)),
+            new Sequence(new ConditionNode(() => hunger < hungerHuntThreshold), new ActionNode(Hunt)), // why hooman not hunting
             new Sequence(new ConditionNode(() => SimulationManager.Instance.GetDNC().IsNight()), new ActionNode(Shelter)),
 
             new ActionNode(Wander)
@@ -176,9 +180,9 @@ public class HumanBehaviour : MonoBehaviour
             energy -= energyDecayRate * SimulationManager.Instance.GetDNC().SimDeltaTime;
         }
 
-        if (energy <= 0.0f) {
-            currentState = HumanState.Sleeping;
-        }
+        //if (energy <= 0.0f) {
+        //    currentState = HumanState.Sleeping;
+        //}
 
         if (isSafe)
         {
@@ -194,8 +198,22 @@ public class HumanBehaviour : MonoBehaviour
     }
 
     private bool ZombieNearby() {
-        // TODO: where zombo
-        return false;
+        float closestDist = float.MaxValue;
+
+        foreach (var mob in SpawnManager.Instance.zombies)
+        {
+            // take into account the FLAT distance here for both
+            Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
+            Vector3 flatZombie = new Vector3(mob.transform.position.x, 0.0f, mob.transform.position.z);
+
+            float dist = Vector3.Distance(flatHuman, flatZombie);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+            }
+        }
+
+        return (closestDist <= zombieDetectionRadius);
     }
 
     private bool TryFindHuntTarget(out GameObject target) {

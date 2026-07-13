@@ -25,6 +25,12 @@ public enum Terrain_obj
     NONE
 }
 
+// might have to attach a pathfinding script to terrain gen and a try get valid walking path, like how its been done for
+// the human/mob/zombies
+// it uses the same base astar instance, just that pathfinding is howyou can get the result
+// if im not wrong ah
+// yeah pretty much? just add pathfinidng as a component for the terraingen obj, then after that get a reference to it via serializefield or smth
+
 //64 x 64
 public class TerrainGen : MonoBehaviour
 {

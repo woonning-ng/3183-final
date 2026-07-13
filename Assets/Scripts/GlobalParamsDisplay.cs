@@ -29,6 +29,7 @@ public class GlobalParamsDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI humanEnergy;
     [SerializeField] private TextMeshProUGUI humanSafety;
     [SerializeField] private TextMeshProUGUI humanState;
+    [SerializeField] private TextMeshProUGUI daysElapsedForRun;
 
     [SerializeField] private GameObject humanDiedScreen;
 
@@ -70,6 +71,11 @@ public class GlobalParamsDisplay : MonoBehaviour
             humanState.text = human.GetHumanState();
 
             humanDiedScreen.SetActive(human.IsHumanDead());
+            if (human.IsHumanDead())
+            {
+                SimulationManager.Instance.SetPaused(true);
+                daysElapsedForRun.text = SimulationManager.Instance.GetTimeElapsedRunInDays().ToString("f2");
+            }
         }
 
         // nvm
