@@ -1355,6 +1355,7 @@ MonoBehaviour:
   maxShift: 100
   followLookSpeed: 5
   offsetFromTarget: {x: 2, y: 5, z: 2}
+  distFromTarget: 10
   bypassModeDefaults: 0
 --- !u!1 &346751968
 GameObject:
@@ -6492,6 +6493,10 @@ PrefabInstance:
       propertyPath: humanDiedScreen
       value: 
       objectReference: {fileID: 157865314}
+    - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
+      propertyPath: daysElapsedForRun
+      value: 
+      objectReference: {fileID: 1476196027}
     - target: {fileID: 965791060599800071, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -7375,6 +7380,10 @@ PrefabInstance:
       propertyPath: grid
       value: 
       objectReference: {fileID: 1957155138}
+    - target: {fileID: 1995799805820321593, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+      propertyPath: hungerDecayRate
+      value: 2.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4376007838050145984, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
       propertyPath: terrainGen
       value: 

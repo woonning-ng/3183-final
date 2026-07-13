@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+using static PassiveMobBehaviour;
 
 public class HumanBehaviour : MonoBehaviour
 {
@@ -32,8 +32,8 @@ public class HumanBehaviour : MonoBehaviour
     public float sleepEnergyRegen = 1.5f;
     public float hungerRestoreAmount = 20.0f;
 
-    public float repathTimer = 10.0f;
-    public float repathInterval = 10.0f;
+    public float repathTimer = 1.0f;
+    public float repathInterval = 1.0f;
 
     private GameObject huntTarget; // passive mob
     public float eatDistance = 5.0f;
@@ -46,8 +46,8 @@ public class HumanBehaviour : MonoBehaviour
     // TODO: clean up all these later omg
     // also how to make it be linked to sim time rather than just time deltatime
 
-    public enum HumanState { Wandering, Hunting, SeekingShelter, Sheltering, Sleeping }
-    private HumanState currentState = HumanState.Wandering;
+    public enum HumanState { None, Wandering, Hunting, SeekingShelter, Sheltering, Sleeping }
+    [SerializeField] private HumanState currentState = HumanState.None;
 
     //[SerializeField] private LayerMask shelterLayer;
     //[SerializeField] private float shelterSearchRadius = 200f; // effectively "whole map" if shelters are sparse
@@ -63,6 +63,7 @@ public class HumanBehaviour : MonoBehaviour
             case HumanState.SeekingShelter: return "Seeking Shelter";
             case HumanState.Sheltering: return "Sheltering";
             case HumanState.Sleeping: return "Sleeping";
+            case HumanState.None: return "Sleeping";
             default: return "Unknown";
         }
     }
@@ -118,20 +119,25 @@ public class HumanBehaviour : MonoBehaviour
 
         // how do i use the human states to do this instead?
 
+        // bro wtaf i dont get it why is it NOT doing this shit properly im just going to yeet the whole bt atp 
+
         root = new Selector(
             // forced sleep sequence if human runs out of energy
-            new Sequence(new ConditionNode(() => (currentState == HumanState.Sleeping)), new ActionNode(Sleep)),
+            new Sequence(new ConditionNode(() => (currentState == HumanState.Sleeping)), new ActionNode(Sleep)), // why
 
-            // low safety: shelter takes priority over hunger - EvaluateAndAct??
-            //new Sequence(
-            //    new ConditionNode(() => ((safety <= safetyPriorityThreshold) && (SimulationManager.Instance.GetDNC().IsNight()))),
-            //    new ActionNode(Shelter)
-            //),
-            // commenting out th above chunk first because im confused
+            new Sequence(
+                new ConditionNode(() => {
+                    bool night = SimulationManager.Instance.GetDNC().IsNight();
+                    bool humanHungry = (hunger < hungerHuntThreshold);
+                    Debug.Log("isNight check: " + night);
+                    return night && !humanHungry;
+                }),
+                new ActionNode(Shelter)
+            ),
 
             // otherwise: normal hunger-first priority
             new Sequence(new ConditionNode(() => hunger < hungerHuntThreshold), new ActionNode(Hunt)), // why hooman not hunting
-            new Sequence(new ConditionNode(() => SimulationManager.Instance.GetDNC().IsNight()), new ActionNode(Shelter)),
+            //new Sequence(new ConditionNode(() => SimulationManager.Instance.GetDNC().IsNight()), new ActionNode(Shelter)),
 
             new ActionNode(Wander)
         );
@@ -173,16 +179,19 @@ public class HumanBehaviour : MonoBehaviour
             return;
         }
 
-        bool isSafe = currentState == HumanState.Sheltering; // arrived only, not SeekingShelter
+        bool isSafe = (currentState == HumanState.Sheltering); // arrived only, not SeekingShelter
         bool isNight = SimulationManager.Instance.GetDNC().IsNight();
 
-        if (currentState != HumanState.Sleeping || !isSafe) {
-            energy -= energyDecayRate * SimulationManager.Instance.GetDNC().SimDeltaTime;
+        if (energy <= 0.0f)
+        {
+            currentState = HumanState.Sleeping;
         }
 
-        //if (energy <= 0.0f) {
-        //    currentState = HumanState.Sleeping;
-        //}
+        if ((currentState != HumanState.Sleeping) && (!isSafe))
+        {
+            energy -= energyDecayRate * SimulationManager.Instance.GetDNC().SimDeltaTime;
+            energy = Mathf.Max(energy, 0f);
+        }
 
         if (isSafe)
         {
@@ -194,6 +203,7 @@ public class HumanBehaviour : MonoBehaviour
             float lossMultiplier = ZombieNearby() ? nightZombieSafetyMultiplier : 1f;
             safety -= nightSafetyDecay * lossMultiplier * SimulationManager.Instance.GetDNC().SimDeltaTime;
             safety = Mathf.Max(safety, 0f);
+            Debug.Log($"safety decaying: {safety}, state={currentState}, isNight={isNight}");
         }
     }
 
@@ -239,28 +249,39 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Wander()
     {
-        currentState = HumanState.Wandering;
+        // if not already wandering, set and find goal
+        if (currentState != HumanState.Wandering)
+        {
+            currentState = HumanState.Wandering;
+            if (TryGetRandomWalkableTile(out GridPos goalPos))
+                pathfinding.SetGoal(grid.Get_WorldPos(goalPos));
+        }
 
         if (!pathfinding.HasArrived)
+        {
             return NodeResult.Running;
-
-        if (TryGetRandomWalkableTile(out GridPos goalPos))
-            pathfinding.SetGoal(grid.Get_WorldPos(goalPos));
-
-        return NodeResult.Running; // never "succeeds" — wandering is a loop, not a goal state
+        }
+        else
+        {
+            currentState = HumanState.None; // reset it
+            return NodeResult.Success;
+        }
     }
 
     private NodeResult Sleep()
-    {
+    { 
+        // if it is for some reason NOT sleeping. why do you do this to me.
+        if (currentState != HumanState.Sleeping) // first entry only
+        {
+            huntTarget = null;
+            currentShelterTarget = new Vector3(-1, -1, -1);
+        }
         currentState = HumanState.Sleeping;
-        energy += sleepEnergyRegen * SimulationManager.Instance.GetDNC().SimDeltaTime;
-
-        UnityEngine.Debug.Log("hooman is sleeping");
 
         if (energy >= maxEnergy * 0.5f)
         {
-            currentState = HumanState.Wandering; // remove it from sleep mode
-            return NodeResult.Success; // "wakes up when energy is halfway full"
+            currentState = HumanState.Wandering;
+            return NodeResult.Success;
         }
 
         return NodeResult.Running;
@@ -269,10 +290,14 @@ public class HumanBehaviour : MonoBehaviour
     private NodeResult Hunt()
     {
         currentShelterTarget = new Vector3(-1, -1, -1); // invalidate stale shelter target on interrupt
-        currentState = HumanState.Hunting;
 
         if (huntTarget == null && !TryFindHuntTarget(out huntTarget))
+        {
+            Debug.Log("Hunt failed: no target found (passiveMobs count: " + SpawnManager.Instance.passiveMobs.Count + ")");
             return NodeResult.Failure; // no mobs in range — fall through to shelter/wander
+        }
+
+        currentState = HumanState.Hunting; // only set if hunt target found
 
         float dist = Vector3.Distance(transform.position, huntTarget.transform.position);
 
@@ -334,7 +359,6 @@ public class HumanBehaviour : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        // trigger restart-sim logic here — whatever that hook is
     }
 
     private bool TryGetRandomWalkableTile(out GridPos result)
