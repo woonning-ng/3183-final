@@ -18,18 +18,21 @@ public class ZombieBehaviour : MonoBehaviour
     public float zombieChaseCooldown = 4.0f;
     public float zombieChaseCurrentCooldown = 4.0f;
 
+    public float repathTimer = 10.0f;
+    public float repathInterval = 10.0f;
+
     // bool markedForDeath = false; // unused field for now
 
     // actions: wander, idle, chase(?)
-    public enum ZombieState { Wandering, Idling, Chasing }
+    public enum ZombieState { None, Wandering, Idling, Chasing }
     [SerializeField] private ZombieState currentState;
 
     public GameObject humanTarget;
-    public float humanDetectionRadius = 15.0f;
+    public float humanDetectionRadius = 55.0f;
 
     private void Awake()
     {
-        root = new ActionNode(() => Wander());
+        //root = new ActionNode(() => Wander());
 
         // the zombie will wander, and stay still, looking around at times
         // unless a human is within a certain radius of it, in which it will then give chase for about 5s
@@ -39,10 +42,16 @@ public class ZombieBehaviour : MonoBehaviour
         root = new Selector(
             // zombie priorities
             // 1. only chase human if it is near one and duration is more than 0.0f.
-            new Sequence(new ConditionNode(() => zombieChaseCurrentCooldown <= 0.0f && IsNearHuman() && zombieChaseDuration >= 0.0f), new ActionNode(ChaseHuman)),
+            new Sequence(
+                new ConditionNode(() => {
+                    bool ready = zombieChaseCurrentCooldown <= 0.0f && IsNearHuman() && zombieChaseDuration >= 0.0f;
+                    Debug.Log("chase condition: " + ready);
+                    return ready;
+                }),
+                new ActionNode(ChaseHuman)
+            ),
 
             // 2. otherwise, choose to idle or wander
-
             new RandomSelector(
                 new ActionNode(Wander),
                 new ActionNode(Idle)
@@ -66,32 +75,48 @@ public class ZombieBehaviour : MonoBehaviour
     }
 
     private bool IsNearHuman() {
-        // compute flat distance between zombie and human
-        Vector3 humanPosFlat = new Vector3(humanTarget.transform.position.x, 0.0f, humanTarget.transform.position.z);
-        Vector3 thisPosFlat = new Vector3(transform.position.x, 0.0f, transform.position.z);
+        if (currentState != ZombieState.Chasing)
+        {
+            UnityEngine.Debug.Log("found human??");
+            // compute flat distance between zombie and human
+            Vector3 humanPosFlat = new Vector3(humanTarget.transform.position.x, 0.0f, humanTarget.transform.position.z);
+            Vector3 thisPosFlat = new Vector3(transform.position.x, 0.0f, transform.position.z);
 
-        float dist = Vector3.Distance(humanPosFlat, thisPosFlat);
+            float dist = Vector3.Distance(humanPosFlat, thisPosFlat);
 
-        if (dist <= humanDetectionRadius) {
-            currentState = ZombieState.Chasing;
+            //if (dist <= humanDetectionRadius)
+            //{
+                //UnityEngine.Debug.Log("human has been found. initiaiting chase");
+                //currentState = ZombieState.Chasing;
+            //}
+
+            return (dist <= humanDetectionRadius);
         }
-
-        return (dist <= humanDetectionRadius); // within 5m?
+        return false;
     }
 
-    private NodeResult ChaseHuman() {
+    private NodeResult ChaseHuman()
+    {
+        if (currentState != ZombieState.Chasing)
+        {
+            currentState = ZombieState.Chasing;
+            zombieChaseDuration = zombieChaseTimer; // start the timer fresh
+            pathfinding.SetGoal(humanTarget.transform.position); // TODO logic replaced
+        }
+
         if (zombieChaseDuration <= 0.0f)
         {
-            // reset chase duration and set cooldown for chase
-            //currentState = ZombieState.Wandering;
-            zombieChaseDuration = 4.0f;
-            zombieChaseCurrentCooldown = zombieChaseCooldown;
-
+            zombieChaseCurrentCooldown = zombieChaseCooldown; // arm cooldown only when chase actually ends
             return NodeResult.Success;
         }
 
-        // to do: chase human
-
+        // TODO: repath periodically toward humanTarget, like Hunt()/Shelter() do with repathTimer
+        repathTimer -= SimulationManager.Instance.GetDNC().SimDeltaTime;
+        if (repathTimer <= 0f)
+        {
+            pathfinding.SetGoal(humanTarget.transform.position);
+            repathTimer = repathInterval;
+        }
         return NodeResult.Running;
     }
 
@@ -111,6 +136,7 @@ public class ZombieBehaviour : MonoBehaviour
         }
         else
         {
+            currentState = ZombieState.None;
             return NodeResult.Success;
         }
     }
@@ -125,6 +151,7 @@ public class ZombieBehaviour : MonoBehaviour
 
         if (idleTime <= 0.0f)
         { // return success if idling done
+            currentState = ZombieState.None;
             return NodeResult.Success;
         }
 
