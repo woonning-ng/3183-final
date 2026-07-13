@@ -1,11 +1,5 @@
-using System.Drawing;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
-using static UnityEngine.GraphicsBuffer;
-//using static UnityEditor.Searcher.SearcherWindow.Alignment;
+
 
 // https://discussions.unity.com/t/enum-as-a-function-param-in-a-button-onclick/214010
 // https://dev.to/matthewodle/simple-3d-camera-movement-1lcj
