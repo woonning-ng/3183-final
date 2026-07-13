@@ -75,24 +75,11 @@ public class ZombieBehaviour : MonoBehaviour
     }
 
     private bool IsNearHuman() {
-        if (currentState != ZombieState.Chasing)
-        {
-            UnityEngine.Debug.Log("found human??");
-            // compute flat distance between zombie and human
-            Vector3 humanPosFlat = new Vector3(humanTarget.transform.position.x, 0.0f, humanTarget.transform.position.z);
-            Vector3 thisPosFlat = new Vector3(transform.position.x, 0.0f, transform.position.z);
-
-            float dist = Vector3.Distance(humanPosFlat, thisPosFlat);
-
-            //if (dist <= humanDetectionRadius)
-            //{
-                //UnityEngine.Debug.Log("human has been found. initiaiting chase");
-                //currentState = ZombieState.Chasing;
-            //}
-
-            return (dist <= humanDetectionRadius);
-        }
-        return false;
+        // pure condition no state
+        Vector3 humanPosFlat = new Vector3(humanTarget.transform.position.x, 0.0f, humanTarget.transform.position.z);
+        Vector3 thisPosFlat = new Vector3(transform.position.x, 0.0f, transform.position.z);
+        float dist = Vector3.Distance(humanPosFlat, thisPosFlat);
+        return dist <= humanDetectionRadius;
     }
 
     private NodeResult ChaseHuman()
