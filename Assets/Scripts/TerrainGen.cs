@@ -66,7 +66,7 @@ public class TerrainGen : MonoBehaviour
     bool[,] safe = new bool[GlobalParam.max_width, GlobalParam.max_height];
 
     //for map traversal checks
-    int[,] traversal = new int[GlobalParam.max_width, GlobalParam.max_height];
+    //int[,] traversal = new int[GlobalParam.max_width, GlobalParam.max_height];
 
 
 
@@ -144,7 +144,7 @@ public class TerrainGen : MonoBehaviour
                 //set all to false first
                 safe[i, j] = false;
                 //set all to 1 first
-                traversal[i, j] = 1;
+                //traversal[i, j] = 1;
             }
         }
 
@@ -281,7 +281,7 @@ public class TerrainGen : MonoBehaviour
                     case Terrain_cus.WATER:
                         //Only water would make the path inaccessible
                         accessible[i, j] = false;
-                        traversal[i, j] = 0;
+                        //traversal[i, j] = 0;
                         Instantiate(water_prefab, pos, Quaternion.identity);
                         break;
                     case Terrain_cus.SAND:
@@ -341,84 +341,172 @@ public class TerrainGen : MonoBehaviour
 
     //reference
     //https://www.enjoyalgorithms.com/blog/flood-fill-problem
-    void floodfill()
-    {
-        
-        //Change to 8 direction checks as 4 direction could not handle diagonals
-        //That was the issue
-        int[] offsetx = new int[] { -1, 1, 0, 0, -1, -1, 1, 1 };
-        int[] offsetz = new int[] { 0, 0, -1, 1, -1, 1, -1, 1 };
+    //void floodfill()
+    //{
 
-        Queue<(int x, int z)> queue = new Queue<(int x, int z)>();
+    //    //Change to 8 direction checks as 4 direction could not handle diagonals
+    //    //That was the issue
+    //    int[] offsetx = new int[] { -1, 1, 0, 0, -1, -1, 1, 1 };
+    //    int[] offsetz = new int[] { 0, 0, -1, 1, -1, 1, -1, 1 };
+    //    //int[] offsets = new int[] { -1, 0, 1, 0, -1 };
 
-        //Find the first value tile to start the floodfill
-        for(int i=0; i< GlobalParam.max_width; i++)
-        {
-            for(int j=0; j< GlobalParam.max_height; j++)
-            {
-                if (traversal[i,j] != 0)
-                {
-                    queue.Enqueue(new(i, j));
-                    break;
-                }
-            }
-            break;
-        }
+    //    Queue<(int x, int z)> queue = new Queue<(int x, int z)>();
 
-        //The actual queue for floodfill
-        while (queue.Count > 0)
-        {
+    //    //Find the first value tile to start the floodfill
+    //    for(int i=0; i< GlobalParam.max_width; i++)
+    //    {
+    //        for(int j=0; j< GlobalParam.max_height; j++)
+    //        {
+    //            if (traversal[i,j] != 0)
+    //            {
+    //                queue.Enqueue(new(i, j));
+    //                break;
+    //            }
+    //        }
+    //        break;
+    //    }
+
+    //    //The actual queue for floodfill
+    //    while (queue.Count > 0)
+    //    {
             
-            (int x, int z) = queue.Dequeue();
+    //        (int x, int z) = queue.Dequeue();
 
-            if (traversal[x, z] == 2)
-            {
-                continue;
-            }
+    //        if (traversal[x, z] == 2)
+    //        {
+    //            continue;
+    //        }
 
-            if (traversal[x,z] != 0)
-            {
-                traversal[x, z] = 2;
-            }
+    //        if (traversal[x,z] != 0)
+    //        {
+    //            traversal[x, z] = 2;
+    //        }
              
 
             
-            for(int k = 0; k < offsetx.Length; k++)
-            {
-                int curr_x = x + offsetx[k];
-                int curr_z = z + offsetz[k];
-                if (curr_x >=0 && curr_x < GlobalParam.max_width && curr_z >=0 && curr_z < GlobalParam.max_height
-                    && traversal[curr_x, curr_z] == 1)
-                {
-                    queue.Enqueue(new(curr_x, curr_z));
-                }
-            }
+    //        for(int k = 0; k < offsetx.Length; k++)
+    //        {
+    //            int curr_x = x + offsetx[k];
+    //            int curr_z = z + offsetz[k];
+    //            if (curr_x >=0 && curr_x < GlobalParam.max_width && curr_z >=0 && curr_z < GlobalParam.max_height
+    //                && traversal[curr_x, curr_z] == 1)
+    //            {
+    //                queue.Enqueue(new(curr_x, curr_z));
+    //            }
+    //        }
                 
             
             
-        }
+    //    }
 
 
 
 
-    }
+    //}
 
-    bool CheckUnreachable()
-    {
-        for(int i=0; i< GlobalParam.max_width; i++)
-        {
-            for(int j =0; j < GlobalParam.max_height; j++)
-            {
-                if (traversal[i,j] == 1)
-                {
-
-                    return true;
-                }
-            }
-        }
+    //bool CheckUnreachable(ref int x, ref int z)
+    //{
+    //    for(int i=0; i< GlobalParam.max_width; i++)
+    //    {
+    //        for(int j =0; j < GlobalParam.max_height; j++)
+    //        {
+    //            if (traversal[i,j] == 1)
+    //            {
+    //                x = i;
+    //                z = j;
+    //                return true;
+    //            }
+    //        }
+    //    }
         
-        return false;
-    }
+    //    return false;
+    //}
+
+    //bool checkreach(int x, int z)
+    //{
+    //    int[] offsets = new int[] { -1, 0, 1, 0, -1 };
+
+    //    for(int i=0; i< offsets.Length -1; i++)
+    //    {
+    //        if (x + offsets[i] >= 0 && x + offsets[i] < GlobalParam.max_width
+
+    //                && z + offsets[i + 1] >= 0 && z + offsets[i + 1] < GlobalParam.max_height &&
+
+    //                traversal[x + offsets[i], z + offsets[i + 1]] == 1)
+
+    //        {
+    //            return true;
+    //        }
+    //    }
+
+    //    return false;
+    //}
+
+    //void Buildabridge(ref int x, ref int z)
+    //{
+    //    //use bfs to traverse and build a bridge
+
+    //    //int[] offsetx = new int[] { -1, 1, 0, 0, -1, -1, 1, 1 };
+    //    //int[] offsetz = new int[] { 0, 0, -1, 1, -1, 1, -1, 1 };
+    //    int[] offsets = new int[] { -1, 0, 1, 0, -1 };
+
+    //    Queue<(int x, int z)> queue = new Queue<(int x, int z)>();
+
+    //    //List<(int x, int z)> inqueue = new List<(int x, int z)>();
+
+    //    queue.Enqueue(new(x, z));
+    //    //inqueue.Add(new(x, z));
+
+    //    if (traversal[x, z] == 0)
+    //    {
+    //        traversal[x, z] = 3;
+    //    }
+
+    //    while (queue.Count > 0)
+    //    {
+    //        (int ux, int uz) = queue.Dequeue();
+
+    //        bool reach = checkreach(ux , uz);
+
+    //        if (reach)
+    //        {
+    //            Vector3 pos = new Vector3(ux, ((int)data[ux, uz]), uz);
+    //            Instantiate(snow_prefab, pos, Quaternion.identity);
+    //            break;
+    //        }
+
+    //        //if (traversal[ux, uz] == 0)
+    //        //{
+    //        //traversal[ux, uz] = 3;
+
+    //        //}
+    //        Vector3 pos2 = new Vector3(ux, ((int)data[ux, uz]), uz);
+    //        Instantiate(snow_prefab, pos2, Quaternion.identity);
+
+    //        // bool add = true;
+    //        for (int i = 0; i < offsets.Length - 1; i++)
+
+    //        {
+
+    //            if (ux + offsets[i] >= 0 && ux + offsets[i] < GlobalParam.max_width
+
+    //                && uz + offsets[i + 1] >= 0 && uz + offsets[i + 1] < GlobalParam.max_height &&
+
+    //                traversal[ux + offsets[i], uz + offsets[i + 1]] == 0)
+
+    //            {
+    //                traversal[ux + offsets[i], uz + offsets[i+1]] = 3;
+    //                //traversal[x, z] = 2;
+
+
+    //                queue.Enqueue(new(ux + offsets[i], uz + offsets[i + 1]));
+    //                break;
+
+    //            }
+
+    //        }
+    //    }
+    //}
 
     void Awake(){ // awake
         
@@ -433,11 +521,16 @@ public class TerrainGen : MonoBehaviour
         InstantiateTerrain();
         //UnityEngine.Debug.Log("THIS IS THE OUTPUT!!!!\n");
 
-        floodfill();
-        if (CheckUnreachable())
-        {
-            UnityEngine.Debug.Log("UNREACHABLE");
-        }
+        //floodfill();
+
+        //int unreachable_x = 0;
+        //int unreachable_z = 0;
+
+        //if (CheckUnreachable(ref unreachable_x, ref unreachable_z))
+        //{
+        //    UnityEngine.Debug.Log("UNREACHABLE");
+        //    Buildabridge(ref unreachable_x, ref unreachable_z);
+        //}
 
     }
 
