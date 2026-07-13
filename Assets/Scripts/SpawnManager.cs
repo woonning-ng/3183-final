@@ -117,10 +117,19 @@ public class SpawnManager : MonoBehaviour
             }
         }
 
-        foreach (var mob in passiveMobs) {
-            if (mob.GetComponent<PassiveMobBehaviour>().IsDead()) {
-                Destroy(mob);
+        // flag dead ones here first
+        List<int> deadMobs = new List<int>();
+
+        for (int i = 0; i < passiveMobs.Count; i++) {
+            if (passiveMobs[i].GetComponent<PassiveMobBehaviour>().IsDead()) {
+                deadMobs.Add(i);
             }
+        }
+
+        // THEN remove the dead ones here
+        foreach (int i in deadMobs) {
+            Destroy(passiveMobs[i]);
+            passiveMobs.Remove(passiveMobs[i]);
         }
     }
 }

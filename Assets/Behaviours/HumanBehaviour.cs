@@ -31,6 +31,7 @@ public class HumanBehaviour : MonoBehaviour
     public float nightSafetyDecay = 1.0f;
     public float sleepEnergyRegen = 1.5f;
     public float hungerRestoreAmount = 20.0f;
+    public float safetyRegen = 1.0f;
 
     public float repathTimer = 0.0f;
     public float repathInterval = 1.0f;
@@ -42,6 +43,9 @@ public class HumanBehaviour : MonoBehaviour
 
     bool placeHuman = false;
     public float zombieDetectionRadius = 20.0f;
+
+    private int huntPathFailures = 0;
+    private const int maxHuntPathFailures = 3;
 
     public enum HumanState { None, Wandering, Hunting, SeekingShelter, Sheltering, Sleeping, Idling }
     [SerializeField] private HumanState currentState = HumanState.None;
@@ -115,7 +119,7 @@ public class HumanBehaviour : MonoBehaviour
             new Sequence(new ConditionNode(() => { return currentState == HumanState.Sleeping; }), new ActionNode(Sleep)),
 
             new Sequence(
-                new ConditionNode(() => { return (cachedIsNight && safety < safetyPriorityThreshold); }),
+                new ConditionNode(() => { return (cachedIsNight && safety < safetyPriorityThreshold) || (currentState == HumanState.Sheltering && !cachedIsNight); }),
                 new ActionNode(Shelter)
             ),
 
@@ -173,6 +177,7 @@ public class HumanBehaviour : MonoBehaviour
         // energy floor check FIRST — so isSafe below reflects the state we're actually about to act on this frame
         if (energy <= 0.0f && currentState != HumanState.Sleeping)
         {
+            UnityEngine.Debug.Log("force human to sleep");
             currentState = HumanState.Sleeping;
             huntTarget = null;              // clear so we don't resume a stale hunt on wake
             currentShelterTarget = NoShelter; // clear so we don't resume a stale shelter path on wake
@@ -190,6 +195,12 @@ public class HumanBehaviour : MonoBehaviour
         if (currentState == HumanState.Sleeping)
         {
             energy = Mathf.Min(energy + sleepEnergyRegen * dt, maxEnergy);
+        }
+
+        // help this dumbass regain safety
+        if (!cachedIsNight) {
+            safety += nightSafetyDecay * safetyRegen * dt;
+            safety = Mathf.Min(maxSafety, safety);
         }
 
         if (isSafe)
@@ -240,12 +251,13 @@ public class HumanBehaviour : MonoBehaviour
             }
         }
 
+        UnityEngine.Debug.Log("found a target? " + target == null);
         return target != null;
     }
 
     private NodeResult Wander()
     {
-        //UnityEngine.Debug.Log("human is trying to wander");
+        UnityEngine.Debug.Log("human is trying to wander");
         // if not already wandering, set and find goal
         if (currentState != HumanState.Wandering)
         {
@@ -294,7 +306,11 @@ public class HumanBehaviour : MonoBehaviour
         bool night = SimulationManager.Instance.GetDNC().IsNight();
         float before = energy;
         energy = Mathf.Min(energy + sleepEnergyRegen * dt, maxEnergy);
-        Debug.Log($"[Sleep] night={night} dt={dt} before={before} after={energy}");
+        UnityEngine.Debug.Log("the dumbass human is sleeping");
+        //Debug.Log($"[Sleep] night={night} dt={dt} before={before} after={energy}");
+
+        currentState = HumanState.Sleeping;
+        currentShelterTarget = NoShelter; huntTarget = null;
 
         // Only wake up when FULLY rested
         if (energy >= maxEnergy)
@@ -308,34 +324,45 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Hunt()
     {
-        UnityEngine.Debug.Log("hunting for tgt");
-        // don't touch currentState yet — only commit once we know there's a real target
         if (huntTarget == null && !TryFindHuntTarget(out huntTarget))
-            return NodeResult.Failure; // falls through to Wander this same tick, cleanly
+            return NodeResult.Failure;
 
         currentState = HumanState.Hunting;
-        currentShelterTarget = NoShelter; // invalidate stale shelter target on interrupt
+        currentShelterTarget = NoShelter;
 
         Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
         Vector3 flatMob = new Vector3(huntTarget.transform.position.x, 0.0f, huntTarget.transform.position.z);
-
         float dist = Vector3.Distance(flatHuman, flatMob);
 
         if (dist <= eatDistance)
         {
-            UnityEngine.Debug.Log("did the human eat at all");
             hunger = Mathf.Min(hunger + hungerRestoreAmount, maxHunger);
             huntTarget.GetComponent<PassiveMobBehaviour>().MarkDead();
             huntTarget = null;
+            huntPathFailures = 0;
             return NodeResult.Success;
         }
 
         repathTimer -= SimulationManager.Instance.GetDNC().SimDeltaTime;
         if (repathTimer <= 0f)
         {
-            UnityEngine.Debug.Log("repathing to find tgt");
-            pathfinding.SetGoal(huntTarget.transform.position);
+            bool reachable = pathfinding.TrySetGoal(huntTarget.transform.position);
             repathTimer = repathInterval;
+
+            if (!reachable)
+            {
+                huntPathFailures++;
+                if (huntPathFailures >= maxHuntPathFailures)
+                {
+                    huntTarget = null;
+                    huntPathFailures = 0;
+                    return NodeResult.Failure; // give up, fall through to Wander this tick
+                }
+            }
+            else
+            {
+                huntPathFailures = 0;
+            }
         }
 
         return NodeResult.Running;

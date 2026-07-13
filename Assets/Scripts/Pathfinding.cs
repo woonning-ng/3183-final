@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 public class Pathfinding : MonoBehaviour
 {
@@ -35,25 +34,25 @@ public class Pathfinding : MonoBehaviour
 
     public bool HasArrived => currentWaypointIndex >= currentPath.Count;
 
-    //private void Awake()
-    //{
-    //    if (grid == null)
-    //        grid = Grid.Instance;
+    private void Awake()
+    {
+        if (grid == null)
+            grid = Grid.Instance;
 
-    //    astar = new Astar(grid);
+        astar = new Astar(grid);
 
-    //    request = new PathRequest
-    //    {
-    //        path = new List<Vector3>(),
-    //        heuristic = heuristic,
-    //        weight = weight,
-    //        smoothing = smoothing,
-    //        rubberBanding = rubberBanding,
-    //        singleStep = singleStep,
-    //        debugColoring = debugColoring,
-    //        newRequest = true
-    //    };
-    //}
+        request = new PathRequest
+        {
+            path = new List<Vector3>(),
+            heuristic = heuristic,
+            weight = weight,
+            smoothing = smoothing,
+            rubberBanding = rubberBanding,
+            singleStep = singleStep,
+            debugColoring = debugColoring,
+            newRequest = true
+        };
+    }
 
     public void SetGrid(Grid grid) {  this.grid = grid; }
 
@@ -63,7 +62,7 @@ public class Pathfinding : MonoBehaviour
         astar = new Astar(grid);
     }
 
-    public void SetGoal(Vector3 goal)
+    public bool TrySetGoal(Vector3 goal)
     {
         PathRequest request = new PathRequest
         {
@@ -78,15 +77,19 @@ public class Pathfinding : MonoBehaviour
             newRequest = true
         };
 
-        if (astar.ComputePath(ref request) == PathResult.COMPLETE) // WHY ARE YOU NULLREFERENCE!!!!!!!!!!!!!!!!
+        if (astar.ComputePath(ref request) == PathResult.COMPLETE)
         {
             currentPath.Clear();
             foreach (Vector3 p in request.path)
                 currentPath.Add(new Vector3(p.x, grid.terrainGen.GetY(p.x, p.z), p.z));
-
             currentWaypointIndex = 0;
+            return true;
         }
+
+        return false; // caller now knows it failed, instead of guessing from HasArrived
     }
+
+    public void SetGoal(Vector3 goal) => TrySetGoal(goal); // keep the old void signature working elsewhere
 
     public void Tick() => FollowPath();
 

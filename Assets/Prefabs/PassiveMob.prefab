@@ -49,6 +49,9 @@ MonoBehaviour:
   pathfinding: {fileID: 0}
   grid: {fileID: 0}
   maxPlacementAttempts: 30
+  currentState: 0
+  idleTime: 5
+  maxIdleTime: 5
 --- !u!114 &2954586125547350773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,7 +73,7 @@ MonoBehaviour:
   rubberBanding: 1
   singleStep: 0
   debugColoring: 0
-  autoWander: 1
+  autoWander: 0
   maxPlacementAttempts: 30
 --- !u!1001 &3272481235175055128
 PrefabInstance:
