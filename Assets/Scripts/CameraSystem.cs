@@ -1,6 +1,10 @@
 using System.Drawing;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+using static UnityEngine.GraphicsBuffer;
 //using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 // https://discussions.unity.com/t/enum-as-a-function-param-in-a-button-onclick/214010
@@ -9,6 +13,7 @@ using UnityEngine.InputSystem;
 // https://discussions.unity.com/t/fly-cam-simple-cam-script/428226
 // https://stackoverflow.com/questions/71232279/how-to-make-the-camera-follow-the-player-in-unity
 // https://discussions.unity.com/t/rotate-camera-around-game-object-and-zoom-camera-into-same-game-object/720654/5
+// https://github.com/Aiuces/Camera-Like-Genshin-Impact/blob/main/Assets/Scripts/GenshinCameraController.cs
 
 // very difficult to see human at a 128 x 128 scale. add markers on screen?
 // is there a way to visualise the pathfinding, the agent's decision, etc?
@@ -54,6 +59,12 @@ public class CameraSystem : MonoBehaviour
 
     [SerializeField, Header("Default Offset")]
     private Vector3 offsetFromTarget = new Vector3(0.0f, 1.0f, 0.0f);
+
+    [SerializeField, Header("Distance between Camera and Target")]
+    private float distFromTarget = 10.0f;
+
+    private float lookAngle = 45.0f;
+    private float lookHeight = 5.0f;
 
 
     // params like zoom, moving, etc here idk
@@ -290,13 +301,34 @@ public class CameraSystem : MonoBehaviour
 
     public void FollowCameraMode() {
         // needs to check for zoom AND moving around
-        
-        transform.position = humanTarget.transform.position + offsetFromTarget;
+
+        //transform.position = humanTarget.transform.position + offsetFromTarget;
 
         // rotate around based on mouse pos
-        transform.RotateAround(humanTarget.transform.position, new Vector3(0.0f, -1.0f, 0.0f), 20 * Time.deltaTime * followLookSpeed);
+        //transform.RotateAround(humanTarget.transform.position, new Vector3(0.0f, -1.0f, 0.0f), 20 * Time.deltaTime * followLookSpeed);
 
         // zoom in and out based on mouse wheel
+
+        // Get the mouse input for rotation
+        float horizontal = Input.GetAxis("Mouse X") * followLookSpeed;
+        float vertical = Input.GetAxis("Mouse Y") * followLookSpeed;
+
+        // Rotate the camera around the target
+        lookAngle += horizontal;
+        lookHeight -= vertical;
+
+        // Clamp the height to the allowable range
+        lookHeight = Mathf.Clamp(lookHeight, -20.0f, 80.0f);
+
+        // Calculate the position and rotation of the camera
+        Quaternion rotation = Quaternion.Euler(lookHeight, lookAngle, 0f);
+        Vector3 position = humanTarget.transform.position - rotation * Vector3.forward * distFromTarget;
+
+        // Move the camera towards the target
+        transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * moveSpeed);
+
+        // Look at the target
+        transform.LookAt(humanTarget.transform);
     }
 
     // to put the camera back where it should be by default
@@ -339,6 +371,24 @@ public class CameraSystem : MonoBehaviour
                 FollowCameraMode();
                 break;
 
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        switch (mode) {
+            case CameraMode.TOPDOWN:
+            case CameraMode.FREE:
+            default:
+                break;
+            case CameraMode.FOLLOW:
+                // Get the input for zooming
+                float zoom = Input.GetAxis("Mouse ScrollWheel") * followLookSpeed;
+
+                // Zoom the camera in or out
+                distFromTarget -= zoom;
+                distFromTarget = Mathf.Clamp(distFromTarget, 3.0f, 15.0f); // curr dist, min, max OTL
+                break;
         }
     }
 }
