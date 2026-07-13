@@ -116,5 +116,11 @@ public class SpawnManager : MonoBehaviour
                 KillAllZombies();
             }
         }
+
+        foreach (var mob in passiveMobs) {
+            if (mob.GetComponent<PassiveMobBehaviour>().IsDead()) {
+                Destroy(mob);
+            }
+        }
     }
 }

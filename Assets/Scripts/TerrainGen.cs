@@ -347,6 +347,7 @@ public class TerrainGen : MonoBehaviour
 
     private void Start()
     {
+        UnityEngine.Debug.Log("START OF TERRAINGEN"); // ?????
         // note: can probably invoke pathfinding here to test out terrain validity...?
     }
 

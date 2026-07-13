@@ -35,6 +35,8 @@ public class PassiveMobBehaviour : MonoBehaviour
         markedForDeath = true;
     }
 
+    public bool IsDead() {  return markedForDeath; }
+
     private void Start()
     {
         if (grid == null) grid = Grid.Instance;

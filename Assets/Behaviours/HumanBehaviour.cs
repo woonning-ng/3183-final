@@ -90,12 +90,13 @@ public class HumanBehaviour : MonoBehaviour
             }
         }
 
+        UnityEngine.Debug.Log("human found shelter");
         return shelter != NoShelter;
     }
 
     private void Awake()
     {
-        Debug.Log("HUMANBEHAVIOUR AWAKE - VERSION CHECK X");
+        //Debug.Log("HUMANBEHAVIOUR AWAKE - VERSION CHECK X");
 
         hunger = maxHunger;
         energy = maxEnergy;
@@ -121,10 +122,10 @@ public class HumanBehaviour : MonoBehaviour
             new Sequence(new ConditionNode(() => { return (cachedIsHungry);
             }), new ActionNode(Hunt)),
 
-            new RandomSelector(
-                new ActionNode(Wander),
-                new ActionNode(Idle)
-            )
+            //new RandomSelector(
+            new ActionNode(Wander)
+            //    new ActionNode(Idle)
+            //)
         );
     }
 
@@ -244,13 +245,15 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Wander()
     {
-        UnityEngine.Debug.Log("human is trying to wander");
+        //UnityEngine.Debug.Log("human is trying to wander");
         // if not already wandering, set and find goal
         if (currentState != HumanState.Wandering)
         {
             currentState = HumanState.Wandering;
             if (TryGetRandomWalkableTile(out GridPos goalPos))
+            {
                 pathfinding.SetGoal(grid.Get_WorldPos(goalPos));
+            }
         }
 
         if (!pathfinding.HasArrived)
@@ -259,7 +262,7 @@ public class HumanBehaviour : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.Log("human has reached");
+            //UnityEngine.Debug.Log("human has reached");
             currentState = HumanState.None;
             return NodeResult.Success;
         }
@@ -267,7 +270,7 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Idle()
     {
-        UnityEngine.Debug.Log("human is trying to idle");
+        //UnityEngine.Debug.Log("human is trying to idle");
         if (currentState != HumanState.Idling)
         {
             currentState = HumanState.Idling;
@@ -276,7 +279,7 @@ public class HumanBehaviour : MonoBehaviour
 
         if (idleTime <= 0.0f)
         { // return success if idling done
-            UnityEngine.Debug.Log("human has idled long enough");
+            //UnityEngine.Debug.Log("human has idled long enough");
             currentState = HumanState.None;
             return NodeResult.Success;
         }

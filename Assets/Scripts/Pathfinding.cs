@@ -78,7 +78,7 @@ public class Pathfinding : MonoBehaviour
             newRequest = true
         };
 
-        if (astar.ComputePath(ref request) == PathResult.COMPLETE)
+        if (astar.ComputePath(ref request) == PathResult.COMPLETE) // WHY ARE YOU NULLREFERENCE!!!!!!!!!!!!!!!!
         {
             currentPath.Clear();
             foreach (Vector3 p in request.path)
