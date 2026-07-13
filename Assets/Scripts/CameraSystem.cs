@@ -192,7 +192,7 @@ public class CameraSystem : MonoBehaviour
     }
 
     private void TopDownCameraMode() {
-        UnityEngine.Debug.Log("in top down camera mode");
+        //UnityEngine.Debug.Log("in top down camera mode");
         // at least allow for zooming here and moving UDLR if needed
         if (Input.GetKey(KeyCode.LeftShift))
         {

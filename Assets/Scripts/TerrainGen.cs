@@ -407,6 +407,7 @@ public class TerrainGen : MonoBehaviour
 
     void Start()
     {
+        UnityEngine.Debug.Log("START OF TERRAINGEN"); // ?????
         // note: can probably invoke pathfinding here to test out terrain validity...?
         //Flood fill works now but now to build the actual bridge
         floodfill();

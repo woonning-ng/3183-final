@@ -70,7 +70,7 @@ public class SpawnManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance == null) // what if i kill myself right now
         {
             Instance = this;
         }
@@ -114,6 +114,12 @@ public class SpawnManager : MonoBehaviour
         else {
             if (zombies.Count > 0) {
                 KillAllZombies();
+            }
+        }
+
+        foreach (var mob in passiveMobs) {
+            if (mob.GetComponent<PassiveMobBehaviour>().IsDead()) {
+                Destroy(mob);
             }
         }
     }

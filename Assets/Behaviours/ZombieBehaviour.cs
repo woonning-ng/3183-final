@@ -1,5 +1,4 @@
 using UnityEngine;
-using static PassiveMobBehaviour;
 
 public class ZombieBehaviour : MonoBehaviour
 {
@@ -45,7 +44,7 @@ public class ZombieBehaviour : MonoBehaviour
             new Sequence(
                 new ConditionNode(() => {
                     bool ready = zombieChaseCurrentCooldown <= 0.0f && IsNearHuman() && zombieChaseDuration >= 0.0f;
-                    Debug.Log("chase condition: " + ready);
+                    //Debug.Log("chase condition: " + ready);
                     return ready;
                 }),
                 new ActionNode(ChaseHuman)

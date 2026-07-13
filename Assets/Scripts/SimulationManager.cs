@@ -22,7 +22,7 @@ public class SimulationManager : MonoBehaviour
 
     private int currentDay = 0;
     private float timeElapsedRun = 0.0f;
-    private float totalTimeElapsed = 0.0f;
+    //private float totalTimeElapsed = 0.0f;
 
     // need to get the other managers and relevant stuff for pausing
 
@@ -36,11 +36,17 @@ public class SimulationManager : MonoBehaviour
         // reset various stuff here
     }
 
+    public void SetPaused(bool p) { paused = p; }
+    public float GetTimeElapsedRun() { return timeElapsedRun; }
+    public float GetTimeElapsedRunInDays() { return timeElapsedRun / 24.0f; }
+
 
     private void Awake()
     {
         Instance = this;
         currentCycleLength = baseCycleLength;
+        timeElapsedRun = 0.0f;
+        paused = false;
     }
 
     public void SetCycleLength(float newLength)
@@ -59,6 +65,7 @@ public class SimulationManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (paused) return;
+        timeElapsedRun += GetDNC().SimDeltaTime;
     }
 }
