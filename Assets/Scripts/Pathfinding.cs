@@ -62,7 +62,7 @@ public class Pathfinding : MonoBehaviour
         astar = new Astar(grid);
     }
 
-    public void SetGoal(Vector3 goal)
+    public bool TrySetGoal(Vector3 goal)
     {
         PathRequest request = new PathRequest
         {
@@ -77,15 +77,19 @@ public class Pathfinding : MonoBehaviour
             newRequest = true
         };
 
-        if (astar.ComputePath(ref request) == PathResult.COMPLETE) // WHY ARE YOU NULLREFERENCE!!!!!!!!!!!!!!!!
+        if (astar.ComputePath(ref request) == PathResult.COMPLETE)
         {
             currentPath.Clear();
             foreach (Vector3 p in request.path)
                 currentPath.Add(new Vector3(p.x, grid.terrainGen.GetY(p.x, p.z), p.z));
-
             currentWaypointIndex = 0;
+            return true;
         }
+
+        return false; // caller now knows it failed, instead of guessing from HasArrived
     }
+
+    public void SetGoal(Vector3 goal) => TrySetGoal(goal); // keep the old void signature working elsewhere
 
     public void Tick() => FollowPath();
 

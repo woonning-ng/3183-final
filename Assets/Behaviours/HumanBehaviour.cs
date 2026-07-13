@@ -44,6 +44,9 @@ public class HumanBehaviour : MonoBehaviour
     bool placeHuman = false;
     public float zombieDetectionRadius = 20.0f;
 
+    private int huntPathFailures = 0;
+    private const int maxHuntPathFailures = 3;
+
     public enum HumanState { None, Wandering, Hunting, SeekingShelter, Sheltering, Sleeping, Idling }
     [SerializeField] private HumanState currentState = HumanState.None;
 
@@ -321,35 +324,45 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Hunt()
     {
-        UnityEngine.Debug.Log("hunting for tgt");
-        // don't touch currentState yet — only commit once we know there's a real target
         if (huntTarget == null && !TryFindHuntTarget(out huntTarget))
-            return NodeResult.Failure; // falls through to Wander this same tick, cleanly
-        UnityEngine.Debug.Log("found a target it seems");
+            return NodeResult.Failure;
 
         currentState = HumanState.Hunting;
-        currentShelterTarget = NoShelter; // invalidate stale shelter target on interrupt
+        currentShelterTarget = NoShelter;
 
         Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
         Vector3 flatMob = new Vector3(huntTarget.transform.position.x, 0.0f, huntTarget.transform.position.z);
-
         float dist = Vector3.Distance(flatHuman, flatMob);
 
         if (dist <= eatDistance)
         {
-            UnityEngine.Debug.Log("did the human eat at all");
             hunger = Mathf.Min(hunger + hungerRestoreAmount, maxHunger);
             huntTarget.GetComponent<PassiveMobBehaviour>().MarkDead();
             huntTarget = null;
+            huntPathFailures = 0;
             return NodeResult.Success;
         }
 
         repathTimer -= SimulationManager.Instance.GetDNC().SimDeltaTime;
         if (repathTimer <= 0f)
         {
-            UnityEngine.Debug.Log("repathing to find tgt");
-            pathfinding.SetGoal(huntTarget.transform.position);
+            bool reachable = pathfinding.TrySetGoal(huntTarget.transform.position);
             repathTimer = repathInterval;
+
+            if (!reachable)
+            {
+                huntPathFailures++;
+                if (huntPathFailures >= maxHuntPathFailures)
+                {
+                    huntTarget = null;
+                    huntPathFailures = 0;
+                    return NodeResult.Failure; // give up, fall through to Wander this tick
+                }
+            }
+            else
+            {
+                huntPathFailures = 0;
+            }
         }
 
         return NodeResult.Running;
