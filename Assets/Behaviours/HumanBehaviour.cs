@@ -116,7 +116,7 @@ public class HumanBehaviour : MonoBehaviour
             new Sequence(new ConditionNode(() => { return currentState == HumanState.Sleeping; }), new ActionNode(Sleep)),
 
             new Sequence(
-                new ConditionNode(() => { return (cachedIsNight && safety < safetyPriorityThreshold); }),
+                new ConditionNode(() => { return (cachedIsNight && safety < safetyPriorityThreshold) || (currentState == HumanState.Sheltering && !cachedIsNight); }),
                 new ActionNode(Shelter)
             ),
 
