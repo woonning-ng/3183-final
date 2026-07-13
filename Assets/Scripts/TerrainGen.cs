@@ -407,27 +407,34 @@ public class TerrainGen : MonoBehaviour
 
     void Start()
     {
-        UnityEngine.Debug.Log("START OF TERRAINGEN"); // ?????
+        //UnityEngine.Debug.Log("START OF TERRAINGEN"); // ?????
         // note: can probably invoke pathfinding here to test out terrain validity...?
         //Flood fill works now but now to build the actual bridge
+
+        //Honestly maybe can just merge the start and awake for this as I dont really need pathfinding?
+        //ok merge the start and awake to just build a completed map instead.
         floodfill();
-        filepath = "C:/Users/Lemin/Documents/TerrainGen.txt";
 
-        string output = "";
-        for(int i=0; i< GlobalParam.max_width; i++)
-        {
+        //FOR DEBUG, CAN REMOVE ONCE ITS STABLE
+        //______________________________________________________________
+        
+        //filepath = "C:/Users/Lemin/Documents/TerrainGen.txt";
 
-            output += "| ";
-            for(int j=0; j<GlobalParam.max_height; j++)
-            {
+        //string output = "";
+        //for(int i=0; i< GlobalParam.max_width; i++)
+        //{
 
-                output += traversal[i, j] + " ";
-            }
+        //    output += "| ";
+        //    for(int j=0; j<GlobalParam.max_height; j++)
+        //    {
 
-            output += "|\n";
-        }
-        System.IO.File.AppendAllText(filepath, output);
+        //        output += traversal[i, j] + " ";
+        //    }
 
+        //    output += "|\n";
+        //}
+        //System.IO.File.AppendAllText(filepath, output);
+        //________________________________________________________________
 
     }
 
