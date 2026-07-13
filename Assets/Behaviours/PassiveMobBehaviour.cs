@@ -14,11 +14,17 @@ public class PassiveMobBehaviour : MonoBehaviour
 
     // actions: wander, idle, die
     public enum MobState { Wandering, Idling, Dying }
-    private MobState currentState;
+    [SerializeField] private MobState currentState;
+
+    public float idleTime = 5.0f;
+    public float maxIdleTime = 5.0f;
 
     private void Awake()
     {
-        root = new ActionNode(() => Wander());
+        root = new RandomSelector(
+                new ActionNode(Wander),
+                new ActionNode(Idle)
+            );
 
         // the passive mob will wander, and stay still, looking around at times. its behaviour is very simple
         // if it is marked for death, make it play the dead behaviour and then let the system despawn it
@@ -37,6 +43,7 @@ public class PassiveMobBehaviour : MonoBehaviour
     private void Update()
     {
         if (markedForDeath) return;
+        if (currentState == MobState.Idling) idleTime -= SimulationManager.Instance.GetDNC().SimDeltaTime;
 
         root.Tick();
         pathfinding.Tick();
@@ -44,13 +51,35 @@ public class PassiveMobBehaviour : MonoBehaviour
 
     private NodeResult Wander()
     {
+        // if not already wandering, set and find goal
+        if (currentState != MobState.Wandering)
+        {
+            currentState = MobState.Wandering;
+            if (TryGetRandomWalkableTile(out GridPos goalPos))
+                pathfinding.SetGoal(grid.Get_WorldPos(goalPos));
+        }
+
         if (!pathfinding.HasArrived)
+        {
             return NodeResult.Running;
+        }
+        else {
+            return NodeResult.Success;
+        }
+    }
 
-        if (TryGetRandomWalkableTile(out GridPos goalPos))
-            pathfinding.SetGoal(grid.Get_WorldPos(goalPos));
+    private NodeResult Idle() {
+        if (currentState != MobState.Idling)
+        {
+            currentState = MobState.Idling;
+            idleTime = UnityEngine.Random.Range(1.0f, 5.0f);
+        }
 
-        return NodeResult.Running; // never "succeeds" — wandering is a loop, not a goal state
+        if (idleTime <= 0.0f) { // return success if idling done
+            return NodeResult.Success;
+        }
+
+        return NodeResult.Running;
     }
 
     private bool TryGetRandomWalkableTile(out GridPos result)

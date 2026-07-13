@@ -4,6 +4,7 @@ using UnityEngine;
 public class RandomSelector : BTNode
 {
     private List<BTNode> children;
+    private BTNode runningChild = null;
 
     public RandomSelector(params BTNode[] nodes)
     {
@@ -12,17 +13,36 @@ public class RandomSelector : BTNode
 
     public override NodeResult Tick()
     {
+        // if something was already running, stick with it
+        if (runningChild != null)
+        {
+            var result = runningChild.Tick();
+            if (result == NodeResult.Running)
+                return NodeResult.Running;
+
+            runningChild = null; // resolved — fall through to pick a new one next
+            if (result == NodeResult.Success)
+                return NodeResult.Success;
+            // if Failure, continue on to try a fresh random pick this same tick
+        }
+
         var shuffled = new List<BTNode>(children);
         Shuffle(shuffled);
 
         foreach (var child in shuffled)
         {
             var result = child.Tick();
-            if (result != NodeResult.Failure)
-                return result; // Running or Success — stop here
+            if (result == NodeResult.Running)
+            {
+                runningChild = child; // commit to it going forward
+                return NodeResult.Running;
+            }
+            if (result == NodeResult.Success)
+                return NodeResult.Success;
+            // Failure -> try next in shuffled order
         }
 
-        return NodeResult.Failure; // everything failed
+        return NodeResult.Failure;
     }
 
     private void Shuffle(List<BTNode> list)
