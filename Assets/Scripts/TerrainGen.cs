@@ -243,21 +243,6 @@ public class TerrainGen : MonoBehaviour
                     //Terrain_obj b = Objects(data[i, j], moisture[i, j]);
                     GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
 
-                    //if shelter count is zero, force spawn in a shelter at a random location
-                    if(shelter_count == 0)
-                    {
-                        int x = UnityEngine.Random.Range(0, GlobalParam.max_height-1);
-                        int z = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
-                        //Loop to check if the tile is accessible or not
-                        while (!accessible[x, z])
-                        {
-                            x = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
-                            z = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
-                        }
-
-                        GlobalParam.terrain_objs[x, z] = Terrain_obj.SHELTER;
-                        shelter_count++;
-                    }
                 }
 
 
@@ -284,7 +269,7 @@ public class TerrainGen : MonoBehaviour
 
                 }
 
-                
+
                 //Instantiating objects
                 switch (GlobalParam.terrain_objs[i, j])
                 {
@@ -299,6 +284,29 @@ public class TerrainGen : MonoBehaviour
                         Instantiate(shelter_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
                         break;
                 }
+            }
+        }
+        //Spawn forced shelter here as we need the acessibility 
+        if (GlobalParam.m_random || GlobalParam.simulatedRuns == 0)
+        {
+
+            //if shelter count is zero, force spawn in a shelter at a random location
+            if (shelter_count == 0)
+            {
+                int x = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
+                int z = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
+                //Loop to check if the tile is accessible or not
+                while (!accessible[x, z])
+                {
+                    x = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
+                    z = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
+                }
+
+                GlobalParam.terrain_objs[x, z] = Terrain_obj.SHELTER;
+                safe[x, z] = true;
+                Vector3 pos = new Vector3(x, (int)(data[x, z] * 10.0f), z);
+                Instantiate(shelter_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
+                shelter_count++;
             }
         }
     }
