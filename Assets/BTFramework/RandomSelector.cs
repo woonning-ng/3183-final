@@ -1,10 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// the random selector has memory
 public class RandomSelector : BTNode
 {
     private List<BTNode> children;
-    private BTNode runningChild = null;
+    private BTNode runningChild = null; // this is needed as we ran into an issue whereby
+                                        // the currently running child was getting overwritten
+                                        // so the random selector kept flipping between its children
+                                        // very rapidly. this way the node knows which child is currently
+                                        // running, if any, and will not attempt to overwrite it
 
     public RandomSelector(params BTNode[] nodes)
     {
