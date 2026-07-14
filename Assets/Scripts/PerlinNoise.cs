@@ -15,15 +15,11 @@ using UnityEngine.Rendering.Universal.Internal;
 //https://thewizardapprentice.com/2025/10/27/breaking-down-perlin-noise-reference-implementation/
 //https://grokipedia.com/page/Perlin_noise
 //https://cs.nyu.edu/~perlin/noise/
+////https://docs.unity3d.com/2021.3/Documentation/Manual/class-Random.html
 
 //2D noise can implement basic terrains but cannot do so for caves and overhang systems
 
-//Need to add helper function to call and renegerate terrain on button click
 
-//public class Grid
-//{
-//    int row, col;
-//}
 
 public class PerlinNoise
 {
@@ -49,19 +45,14 @@ public class PerlinNoise
         float u = Fade(x);
         float v = Fade(z);
 
-        //Init();
         int A = p[X] + Z;
         int B = p[X + 1] + Z;
-
+        //Linear interpolation for noise
         return Lerp(v, Lerp(u, Grad(p[A], x, z),
                                     Grad(p[B], x - 1, z)),
                         Lerp(u, Grad(p[A + 1], x, z - 1),
                                     Grad(p[B + 1], x - 1, z - 1)));
 
-        //return (raw + 1.0f) * 0.5f;
-
-        //Temp return 
-        //return 0.0f;
     }
 
     static float Fade(float t)
@@ -89,6 +80,7 @@ public class PerlinNoise
     }
 
     static int[] p = new int[512];
+    //Fixed permutation array from Perlin noise
     static int[] permutation = { 151,160,137,91,90,15,
    131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
    190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
@@ -106,7 +98,7 @@ public class PerlinNoise
 
     static public void Randomize_permutation()
     {
-        //Shuffling algo 
+        //Shuffling algorithm to shuffle P array 
         for(int i=0; i< 256; i++)
         {
             int tmp = p[i];
@@ -119,6 +111,7 @@ public class PerlinNoise
     }
     static void Init()
     {
+        //Populate P array with the fixed array
         for (int i = 0; i < 256; i++)
         {
             p[256 + i] = p[i] = permutation[i];

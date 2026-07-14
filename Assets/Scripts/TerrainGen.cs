@@ -5,13 +5,14 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using static GlobalParam;
-//using UnityEngine.UIElements;
 using static PerlinNoise;
 using static UnityEditor.PlayerSettings;
 
 
 //References:
 //https://www.redblobgames.com/maps/terrain-from-noise/
+//https://amanpriyanshu.github.io/The-Mountains-of-Madness/
+//https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Random.Range.html
 
 public enum Terrain_cus
 {
@@ -28,19 +29,17 @@ public enum Terrain_obj
     NONE
 }
 
-//128 x 128
+//128 x 128 map size
 
 public class TerrainGen : MonoBehaviour
 {
-    //static int max_width = 128;
-    //static int max_height = 128;
     //this frequency is to make it more rough or smoother
     //The higher the frequency value is, the more rough the terrain would be
     //The lower frequency value would make the terrain more smooth
     //By that I meant the variety would be smaller if the frequency value is lower
     static float frequency = 3.0f;
-    //static float exp = 0.25f;
-    //static float octave = 
+
+    //Prefabs for instantianting terrains
     public GameObject water_prefab;
     public GameObject sand_prefab;
     public GameObject grass_prefab;
@@ -48,31 +47,22 @@ public class TerrainGen : MonoBehaviour
     public GameObject tree_prefab;
     public GameObject shelter_prefab;
 
+    //For object placements
     int shelter_count = 0;
     static int max_shelter = 3;
 
-    public Pathfinding pathfinding;
-
-    //Add some boolean to check if it is toggled?
-    //public GameObject m_toggle;
-
-    //public Toggle m_toggle;
     //2d array to store the perlin noise values
     //The 2d array is [x, z] and the float within is the y value
     //Y value have to be converted to int as we are going for minecraft style
 
     float[,] data = new float[GlobalParam.max_width, GlobalParam.max_height];
+    //Moisture to help with biome determination
     float[,] moisture = new float[GlobalParam.max_width, GlobalParam.max_height];
+    //TO check if the tile is walkable or have any blockage (like water and trees are not accessible)
     bool[,] accessible = new bool[GlobalParam.max_width, GlobalParam.max_height];
+    //To check if the tile contains safehouses
     bool[,] safe = new bool[GlobalParam.max_width, GlobalParam.max_height];
 
-    //for map traversal checks
-    //int[,] traversal = new int[GlobalParam.max_width, GlobalParam.max_height];
-
-
-
-    //public float GetWidth() { return max_width; }
-    //public float GetHeight() { return max_height; }
     public float GetY(float x, float z) {
         return (int)(data[(int)x, (int)z] * 10.0f);
     }
@@ -103,25 +93,18 @@ public class TerrainGen : MonoBehaviour
 
     void GenerateRandomMap() {
 
+        //for octaves
         float[] octaveOffset = new float[3];
         octaveOffset[0] = 1.0f;
         octaveOffset[1] = 0.5f;
         octaveOffset[2] = 0.25f;
-        //Randomize_permutation();
-        //Randomize_permutation();
-        //Randomize_permutation();
         for (int i = 0; i < max_height; i++)
         {
             for (int j = 0; j < max_width; j++)
             {
-                //Some other customization options:
-                //1. Ridge noise (abs the values to make the elevation go higher?)
-
-                //There are other stuff that can customise the terrain
-                //Octave and frequency
-                //For now, a simple implementation of Terrain gen with perlin noise
-                //float nx = (float)j / max_width - 0.5f, ny = (float)i / max_height - 0.5f;
+                
                 float nx = (float)j / max_width , ny = (float)i / max_height;
+                //Frequency makes the terrain rougher or smoother
                 if (GlobalParam.m_frequency)
                 {
                     nx *= frequency;
@@ -129,10 +112,7 @@ public class TerrainGen : MonoBehaviour
                 }
                 
 
-                //data[i, j] = 1.0f * Ridgenoise(nx * 1.0f, ny * 1.0f);
-                //data[i, j] += 0.5f * Ridgenoise(nx * 2.0f, ny * 2.0f);
-                //data[i, j] += 0.25f * Ridgenoise(nx * 4.0f, ny * 4.0f);
-                //data[i, j] /= (1.0f + 0.5f + 0.25f);
+                //Octave to make terrain more vary by adding noise in different frequencies
                 if (GlobalParam.m_octave)
                 {
                     float octaveTotal = 0.0f;
@@ -140,6 +120,7 @@ public class TerrainGen : MonoBehaviour
                     for (int k = 0; k < octaveOffset.Length; k++)
                     {
                         float octaveInv = 1.0f / octaveOffset[k];
+                        //Rdige functions are use to amplify the heights
                         if (GlobalParam.m_ridge)
                         {
                             data[i, j] += octaveOffset[k] * Ridgenoise(nx * octaveInv, ny * octaveInv);
@@ -156,6 +137,7 @@ public class TerrainGen : MonoBehaviour
                 }
                 else
                 {
+                    //Rdige functions are use to amplify the heights
                     if (GlobalParam.m_ridge)
                     {
                         data[i, j] = Ridgenoise(nx, ny);
@@ -166,32 +148,21 @@ public class TerrainGen : MonoBehaviour
                     }
                         
                 }
-
-                    //data[i, j] = Mathf.Pow(data[i, j], exp);
-                    moisture[i, j] = Noise(nx, ny);
+                //moisture will just use the normal noise function as we do not need it to vary a lot
+                moisture[i, j] = Noise(nx, ny);
                 //set all to true first
                 accessible[i, j] = true;
                 //set all to false first
                 safe[i, j] = false;
-                //set all to 1 first
-                //traversal[i, j] = 1;
+                
             }
         }
 
     }
-    //Biome function will return the enum? of the gameobject to spawn?
+    //Biome function will return the enum of the gameobject to spawn
     Terrain_cus Biome(float height, float moist){
         //Values can be customizable
         //-1 to 1 range
-
-        //Water moisture to be at least 0.4f? 
-
-        //Customize it to make it so that water does not only exist in the lower height?
-        //Might be hard as water going to lower level make sense, they congest at the bottom
-        //
-
-        //These values are pretty good for now
-
 
         if(height < -0.3f)
         {
@@ -204,36 +175,28 @@ public class TerrainGen : MonoBehaviour
             {
                 return Terrain_cus.SAND;
             }
-            //return Terrain_cus.GRASS;
         }
         else if(height >= 0.5f)
         {
-            //if(moist >= 0.4f)
-            //{
-                return Terrain_cus.SNOW;
-            //}
-            //return Terrain_cus.GRASS;
+
+            return Terrain_cus.SNOW;
+;
         }
 
         
         
         return Terrain_cus.GRASS;
-        //if (height < 0.5f && moist > 0.4f) return Terrain_cus.WATER;
-        //else if (height < 0.5f && moist < -0.2f) return Terrain_cus.SAND;
-        //else if (height >= 0.5f && moist > 0.4f) return Terrain_cus.SNOW;
-        //else return Terrain_cus.GRASS;
     }
 
+    //Function for object placements 
     Terrain_obj Objects(float height, float moist)
     {
+        //If the terrain is either sand or grass based on the Biome function
         if(height >= -0.3f && height < 0.5f)
         {
             if (moist>-0.1f)
             {
-                //okay time to think of how to spawn tree and shelters
-                //maybe for now a randomizer?
-                //probability have to be low tho
-                //0.1% prob for now?
+                //Using random function 
                 int tree = UnityEngine.Random.Range(1, 10);
                 if (tree == 2)
                 {
@@ -243,7 +206,7 @@ public class TerrainGen : MonoBehaviour
                 
             }
         }
-
+        //Shelter generation using random 
         if(shelter_count < max_shelter && height >= -0.3f)
         {
             int shelter = UnityEngine.Random.Range(1, 1000);
@@ -259,6 +222,7 @@ public class TerrainGen : MonoBehaviour
         return Terrain_obj.NONE;
     }
 
+    //By using absolute from noise function to amplify the values
     static float Ridgenoise(float nx, float nz)
     {
         return 2.0f * (0.5f - Mathf.Abs(0.5f - Noise(nx, nz)));
@@ -272,19 +236,19 @@ public class TerrainGen : MonoBehaviour
             {
                 //This will help to determine which terain to generate
                 //Terrain_cus a = Biome(data[i, j], moisture[i, j]);
-                //No matter if its random or not, have to populate the data if simulatedruns is 0
+                //No matter if its random or not, have to populate the data if it is the first run
                 if (GlobalParam.m_random || GlobalParam.simulatedRuns == 0)
                 {
                     GlobalParam.terrain_map[i, j] = Biome(data[i, j], moisture[i, j]);
                     //Terrain_obj b = Objects(data[i, j], moisture[i, j]);
                     GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
 
-                    //if shelter count is zero, spawn in a shelter at a random location
+                    //if shelter count is zero, force spawn in a shelter at a random location
                     if(shelter_count == 0)
                     {
                         int x = UnityEngine.Random.Range(0, GlobalParam.max_height-1);
                         int z = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
-
+                        //Loop to check if the tile is accessible or not
                         while (!accessible[x, z])
                         {
                             x = UnityEngine.Random.Range(0, GlobalParam.max_height - 1);
@@ -295,31 +259,21 @@ public class TerrainGen : MonoBehaviour
                         shelter_count++;
                     }
                 }
-                //No matter if its random or not, have to populate the data
-                //if(GlobalParam.simulatedRuns == 0)
-                //{
-                //    GlobalParam.terrain_map[i, j] = Biome(data[i, j], moisture[i, j]);
-                //    //Terrain_obj b = Objects(data[i, j], moisture[i, j]);
-                //    GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
-                //}
 
 
-
+                //Get the position te prepare for instantiating
                 Vector3 pos = new Vector3(i, (int)(data[i, j] * 10.0f), j);
                 switch (GlobalParam.terrain_map[i,j])
                 {
                     case Terrain_cus.WATER:
                         //Only water would make the path inaccessible
                         accessible[i, j] = false;
-                        //traversal[i, j] = 0;
                         Instantiate(water_prefab, pos, Quaternion.identity);
                         break;
                     case Terrain_cus.SAND:
                         Instantiate(sand_prefab, pos, Quaternion.identity);
                         break;
                     case Terrain_cus.GRASS:
-                        
-
                         Instantiate(grass_prefab, pos, Quaternion.identity);
 
                         break;
@@ -330,27 +284,8 @@ public class TerrainGen : MonoBehaviour
 
                 }
 
-                if (GlobalParam.m_random || simulatedRuns==0)
-                {
-                    //if shelter count is zero, spawn in a shelter at a random location
-                    if (shelter_count == 0)
-                    {
-                        int x = UnityEngine.Random.Range(0, 127);
-                        int z = UnityEngine.Random.Range(0, 127);
-
-                        while (!accessible[x, z])
-                        {
-                            x = UnityEngine.Random.Range(0, 127);
-                            z = UnityEngine.Random.Range(0, 127);
-                        }
-
-                        GlobalParam.terrain_objs[x, z] = Terrain_obj.SHELTER;
-                        shelter_count++;
-                    }
-                }
-
                 
-
+                //Instantiating objects
                 switch (GlobalParam.terrain_objs[i, j])
                 {
                     case Terrain_obj.TREE:
@@ -367,236 +302,27 @@ public class TerrainGen : MonoBehaviour
             }
         }
     }
-    
-
-    //reference
-    //https://www.enjoyalgorithms.com/blog/flood-fill-problem
-    //void floodfill()
-    //{
-
-    //    //Change to 8 direction checks as 4 direction could not handle diagonals
-    //    //That was the issue
-    //    int[] offsetx = new int[] { -1, 1, 0, 0, -1, -1, 1, 1 };
-    //    int[] offsetz = new int[] { 0, 0, -1, 1, -1, 1, -1, 1 };
-    //    //int[] offsets = new int[] { -1, 0, 1, 0, -1 };
-
-    //    Queue<(int x, int z)> queue = new Queue<(int x, int z)>();
-
-    //    //Find the first value tile to start the floodfill
-    //    for(int i=0; i< GlobalParam.max_width; i++)
-    //    {
-    //        for(int j=0; j< GlobalParam.max_height; j++)
-    //        {
-    //            if (traversal[i,j] != 0)
-    //            {
-    //                queue.Enqueue(new(i, j));
-    //                break;
-    //            }
-    //        }
-    //        break;
-    //    }
-
-    //    //The actual queue for floodfill
-    //    while (queue.Count > 0)
-    //    {
-            
-    //        (int x, int z) = queue.Dequeue();
-
-    //        if (traversal[x, z] == 2)
-    //        {
-    //            continue;
-    //        }
-
-    //        if (traversal[x,z] != 0)
-    //        {
-    //            traversal[x, z] = 2;
-    //        }
-             
-
-            
-    //        for(int k = 0; k < offsetx.Length; k++)
-    //        {
-    //            int curr_x = x + offsetx[k];
-    //            int curr_z = z + offsetz[k];
-    //            if (curr_x >=0 && curr_x < GlobalParam.max_width && curr_z >=0 && curr_z < GlobalParam.max_height
-    //                && traversal[curr_x, curr_z] == 1)
-    //            {
-    //                queue.Enqueue(new(curr_x, curr_z));
-    //            }
-    //        }
-                
-            
-            
-    //    }
-
-
-
-
-    //}
-
-    //bool CheckUnreachable(ref int x, ref int z)
-    //{
-    //    for(int i=0; i< GlobalParam.max_width; i++)
-    //    {
-    //        for(int j =0; j < GlobalParam.max_height; j++)
-    //        {
-    //            if (traversal[i,j] == 1)
-    //            {
-    //                x = i;
-    //                z = j;
-    //                return true;
-    //            }
-    //        }
-    //    }
-        
-    //    return false;
-    //}
-
-    //bool checkreach(int x, int z)
-    //{
-    //    int[] offsets = new int[] { -1, 0, 1, 0, -1 };
-
-    //    for(int i=0; i< offsets.Length -1; i++)
-    //    {
-    //        if (x + offsets[i] >= 0 && x + offsets[i] < GlobalParam.max_width
-
-    //                && z + offsets[i + 1] >= 0 && z + offsets[i + 1] < GlobalParam.max_height &&
-
-    //                traversal[x + offsets[i], z + offsets[i + 1]] == 1)
-
-    //        {
-    //            return true;
-    //        }
-    //    }
-
-    //    return false;
-    //}
-
-    //void Buildabridge(ref int x, ref int z)
-    //{
-    //    //use bfs to traverse and build a bridge
-
-    //    //int[] offsetx = new int[] { -1, 1, 0, 0, -1, -1, 1, 1 };
-    //    //int[] offsetz = new int[] { 0, 0, -1, 1, -1, 1, -1, 1 };
-    //    int[] offsets = new int[] { -1, 0, 1, 0, -1 };
-
-    //    Queue<(int x, int z)> queue = new Queue<(int x, int z)>();
-
-    //    //List<(int x, int z)> inqueue = new List<(int x, int z)>();
-
-    //    queue.Enqueue(new(x, z));
-    //    //inqueue.Add(new(x, z));
-
-    //    if (traversal[x, z] == 0)
-    //    {
-    //        traversal[x, z] = 3;
-    //    }
-
-    //    while (queue.Count > 0)
-    //    {
-    //        (int ux, int uz) = queue.Dequeue();
-
-    //        bool reach = checkreach(ux , uz);
-
-    //        if (reach)
-    //        {
-    //            Vector3 pos = new Vector3(ux, ((int)data[ux, uz]), uz);
-    //            Instantiate(snow_prefab, pos, Quaternion.identity);
-    //            break;
-    //        }
-
-    //        //if (traversal[ux, uz] == 0)
-    //        //{
-    //        //traversal[ux, uz] = 3;
-
-    //        //}
-    //        Vector3 pos2 = new Vector3(ux, ((int)data[ux, uz]), uz);
-    //        Instantiate(snow_prefab, pos2, Quaternion.identity);
-
-    //        // bool add = true;
-    //        for (int i = 0; i < offsets.Length - 1; i++)
-
-    //        {
-
-    //            if (ux + offsets[i] >= 0 && ux + offsets[i] < GlobalParam.max_width
-
-    //                && uz + offsets[i + 1] >= 0 && uz + offsets[i + 1] < GlobalParam.max_height &&
-
-    //                traversal[ux + offsets[i], uz + offsets[i + 1]] == 0)
-
-    //            {
-    //                traversal[ux + offsets[i], uz + offsets[i+1]] = 3;
-    //                //traversal[x, z] = 2;
-
-
-    //                queue.Enqueue(new(ux + offsets[i], uz + offsets[i + 1]));
-    //                break;
-
-    //            }
-
-    //        }
-    //    }
-    //}
 
     void Awake(){ // awake
         
-
+        //Check if rnadom toggle is on
         if (m_random)
         {
+            //Shuffle the permuatation array if it is on
             Randomize_permutation();
             
         }
         GenerateRandomMap();
 
         InstantiateTerrain();
-        //UnityEngine.Debug.Log("THIS IS THE OUTPUT!!!!\n");
-
-        //floodfill();
-
-        //int unreachable_x = 0;
-        //int unreachable_z = 0;
-
-        //if (CheckUnreachable(ref unreachable_x, ref unreachable_z))
-        //{
-        //    UnityEngine.Debug.Log("UNREACHABLE");
-        //    Buildabridge(ref unreachable_x, ref unreachable_z);
-        //}
+       
 
     }
-
-    private string filepath;
 
 
     void Start()
     {
-        //UnityEngine.Debug.Log("START OF TERRAINGEN"); // ?????
-        // note: can probably invoke pathfinding here to test out terrain validity...?
-        //Flood fill works now but now to build the actual bridge
-
-        //Honestly maybe can just merge the start and awake for this as I dont really need pathfinding?
-        //ok merge the start and awake to just build a completed map instead.
-        //floodfill();
-
-        //FOR DEBUG, CAN REMOVE ONCE ITS STABLE
-        //______________________________________________________________
-
-        //filepath = "C:/Users/Lemin/Documents/TerrainGen.txt";
-
-        //string output = "";
-        //for (int i = 0; i < GlobalParam.max_width; i++)
-        //{
-
-        //    output += "| ";
-        //    for (int j = 0; j < GlobalParam.max_height; j++)
-        //    {
-
-        //        output += traversal[i, j] + " ";
-        //    }
-
-        //    output += "|\n";
-        //}
-        //System.IO.File.AppendAllText(filepath, output);
-        //________________________________________________________________
+        //Empty for now
 
     }
 
