@@ -34,7 +34,7 @@ public class HumanBehaviour : MonoBehaviour
     public float safetyRegen = 1.0f;
 
     public float repathTimer = 0.0f;
-    public float repathInterval = 1.0f;
+    public float repathInterval = 0.5f;
 
     private GameObject huntTarget;
     public float eatDistance = 5.0f;
@@ -47,7 +47,7 @@ public class HumanBehaviour : MonoBehaviour
     private int huntPathFailures = 0;
     private const int maxHuntPathFailures = 3;
 
-    public enum HumanState { None, Wandering, Hunting, SeekingShelter, Sheltering, Sleeping, Idling }
+    public enum HumanState { None, Wandering, Hunting, SeekingShelter, Sheltering, Sleeping } // Idling
     [SerializeField] private HumanState currentState = HumanState.None;
 
     private Vector3 currentShelterTarget;
@@ -64,7 +64,7 @@ public class HumanBehaviour : MonoBehaviour
         switch (currentState)
         {
             case HumanState.Wandering: return "Wandering";
-            case HumanState.Idling: return "Idling";
+            //case HumanState.Idling: return "Idling";
             case HumanState.Hunting: return "Hunting";
             case HumanState.SeekingShelter: return "Seeking Shelter";
             case HumanState.Sheltering: return "Sheltering";
@@ -238,6 +238,7 @@ public class HumanBehaviour : MonoBehaviour
         float closestDist = float.MaxValue;
         target = null;
 
+        if (SpawnManager.Instance.passiveMobs.Count <= 0) return false; // skip if no passive mobs at all
         foreach (var mob in SpawnManager.Instance.passiveMobs)
         {
             Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
@@ -280,24 +281,24 @@ public class HumanBehaviour : MonoBehaviour
         }
     }
 
-    private NodeResult Idle()
-    {
-        //UnityEngine.Debug.Log("human is trying to idle");
-        if (currentState != HumanState.Idling)
-        {
-            currentState = HumanState.Idling;
-            idleTime = UnityEngine.Random.Range(1.0f, 5.0f);
-        }
+    //private NodeResult Idle()
+    //{
+    //    //UnityEngine.Debug.Log("human is trying to idle");
+    //    if (currentState != HumanState.Idling)
+    //    {
+    //        currentState = HumanState.Idling;
+    //        idleTime = UnityEngine.Random.Range(1.0f, 5.0f);
+    //    }
 
-        if (idleTime <= 0.0f)
-        { // return success if idling done
-            //UnityEngine.Debug.Log("human has idled long enough");
-            currentState = HumanState.None;
-            return NodeResult.Success;
-        }
+    //    if (idleTime <= 0.0f)
+    //    { // return success if idling done
+    //        //UnityEngine.Debug.Log("human has idled long enough");
+    //        currentState = HumanState.None;
+    //        return NodeResult.Success;
+    //    }
 
-        return NodeResult.Running;
-    }
+    //    return NodeResult.Running;
+    //}
 
     private NodeResult Sleep()
     {
@@ -401,7 +402,7 @@ public class HumanBehaviour : MonoBehaviour
         }
 
         currentState = HumanState.Sheltering;
-        return NodeResult.Running;
+        return NodeResult.Success;
     }
 
     private void Die()

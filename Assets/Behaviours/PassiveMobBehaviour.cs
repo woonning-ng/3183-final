@@ -13,7 +13,7 @@ public class PassiveMobBehaviour : MonoBehaviour
     bool canCull = false;        // for system to cull it
 
     // actions: wander, idle, die
-    public enum MobState { Wandering, Idling, Dying }
+    public enum MobState { None, Wandering, Idling }
     [SerializeField] private MobState currentState;
 
     public float idleTime = 5.0f;

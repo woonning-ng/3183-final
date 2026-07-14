@@ -4260,7 +4260,6 @@ MonoBehaviour:
   snow_prefab: {fileID: 6654256606769088257, guid: 8a57bd9af350ff34b91dbc9926b01b93, type: 3}
   tree_prefab: {fileID: 5374019932645976786, guid: ab66aa37e4845414199393a5ceefc272, type: 3}
   shelter_prefab: {fileID: 8182366381297779794, guid: 8974ed13ccef08246ad6392c60190f25, type: 3}
-  pathfinding: {fileID: 0}
 --- !u!114 &1273906578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8343,6 +8342,14 @@ PrefabInstance:
       propertyPath: grid
       value: 
       objectReference: {fileID: 1957155138}
+    - target: {fileID: 1995799805820321593, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+      propertyPath: repathTimer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1995799805820321593, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
+      propertyPath: repathInterval
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1995799805820321593, guid: 5e0973de0ddfa0043b96eb066b47c590, type: 3}
       propertyPath: hungerDecayRate
       value: 1
