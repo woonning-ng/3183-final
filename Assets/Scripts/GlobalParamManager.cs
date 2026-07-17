@@ -23,6 +23,7 @@ using UnityEngine.Assertions.Must;
 
 //If we want, the GlobalParamManager can be converted to singleton and use DontDestroyOnLoad
 
+
 public static class GlobalParam
 {
     public static bool m_random = true;
@@ -60,6 +61,11 @@ public class GlobalParamManager : MonoBehaviour
     public Camera m_camera;
 
     [SerializeField] private TextMeshProUGUI SimRunsText;
+
+    //Values can be edited in editor
+    [SerializeField] private float grassWeight = 1.0f;
+    [SerializeField] private float sandWeight = 2.0f;
+    [SerializeField] private float snowWeight = 3.0f;
 
     public int GetSimRuns() { return GlobalParam.simulatedRuns; }
 
