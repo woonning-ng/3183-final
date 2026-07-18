@@ -201,18 +201,25 @@ public class HumanBehaviour : MonoBehaviour
     // Human's Hunt action node
     private NodeResult Hunt()
     {
+        // if there is currently no hunt target, try to find one. if fail, return Failure and let
+        // the human's BT fall to the next node in the list.
         if (huntTarget == null && !TryFindHuntTarget(out huntTarget))
             return NodeResult.Failure;
 
+        // otherwise, set the human's current state to Hunting and invalidate its shelter target
         currentState = HumanState.Hunting;
         currentShelterTarget = NoShelter;
 
+        // calculate the flat distance between the human and the found target
         Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
         Vector3 flatMob = new Vector3(huntTarget.transform.position.x, 0.0f, huntTarget.transform.position.z);
         float dist = Vector3.Distance(flatHuman, flatMob);
 
+        // if the human is within range of the mob
         if (dist <= eatDistance)
         {
+            // restore the human.s hunger, mark the mob as dead, invalidate the human's hunt target
+            // and reset huntPathFailures to 0 for the next execution, and return Success
             hunger = Mathf.Min(hunger + hungerRestoreAmount, maxHunger);
             huntTarget.GetComponent<PassiveMobBehaviour>().MarkDead();
             huntTarget = null;
@@ -220,14 +227,18 @@ public class HumanBehaviour : MonoBehaviour
             return NodeResult.Success;
         }
 
+        // periodically repath towards the mob
         repathTimer -= SimulationManager.Instance.GetDNC().SimDeltaTime;
         if (repathTimer <= 0f)
         {
+            // sometimes the target might become unreachable, so there is a need to time out
             bool reachable = pathfinding.TrySetGoal(huntTarget.transform.position);
             repathTimer = repathInterval;
 
             if (!reachable)
             {
+                // if cannot reach, increment huntPathFailures. and if the maximum has been
+                // reached, invalidate the hunt target, set huntPathFailures to 0 and return Failure.
                 huntPathFailures++;
                 if (huntPathFailures >= maxHuntPathFailures)
                 {
@@ -238,44 +249,55 @@ public class HumanBehaviour : MonoBehaviour
             }
             else
             {
+                // reset huntPathFailures so that the human can continue properly pahtfinding twds mob
                 huntPathFailures = 0;
             }
         }
 
+        // return Running - still in progress
         return NodeResult.Running;
     }
 
+    // Helper function to determine if a Zombie is currently near the Human.
     private bool ZombieNearby()
     {
+        // set closest distance to max
         float closestDist = float.MaxValue;
 
-        if (SpawnManager.Instance.zombies.Count <= 0) return false; // BRO
+        // if there are no zombies present then return false
+        if (SpawnManager.Instance.zombies.Count <= 0) return false;
+
+        // iterate throught list of zombies in SpawnMAnager's Zombie list
         foreach (var mob in SpawnManager.Instance.zombies)
         {
+            // Flat position checking to see if the human is near any zombie
             Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
             Vector3 flatZombie = new Vector3(mob.transform.position.x, 0.0f, mob.transform.position.z);
 
             float dist = Vector3.Distance(flatHuman, flatZombie);
+
+            // update dist if zombie was closer
             if (dist < closestDist) closestDist = dist;
         }
 
+        // return boolean denoting if the closest distance found is smaller than the detection radius
+        // aka a zombie is in range of the human
         return closestDist <= zombieDetectionRadius;
     }
 
+    // Mark human as dead
     private void Die()
     {
         isDead = true;
     }
 
+    // Human's Sleep action node
     private NodeResult Sleep()
     {
-        // currentState is already Sleeping by the time this runs (set in TickStats)
         float dt = SimulationManager.Instance.GetDNC().SimDeltaTime;
-        bool night = SimulationManager.Instance.GetDNC().IsNight();
-        float before = energy;
+
+        // regernate human's energy, set its state to sleeping and invalidate shelter and hunt targets again
         energy = Mathf.Min(energy + sleepEnergyRegen * dt, maxEnergy);
-        //UnityEngine.Debug.Log("the human is sleeping");
-        //Debug.Log($"[Sleep] night={night} dt={dt} before={before} after={energy}");
 
         currentState = HumanState.Sleeping;
         currentShelterTarget = NoShelter; huntTarget = null;
@@ -290,6 +312,7 @@ public class HumanBehaviour : MonoBehaviour
         return NodeResult.Running;
     }
 
+    // Helper function to pick a random tile for human to wander towards
     private bool TryGetRandomWalkableTile(out GridPos result)
     {
         for (int i = 0; i < maxPlacementAttempts; i++)
@@ -309,27 +332,28 @@ public class HumanBehaviour : MonoBehaviour
         return false;
     }
 
+    // Human's Wander action node
     private NodeResult Wander()
     {
-        //UnityEngine.Debug.Log("human is trying to wander");
-        // if not already wandering, set and find goal
+        // If the Human is not already wandering, set and find goal.
+        // If a valid walktable tile is found, set the Human's Pathfinding component's
+        // goal to the obtained goal position.
         if (currentState != HumanState.Wandering)
         {
             currentState = HumanState.Wandering;
             if (TryGetRandomWalkableTile(out GridPos goalPos))
-            {
                 pathfinding.SetGoal(grid.Get_WorldPos(goalPos));
-            }
         }
 
+        // Query the Pathfinding component and see if the Human has arrived at its destination.
+        // If no, still in progress, so return Running. Otherwise, return Success.
         if (!pathfinding.HasArrived)
         {
             return NodeResult.Running;
         }
         else
         {
-            //UnityEngine.Debug.Log("human has reached");
-            currentState = HumanState.None;
+            currentState = HumanState.None; // set human state back to none for fresh reroll
             return NodeResult.Success;
         }
     }
