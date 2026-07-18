@@ -23,14 +23,36 @@ using UnityEngine.Assertions.Must;
 
 //If we want, the GlobalParamManager can be converted to singleton and use DontDestroyOnLoad
 
-public struct HumanBTAttributes { 
+[System.Serializable]
+public struct HumanBTAttributes {
+    float MaxHunger; float MaxEnergy; float MaxSafety;
+    float SafetyPriorityThreshold;
+    float HungerHuntThreshold;
 
+    float HungerDecayRate;
+    float NightSafetyDecay;
+    float EnergyDecayRate;
+
+    float ShelterEnergyRegen;
+    float ShelterSafetyRegen;
+
+    float SleepEnergyRegen;
+    float SafetyRegen;
+
+    float NightZombieSafetyMultiplier;
+    float HungerRestoreAmount;
+    float ZombieDetectionRadius;
+
+    float RepathInterval;
+    float EatDistance;
 }
 
-public struct ZombieBTAttributes { 
-
+[System.Serializable]
+public struct ZombieBTAttributes {
+    float MaxIdleTime; 
 }
 
+[System.Serializable]
 public struct PassiveMobBTAttributes { 
 
 }
@@ -82,6 +104,8 @@ public class GlobalParamManager : MonoBehaviour
     [SerializeField] private float grassWeight = 1.0f;
     [SerializeField] private float sandWeight = 2.0f;
     [SerializeField] private float snowWeight = 3.0f;
+
+    [SerializeField] 
 
     public int GetSimRuns() { return GlobalParam.simulatedRuns; }
 
