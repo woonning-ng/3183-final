@@ -296,7 +296,7 @@ public class HumanBehaviour : MonoBehaviour
     {
         float dt = SimulationManager.Instance.GetDNC().SimDeltaTime;
 
-        // regernate human's energy, set its state to sleeping and invalidate shelter and hunt targets again
+        // regenerate human's energy, set its state to sleeping and invalidate shelter and hunt targets again
         energy = Mathf.Min(energy + sleepEnergyRegen * dt, maxEnergy);
 
         currentState = HumanState.Sleeping;
@@ -330,6 +330,17 @@ public class HumanBehaviour : MonoBehaviour
 
         result = default;
         return false;
+    }
+
+    // Helper function to determine the energy decrease in the present moment based on terrain difficulty
+    private float GetTerrainTraversalDifficulty() {
+        Terrain_cus terrainType = GlobalParam.terrain_map[(int)transform.position.x, (int)transform.position.z];
+
+        // uh i will update this to the proper vars later so using temp vals for now
+        return terrainType == Terrain_cus.GRASS ? 1.0f :
+            terrainType == Terrain_cus.SAND ? 2.0f :
+            terrainType == Terrain_cus.SNOW ? 3.0f :
+            1.0f;
     }
 
     // Human's Wander action node
@@ -458,10 +469,12 @@ public class HumanBehaviour : MonoBehaviour
         // IsSafe = human is already in shelter
         bool isSafe = currentState == HumanState.Sheltering;
 
-        // if Human isn't sleeping OR in the shelter, initiate constant decrease for Energy
+        // if Human isn't sleeping OR in the shelter, initiate decrease for Energy
         if (currentState != HumanState.Sleeping && !isSafe)
         {
-            energy -= energyDecayRate * dt;
+            // apply a modifier for the terrain tile the human is currently on
+            energy -= energyDecayRate * GetTerrainTraversalDifficulty() * dt;
+            //UnityEngine.Debug.Log("current terrain traversal diff " + GetTerrainTraversalDifficulty());
             energy = Mathf.Max(energy, 0f);
         }
 
