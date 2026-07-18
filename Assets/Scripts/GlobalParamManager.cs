@@ -68,8 +68,12 @@ public static class GlobalParam
     public static bool m_frequency = true;
     public static bool m_octave = true;
     public static bool m_ridge = true;
-    //public static List<Terrain_cus> terrain_map;
-    //public static List<>
+    
+    public static float m_grassWeight = 1.0f;
+    public static float m_sandWeight = 2.0f;
+    public static float m_snowWeight = 3.0f;
+
+
     public static int max_width = 128;
     public static int max_height = 128;
 
@@ -172,6 +176,10 @@ public class GlobalParamManager : MonoBehaviour
             GlobalParam.showDeadPopup = false;
         }
 
+        grassWeight = GlobalParam.m_grassWeight;
+        sandWeight = GlobalParam.m_sandWeight;
+        snowWeight = GlobalParam.m_snowWeight;
+
         GlobalParam.simulatedRuns++; // just testing
 
         m_camera.GetComponent<CameraSystem>().SetMode(GlobalParam.cameraMode);
@@ -243,6 +251,13 @@ public class GlobalParamManager : MonoBehaviour
         {
             GlobalParam.showDeadPopup = false;
         }
+        
+       
+        GlobalParam.m_grassWeight = grassWeight;
+        
+        GlobalParam.m_sandWeight = sandWeight;
+   
+        GlobalParam.m_snowWeight = snowWeight;
 
         SimRunsText.text = GetSimRuns().ToString();
 
