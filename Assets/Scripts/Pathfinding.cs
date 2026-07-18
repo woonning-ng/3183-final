@@ -34,6 +34,8 @@ public class Pathfinding : MonoBehaviour
 
     public bool HasArrived => currentWaypointIndex >= currentPath.Count;
 
+    public void SetMovementSpeed(float speed) { moveSpeed = speed; }
+
     private void Awake()
     {
         if (grid == null)

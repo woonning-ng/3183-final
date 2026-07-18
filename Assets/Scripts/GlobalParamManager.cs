@@ -24,45 +24,47 @@ using UnityEngine.Assertions.Must;
 //If we want, the GlobalParamManager can be converted to singleton and use DontDestroyOnLoad
 
 [System.Serializable]
-public struct HumanBTAttributes {
-    float MaxHunger; float MaxEnergy; float MaxSafety;
-    float SafetyPriorityThreshold;
-    float HungerHuntThreshold;
+public class HumanBTAttributes {
+    public float MaxHunger = 100.0f; 
+    public float MaxEnergy = 100.0f; 
+    public float MaxSafety = 100.0f;
+    public float SafetyPriorityThreshold = 20.0f;
+    public float HungerHuntThreshold = 60.0f;
 
-    float HungerDecayRate;
-    float NightSafetyDecay;
-    float EnergyDecayRate;
+    public float HungerDecayRate = 0.5f;
+    public float NightSafetyDecay = 1.0f;
+    public float EnergyDecayRate = 1.0f;
 
-    float ShelterEnergyRegen;
-    float ShelterSafetyRegen;
+    public float ShelterEnergyRegen = 3.0f;
+    public float ShelterSafetyRegen = 3.0f;
 
-    float SleepEnergyRegen;
-    float SafetyRegen;
+    public float SleepEnergyRegen = 1.5f;
+    public float SafetyRegen = 1.0f;
 
-    float NightZombieSafetyMultiplier;
-    float HungerRestoreAmount;
-    float ZombieDetectionRadius;
+    public float NightZombieSafetyMultiplier = 2.0f;
+    public float HungerRestoreAmount = 20.0f;
+    public float ZombieDetectionRadius = 20.0f;
 
-    float RepathInterval;
-    float EatDistance;
+    public float RepathInterval = 0.5f;
+    public float EatDistance = 5.0f;
 
-    float MoveSpeed;
+    public float MoveSpeed = 20.0f;
 }
 
 [System.Serializable]
-public struct ZombieBTAttributes {
-    float MaxIdleTime;
-    float DefaultChaseTime;
-    float DefaultChaseCooldown;
-    float RepathInterval;
-    float HumanDetectionRadius;
-    float MoveSpeed;
+public class ZombieBTAttributes {
+    public float MaxIdleTime = 5.0f;
+    public float DefaultChaseTime = 5.0f;
+    public float DefaultChaseCooldown = 4.0f;
+    public float RepathInterval = 5.0f;
+    public float HumanDetectionRadius = 55.0f;
+    public float MoveSpeed = 15.0f;
 }
 
 [System.Serializable]
-public struct PassiveMobBTAttributes {
-    float MaxIdleTime;
-    float MoveSpeed;
+public class PassiveMobBTAttributes {
+    public float MaxIdleTime = 5.0f;
+    public float MoveSpeed = 10.0f;
 }
 
 
@@ -118,8 +120,8 @@ public class GlobalParamManager : MonoBehaviour
     [SerializeField] private float snowWeight = 3.0f;
 
     [SerializeField] public HumanBTAttributes m_human_bt_atts;
-    [SerializeField]  public ZombieBTAttributes m_zombie_bt_atts;
-    [SerializeField]  public PassiveMobBTAttributes m_passivemob_bt_atts;
+    [SerializeField] public ZombieBTAttributes m_zombie_bt_atts;
+    [SerializeField] public PassiveMobBTAttributes m_passivemob_bt_atts;
 
     public int GetSimRuns() { return GlobalParam.simulatedRuns; }
 
@@ -183,6 +185,10 @@ public class GlobalParamManager : MonoBehaviour
         grassWeight = GlobalParam.m_grassWeight;
         sandWeight = GlobalParam.m_sandWeight;
         snowWeight = GlobalParam.m_snowWeight;
+
+        m_human_bt_atts = GlobalParam.human_bt_globals;
+        m_zombie_bt_atts = GlobalParam.zombie_bt_globals;
+        m_passivemob_bt_atts = GlobalParam.passivemob_bt_globals;
 
         GlobalParam.simulatedRuns++; // just testing
 
@@ -260,6 +266,11 @@ public class GlobalParamManager : MonoBehaviour
         GlobalParam.m_grassWeight = grassWeight;
         GlobalParam.m_sandWeight = sandWeight;
         GlobalParam.m_snowWeight = snowWeight;
+
+        // constantly update this one
+        GlobalParam.human_bt_globals = m_human_bt_atts;
+        GlobalParam.zombie_bt_globals = m_zombie_bt_atts;
+        GlobalParam.passivemob_bt_globals = m_passivemob_bt_atts;
 
         SimRunsText.text = GetSimRuns().ToString();
 

@@ -19,12 +19,12 @@ public class ZombieBehaviour : MonoBehaviour
     public float maxIdleTime = 5.0f; // how long should zombie idle for
 
     // Zombie Chase Time
-    public float zombieChaseTimer = 5.0f;           // current chase time
-    public float zombieChaseCurrentDuration = 5.0f; // how long should zombie chase human for
+    public float zombieChaseTimer = 5.0f;           // how long should zombie chase human for
+    public float zombieChaseCurrentDuration = 5.0f; // current chase time 
 
     // Zombie Chase Cooldown
-    public float zombieChaseCooldown = 4.0f;        // current chase cooldown
-    public float zombieChaseCurrentCooldown = 4.0f; // how long should zombie's chase cooldown for
+    public float zombieChaseCooldown = 4.0f;        // how long should zombie's chase cooldown for 
+    public float zombieChaseCurrentCooldown = 4.0f; // current chase cooldown
 
     // Zombie's repathing attribtues
     public float repathTimer = 0.0f;      // current repath time
@@ -36,6 +36,21 @@ public class ZombieBehaviour : MonoBehaviour
 
     // one-time call to set stats from global params manager
     bool firstTimeInit = false;
+
+    // ---------------------------- GLOBAL PARAM INITIALISATION ----------------------------
+    public void InitialiseVariablesFromGlobalParams()
+    {
+        // first initialise the items THIS script needs
+        maxIdleTime = GlobalParam.zombie_bt_globals.MaxIdleTime;
+        zombieChaseTimer = GlobalParam.zombie_bt_globals.DefaultChaseTime;
+        zombieChaseCooldown = GlobalParam.zombie_bt_globals.DefaultChaseCooldown;
+
+        repathInterval = GlobalParam.zombie_bt_globals.RepathInterval;
+        humanDetectionRadius = GlobalParam.zombie_bt_globals.HumanDetectionRadius;
+
+        // then initialise movement speed for the pathfinding obj
+        GetComponent<Pathfinding>().SetMovementSpeed(GlobalParam.zombie_bt_globals.MoveSpeed);
+    }
 
     // ---------------------------- ACTIONS ----------------------------
     // Helper function to determine if Zombie is currently near the Human
@@ -185,6 +200,7 @@ public class ZombieBehaviour : MonoBehaviour
             //UnityEngine.Debug.Log("calling first time instantiate for a chungy");
 
             // initialise global param stats here
+            InitialiseVariablesFromGlobalParams();
         }
 
         // Simplified TickStats() for Zombie

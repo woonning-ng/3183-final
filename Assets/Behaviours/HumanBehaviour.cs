@@ -72,6 +72,37 @@ public class HumanBehaviour : MonoBehaviour
     private bool cachedIsNight;
     private bool cachedIsHungry;
 
+    // ---------------------------- GLOBAL PARAM INITIALISATION ----------------------------
+    public void InitialiseVariablesFromGlobalParams() {
+        // first initialise the items THIS script needs
+        maxHunger = GlobalParam.human_bt_globals.MaxHunger;
+        maxEnergy = GlobalParam.human_bt_globals.MaxEnergy;
+        maxSafety = GlobalParam.human_bt_globals.MaxSafety;
+
+        safetyPriorityThreshold = GlobalParam.human_bt_globals.SafetyPriorityThreshold;
+        hungerHuntThreshold = GlobalParam.human_bt_globals.HungerHuntThreshold;
+
+        hungerDecayRate = GlobalParam.human_bt_globals.HungerDecayRate;
+        nightSafetyDecay = GlobalParam.human_bt_globals.NightSafetyDecay;
+        energyDecayRate = GlobalParam.human_bt_globals.EnergyDecayRate;
+
+        shelterEnergyRegen = GlobalParam.human_bt_globals.ShelterEnergyRegen;
+        shelterSafetyRegen = GlobalParam.human_bt_globals.ShelterSafetyRegen;
+
+        sleepEnergyRegen = GlobalParam.human_bt_globals.SleepEnergyRegen;
+        safetyRegen = GlobalParam.human_bt_globals.SafetyRegen;
+
+        nightZombieSafetyMultiplier = GlobalParam.human_bt_globals.NightZombieSafetyMultiplier;
+        hungerRestoreAmount = GlobalParam.human_bt_globals.HungerRestoreAmount;
+        zombieDetectionRadius = GlobalParam.human_bt_globals.ZombieDetectionRadius;
+
+        repathInterval = GlobalParam.human_bt_globals.RepathInterval;
+        eatDistance = GlobalParam.human_bt_globals.EatDistance;
+
+        // then initialise movement speed for the pathfinding obj
+        GetComponent<Pathfinding>().SetMovementSpeed(GlobalParam.human_bt_globals.MoveSpeed);
+    }
+
     // ---------------------------- QUERIES ----------------------------
     // Query if human is dead
     public bool IsHumanDead() { return isDead; }
@@ -420,6 +451,7 @@ public class HumanBehaviour : MonoBehaviour
             firstTimeInit = false;
 
             // also initialise the stats from global params here
+            InitialiseVariablesFromGlobalParams();
         }
 
         // Ignore Update() if human is dead

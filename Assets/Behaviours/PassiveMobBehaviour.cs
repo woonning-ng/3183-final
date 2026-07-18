@@ -24,6 +24,16 @@ public class PassiveMobBehaviour : MonoBehaviour
     // one-time call to set stats from global params manager
     bool firstTimeInit = false;
 
+    // ---------------------------- GLOBAL PARAM INITIALISATION ----------------------------
+    public void InitialiseVariablesFromGlobalParams()
+    {
+        // first initialise the items THIS script needs
+        maxIdleTime = GlobalParam.passivemob_bt_globals.MaxIdleTime;
+
+        // then initialise movement speed for the pathfinding obj
+        GetComponent<Pathfinding>().SetMovementSpeed(GlobalParam.passivemob_bt_globals.MoveSpeed);
+    }
+
     // ---------------------------- QUERIES ----------------------------
     // Query if mob is dead (should it be culled)
     public bool IsDead() { return markedForDeath; }
@@ -125,6 +135,7 @@ public class PassiveMobBehaviour : MonoBehaviour
             firstTimeInit = false;
 
             // initialise global param stats here
+            InitialiseVariablesFromGlobalParams();
         }
 
         // Ignore Update() if mob is Dead
