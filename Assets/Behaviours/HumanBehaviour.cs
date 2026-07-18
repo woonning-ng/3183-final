@@ -64,8 +64,8 @@ public class HumanBehaviour : MonoBehaviour
     private Vector3 currentShelterTarget;                                   // GO to move towards for Shelter
     private static readonly Vector3 NoShelter = new Vector3(-1, -1, -1);    // special case: Shelter is invalid
 
-    // one-time call to place the human at a suitable location
-    bool placeHuman = false;
+    // one-time call to place the human at a suitable location AND set stats from global params manager
+    bool firstTimeInit = false;
 
     // Human's cached IsNight() and IsHungry()
     // cached once per frame so every branch of the tree + TickStats agree on the same snapshot
@@ -93,19 +93,24 @@ public class HumanBehaviour : MonoBehaviour
     }
 
     // ---------------------------- ACTIONS ----------------------------
-
+    // Helper function to pick a random shelter for human to pathfind towards
     private bool TryFindNearestShelter(out Vector3 shelter)
     {
+        // Get a list of all safe tiles from the Grid instance's Terrain Gen reference
         List<Vector3> shelters = Grid.Instance.terrainGen.GetAllSafe();
 
+        // Reset shelter and set closest distance to maximum
         shelter = NoShelter;
         float closestDist = float.MaxValue;
 
+        // Iterate through the list of shelters
         foreach (var hit in shelters)
         {
+            // Compare the flat distance between the human and the shelter
             Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
             Vector3 flatShelter = new Vector3(hit.x, 0.0f, hit.z);
 
+            // update shelter and the closest distance if a shelter was found (and is nearer)
             float dist = Vector3.Distance(flatHuman, flatShelter);
             if (dist < closestDist)
             {
@@ -114,31 +119,39 @@ public class HumanBehaviour : MonoBehaviour
             }
         }
 
-        UnityEngine.Debug.Log("human found shelter");
+        // return bool denoting if shelter was found
         return shelter != NoShelter;
     }
 
-    private bool AtShelter(Vector3 shelter, float arriveDistance = 1.5f)
+    // Helper function to determine if human is currently near a shelter
+    private bool AtShelter(Vector3 shelter, float arriveDistance = 1.5f) // default radius: 1.5f
     {
-        // pure query now — no side effects on currentState
+        // Flat position checking to see if the human is near te shelter
         Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
         Vector3 flatShelter = new Vector3(shelter.x, 0.0f, shelter.z);
+
         return Vector3.Distance(flatHuman, flatShelter) <= arriveDistance;
     }
 
+    // Human's Shelter action node
     private NodeResult Shelter()
     {
-        UnityEngine.Debug.Log("human is sheltering");
+        // if there is currently no shelter target, try to find the nearest target shelter for the human
         if (currentShelterTarget == NoShelter)
         {
+            // try to get current shelter target. if it fails, by the BT's setup,
+            // it falls through to Wander this same tick. Return Failure if so
             if (!TryFindNearestShelter(out currentShelterTarget))
-                return NodeResult.Failure; // falls through to Wander this same tick, cleanly
+                return NodeResult.Failure;
 
+            // set current state to seekingshelter
             currentState = HumanState.SeekingShelter;
         }
 
+        // if the human is not already at the current shelter target
         if (!AtShelter(currentShelterTarget))
         {
+            // set its state to seeking shelter again, and repath periodically towards the shelter
             currentState = HumanState.SeekingShelter;
 
             repathTimer -= SimulationManager.Instance.GetDNC().SimDeltaTime;
@@ -150,21 +163,29 @@ public class HumanBehaviour : MonoBehaviour
             return NodeResult.Running;
         }
 
+        // if we reached here it means that the human managed to find shelter, so set the
+        // proper state and return Success.
         currentState = HumanState.Sheltering;
         return NodeResult.Success;
     }
 
+    // Helper function to pick a random target for human to pathfind towards to hunt
     private bool TryFindHuntTarget(out GameObject target)
     {
+        // Reset closest dist and target
         float closestDist = float.MaxValue;
         target = null;
 
         if (SpawnManager.Instance.passiveMobs.Count <= 0) return false; // skip if no passive mobs at all
+
+        // Iterate through SpawnMAnager instance's passive mob list
         foreach (var mob in SpawnManager.Instance.passiveMobs)
         {
+            // Compare flat distance between human and passive mob
             Vector3 flatHuman = new Vector3(transform.position.x, 0.0f, transform.position.z);
             Vector3 flatMob = new Vector3(mob.transform.position.x, 0.0f, mob.transform.position.z);
 
+            // update target adn closest distance if a mob was fond (and is nearer)
             float dist = Vector3.Distance(flatHuman, flatMob);
             if (dist < closestDist)
             {
@@ -173,10 +194,11 @@ public class HumanBehaviour : MonoBehaviour
             }
         }
 
-        UnityEngine.Debug.Log("found a target? " + target == null);
+        // return bool denoting if target was found
         return target != null;
     }
 
+    // Human's Hunt action node
     private NodeResult Hunt()
     {
         if (huntTarget == null && !TryFindHuntTarget(out huntTarget))
@@ -252,7 +274,7 @@ public class HumanBehaviour : MonoBehaviour
         bool night = SimulationManager.Instance.GetDNC().IsNight();
         float before = energy;
         energy = Mathf.Min(energy + sleepEnergyRegen * dt, maxEnergy);
-        UnityEngine.Debug.Log("the dumbass human is sleeping");
+        //UnityEngine.Debug.Log("the human is sleeping");
         //Debug.Log($"[Sleep] night={night} dt={dt} before={before} after={energy}");
 
         currentState = HumanState.Sleeping;
@@ -289,7 +311,7 @@ public class HumanBehaviour : MonoBehaviour
 
     private NodeResult Wander()
     {
-        UnityEngine.Debug.Log("human is trying to wander");
+        //UnityEngine.Debug.Log("human is trying to wander");
         // if not already wandering, set and find goal
         if (currentState != HumanState.Wandering)
         {
@@ -311,25 +333,6 @@ public class HumanBehaviour : MonoBehaviour
             return NodeResult.Success;
         }
     }
-
-    //private NodeResult Idle()
-    //{
-    //    //UnityEngine.Debug.Log("human is trying to idle");
-    //    if (currentState != HumanState.Idling)
-    //    {
-    //        currentState = HumanState.Idling;
-    //        idleTime = UnityEngine.Random.Range(1.0f, 5.0f);
-    //    }
-
-    //    if (idleTime <= 0.0f)
-    //    { // return success if idling done
-    //        //UnityEngine.Debug.Log("human has idled long enough");
-    //        currentState = HumanState.None;
-    //        return NodeResult.Success;
-    //    }
-
-    //    return NodeResult.Running;
-    //}
 
     // ------------ AWAKE, START, UPDATE, TICKSTATS ------------
     private void Awake()
@@ -370,57 +373,68 @@ public class HumanBehaviour : MonoBehaviour
     private void Start()
     {
         if (grid == null) grid = Grid.Instance;
-        placeHuman = true;
+        firstTimeInit = true;
     }
 
     private void Update()
     {
-        if (placeHuman)
+        // First Time initialisation - for spawn position and global param stats
+        if (firstTimeInit)
         {
             transform.position = grid.TryGetValidSpawn();
-            placeHuman = false;
+            firstTimeInit = false;
 
             // also initialise the stats from global params here
         }
 
+        // Ignore Update() if human is dead
         if (isDead) return;
 
-        // snapshot the world once, so TickStats and every BT condition this frame see the same values
+        // Snapshot the world once, so TickStats and every BT condition this frame see the same values
         cachedIsNight = SimulationManager.Instance.GetDNC().IsNight();
         cachedIsHungry = hunger < hungerHuntThreshold;
 
+        // Human's TickStats()
         TickStats();
 
-        if (isDead) return; // hunger may have just killed us this frame
+        // Second IsDead check here due to TickStats -- human may have died of starvation this frame
+        if (isDead) return;
 
-        root.Tick();
-        pathfinding.Tick();
+        root.Tick();        // call Tick() on Root
+        pathfinding.Tick(); // call Tick() on Pathfinding, in case Human is currently pathfinding
     }
 
+    // Human's TickStats()
     private void TickStats()
     {
+        // Get the simulations's current delta time -- make same for all actions below that rely on timer
         float dt = SimulationManager.Instance.GetDNC().SimDeltaTime;
 
+        // Constant decrease for Hunger
         hunger -= hungerDecayRate * dt;
         hunger = Mathf.Max(hunger, 0f);
 
+        // The instant Hunger hits 0, make Human die of starvation
         if (hunger <= 0f)
         {
             Die();
             return;
         }
 
-        // energy floor check FIRST — so isSafe below reflects the state we're actually about to act on this frame
+        // Energy floor check FIRST — so isSafe below reflects the state
+        // human is's BT actually about to act on this frame
+        // If the Human's energy has hit 0 and it is not currently already Sleeping
         if (energy <= 0.0f && currentState != HumanState.Sleeping)
         {
-            UnityEngine.Debug.Log("force human to sleep");
-            currentState = HumanState.Sleeping;
-            huntTarget = null;              // clear so we don't resume a stale hunt on wake
-            currentShelterTarget = NoShelter; // clear so we don't resume a stale shelter path on wake
+            currentState = HumanState.Sleeping; // force human to sleep
+            huntTarget = null;                  // clear so human won't resume a stale hunt on wake
+            currentShelterTarget = NoShelter;   // clear so human won't resume a stale shelter path on wake
         }
 
+        // IsSafe = human is already in shelter
         bool isSafe = currentState == HumanState.Sheltering;
 
+        // if Human isn't sleeping OR in the shelter, initiate constant decrease for Energy
         if (currentState != HumanState.Sleeping && !isSafe)
         {
             energy -= energyDecayRate * dt;
@@ -433,23 +447,44 @@ public class HumanBehaviour : MonoBehaviour
             energy = Mathf.Min(energy + sleepEnergyRegen * dt, maxEnergy);
         }
 
-        // help this dumbass regain safety
+        // If it is not night time, allow human to slowly regenerate its safety stat
         if (!cachedIsNight) {
             safety += nightSafetyDecay * safetyRegen * dt;
             safety = Mathf.Min(maxSafety, safety);
         }
 
+        // If the human is safe, regernate its energy and safety.
         if (isSafe)
         {
             energy = Mathf.Min(energy + shelterEnergyRegen * dt, maxEnergy);
             safety = Mathf.Min(safety + shelterSafetyRegen * dt, maxSafety);
         }
+        // Otherwise, ONLY if it is nighttime, decrease its safety.
         else if (cachedIsNight)
         {
+            // Base safety loss, with a multiplier if the zombie is nearby
             float lossMultiplier = ZombieNearby() ? nightZombieSafetyMultiplier : 1f;
             safety -= nightSafetyDecay * lossMultiplier * dt;
             safety = Mathf.Max(safety, 0f);
         }
     }
-
 }
+
+//private NodeResult Idle()
+//{
+//    //UnityEngine.Debug.Log("human is trying to idle");
+//    if (currentState != HumanState.Idling)
+//    {
+//        currentState = HumanState.Idling;
+//        idleTime = UnityEngine.Random.Range(1.0f, 5.0f);
+//    }
+
+//    if (idleTime <= 0.0f)
+//    { // return success if idling done
+//        //UnityEngine.Debug.Log("human has idled long enough");
+//        currentState = HumanState.None;
+//        return NodeResult.Success;
+//    }
+
+//    return NodeResult.Running;
+//}

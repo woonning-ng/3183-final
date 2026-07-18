@@ -126,7 +126,7 @@ public class CameraSystem : MonoBehaviour
     }
 
     public void SetMode(int newMode) {
-        UnityEngine.Debug.Log(newMode);
+        //UnityEngine.Debug.Log(newMode);
         switch (newMode)
         {
             case 0:
