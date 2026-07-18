@@ -1,18 +1,15 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using static GlobalParam;
 using static PerlinNoise;
-using static UnityEditor.PlayerSettings;
 
 
 //References:
 //https://www.redblobgames.com/maps/terrain-from-noise/
 //https://amanpriyanshu.github.io/The-Mountains-of-Madness/
 //https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Random.Range.html
+//https://docs.unity3d.com/6000.5/Documentation/ScriptReference/Mathf.RoundToInt.html
+//https://moonjump.com/game-dev-mechanics-poisson-disk-sampling-how-it-works/
 
 public enum Terrain_cus
 {
@@ -63,8 +60,8 @@ public class TerrainGen : MonoBehaviour
     //To check if the tile contains safehouses
     bool[,] safe = new bool[GlobalParam.max_width, GlobalParam.max_height];
 
+    //List for object placement using Poisson Disc Sampling
     List<(int x, int z)> objects = new List<(int x, int z)> ();
-    List<Vector2> objectsPlace = new List<Vector2>();
 
     
 
@@ -192,42 +189,6 @@ public class TerrainGen : MonoBehaviour
         
         return Terrain_cus.GRASS;
     }
-
-    //Function for object placements 
-    Terrain_obj Objects(float height, float moist)
-    {
-        //If the terrain is either sand or grass based on the Biome function
-        if(height >= -0.3f && height < 0.5f)
-        {
-            if (moist>-0.1f)
-            {
-                //Using random function 
-                int tree = UnityEngine.Random.Range(1, 10);
-                if (tree == 2)
-                {
-                    
-                    return Terrain_obj.TREE;
-                }
-                
-            }
-        }
-        //Shelter generation using random 
-        if(shelter_count < max_shelter && height >= -0.3f)
-        {
-            int shelter = UnityEngine.Random.Range(1, 1000);
-            if (shelter == 5)
-            {
-                shelter_count++;
-                return Terrain_obj.SHELTER;
-            }
-        }
-
-        
-
-        return Terrain_obj.NONE;
-    }
-    
-
 
     int[,] grid = new int[GlobalParam.max_width, GlobalParam.max_height];
 
@@ -380,7 +341,6 @@ public class TerrainGen : MonoBehaviour
             }
         }
         //Spawn forced shelter here as we need the acessibility 
-        //The whole object instantiating here as accessibility is required
 
         if (GlobalParam.m_random || GlobalParam.simulatedRuns == 0)
         {
@@ -412,17 +372,13 @@ public class TerrainGen : MonoBehaviour
                 {
                     if(shelter_count < max_shelter)
                     {
-                        safe[x, z] = true;
                         GlobalParam.terrain_objs[x, z] = Terrain_obj.SHELTER;
                         shelter_count++;
-                        Instantiate(shelter_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
                         continue;
                     }
                     
                 }
-                accessible[x, z] = false;
                 GlobalParam.terrain_objs[x, z] = Terrain_obj.TREE;
-                Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
 
             }
 
@@ -439,10 +395,27 @@ public class TerrainGen : MonoBehaviour
                 }
 
                 GlobalParam.terrain_objs[x, z] = Terrain_obj.SHELTER;
-                safe[x, z] = true;
-                Vector3 pos = new Vector3(x, (int)(data[x, z] * 10.0f), z);
-                Instantiate(shelter_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
                 shelter_count++;
+            }
+        }
+        //The whole object instantiating here as accessibility is required
+        for (int i=0; i<GlobalParam.max_width; i++)
+        {
+            for(int j=0; j < GlobalParam.max_height; j++)
+            {
+                Vector3 pos = new Vector3(i, (int)(data[i, j] * 10.0f), j);
+                switch (GlobalParam.terrain_objs[i,j])
+                {
+                case Terrain_obj.TREE:
+                    accessible[i, j] = false;
+
+                    Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
+                    break;
+                case Terrain_obj.SHELTER:
+                    safe[i, j] = true;
+                    Instantiate(shelter_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
+                    break;
+                }
             }
         }
     }
