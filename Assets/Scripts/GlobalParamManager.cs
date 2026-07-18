@@ -45,16 +45,24 @@ public struct HumanBTAttributes {
 
     float RepathInterval;
     float EatDistance;
+
+    float MoveSpeed;
 }
 
 [System.Serializable]
 public struct ZombieBTAttributes {
-    float MaxIdleTime; 
+    float MaxIdleTime;
+    float DefaultChaseTime;
+    float DefaultChaseCooldown;
+    float RepathInterval;
+    float HumanDetectionRadius;
+    float MoveSpeed;
 }
 
 [System.Serializable]
-public struct PassiveMobBTAttributes { 
-
+public struct PassiveMobBTAttributes {
+    float MaxIdleTime;
+    float MoveSpeed;
 }
 
 
@@ -64,8 +72,12 @@ public static class GlobalParam
     public static bool m_frequency = true;
     public static bool m_octave = true;
     public static bool m_ridge = true;
-    //public static List<Terrain_cus> terrain_map;
-    //public static List<>
+    
+    public static float m_grassWeight = 1.0f;
+    public static float m_sandWeight = 2.0f;
+    public static float m_snowWeight = 3.0f;
+
+
     public static int max_width = 128;
     public static int max_height = 128;
 
@@ -81,9 +93,9 @@ public static class GlobalParam
     public static Vector3 cameraDir = new Vector3(90.0f, 0.0f, 0.0f);
 
     // BT related items here
-    public static HumanBTAttributes m_human_bt_globals;
-    public static ZombieBTAttributes m_zombie_bt_globals;
-    public static PassiveMobBTAttributes m_passivemob_bt_globals;
+    public static HumanBTAttributes human_bt_globals;
+    public static ZombieBTAttributes zombie_bt_globals;
+    public static PassiveMobBTAttributes passivemob_bt_globals;
 }
 
 
@@ -105,7 +117,9 @@ public class GlobalParamManager : MonoBehaviour
     [SerializeField] private float sandWeight = 2.0f;
     [SerializeField] private float snowWeight = 3.0f;
 
-    [SerializeField] 
+    [SerializeField] public HumanBTAttributes m_human_bt_atts;
+    [SerializeField]  public ZombieBTAttributes m_zombie_bt_atts;
+    [SerializeField]  public PassiveMobBTAttributes m_passivemob_bt_atts;
 
     public int GetSimRuns() { return GlobalParam.simulatedRuns; }
 
@@ -165,6 +179,10 @@ public class GlobalParamManager : MonoBehaviour
         {
             GlobalParam.showDeadPopup = false;
         }
+
+        grassWeight = GlobalParam.m_grassWeight;
+        sandWeight = GlobalParam.m_sandWeight;
+        snowWeight = GlobalParam.m_snowWeight;
 
         GlobalParam.simulatedRuns++; // just testing
 
@@ -237,6 +255,11 @@ public class GlobalParamManager : MonoBehaviour
         {
             GlobalParam.showDeadPopup = false;
         }
+        
+       
+        GlobalParam.m_grassWeight = grassWeight;
+        GlobalParam.m_sandWeight = sandWeight;
+        GlobalParam.m_snowWeight = snowWeight;
 
         SimRunsText.text = GetSimRuns().ToString();
 
