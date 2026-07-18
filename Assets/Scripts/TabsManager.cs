@@ -17,6 +17,12 @@ public class TabsManager : MonoBehaviour
     {
         // default
         TabText[0].color = ActiveTabTextColour;
+
+        foreach (GameObject go in Tabs)
+        {
+            go.SetActive(false);
+        }
+        Tabs[0].SetActive(true);
     }
 
     public void SwitchToTab(int TabID) {

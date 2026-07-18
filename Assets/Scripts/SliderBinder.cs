@@ -131,29 +131,29 @@ public class SliderBinder : MonoBehaviour
                                 v => paramManager.m_human_bt_atts.MoveSpeed = v);
 
 
-        Bind(ZombieMaxIdleTimeSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v, "f1");
+        Bind(ZombieMaxIdleTimeSlider, () => paramManager.m_zombie_bt_atts.MaxIdleTime,
+                                v => paramManager.m_zombie_bt_atts.MaxIdleTime = v, "f1");
 
-        Bind(ZombieDefaultChaseTimeSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v, "f1");
+        Bind(ZombieDefaultChaseTimeSlider, () => paramManager.m_zombie_bt_atts.DefaultChaseTime,
+                                v => paramManager.m_zombie_bt_atts.DefaultChaseTime = v, "f1");
 
-        Bind(ZombieDefaultChaseCooldownSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v, "f1");
+        Bind(ZombieDefaultChaseCooldownSlider, () => paramManager.m_zombie_bt_atts.DefaultChaseCooldown,
+                                v => paramManager.m_zombie_bt_atts.DefaultChaseCooldown = v, "f1");
 
-        Bind(ZombieRepathIntervalSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v, "f1");
+        Bind(ZombieRepathIntervalSlider, () => paramManager.m_zombie_bt_atts.RepathInterval,
+                                v => paramManager.m_zombie_bt_atts.RepathInterval = v, "f1");
 
-        Bind(ZombieHumanDetectionRadiusSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(ZombieHumanDetectionRadiusSlider, () => paramManager.m_zombie_bt_atts.HumanDetectionRadius,
+                                v => paramManager.m_zombie_bt_atts.HumanDetectionRadius = v);
 
-        Bind(ZombieMoveSpeedSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(ZombieMoveSpeedSlider, () => paramManager.m_zombie_bt_atts.MoveSpeed,
+                                v => paramManager.m_zombie_bt_atts.MoveSpeed = v);
 
 
-        Bind(PassiveMobMaxIdleTimeSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v, "f1");
+        Bind(PassiveMobMaxIdleTimeSlider, () => paramManager.m_passivemob_bt_atts.MaxIdleTime,
+                                v => paramManager.m_passivemob_bt_atts.MaxIdleTime = v, "f1");
 
-        Bind(PassiveMobMoveSpeedSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(PassiveMobMoveSpeedSlider, () => paramManager.m_passivemob_bt_atts.MoveSpeed,
+                                v => paramManager.m_passivemob_bt_atts.MoveSpeed = v);
     }
 }
