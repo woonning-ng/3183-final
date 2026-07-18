@@ -4,13 +4,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TabsManager : MonoBehaviour
 {
     public GameObject[] Tabs;
-    public Image[] TabButtons;
-    public Color InactiveTabBG, ActiveTabBG; // using color instead
-    public Vector2 InactiveTabButtonSize, ActiveTabButtonSize;
+    public TextMeshProUGUI[] TabText;
+    public Color InactiveTabTextColour, ActiveTabTextColour; // using color instead
+    //public Vector2 InactiveTabButtonSize, ActiveTabButtonSize;
+
+    public void Start()
+    {
+        // default
+        TabText[0].color = ActiveTabTextColour;
+
+        foreach (GameObject go in Tabs)
+        {
+            go.SetActive(false);
+        }
+        Tabs[0].SetActive(true);
+    }
 
     public void SwitchToTab(int TabID) {
         foreach (GameObject go in Tabs) {
@@ -18,11 +31,12 @@ public class TabsManager : MonoBehaviour
         }
         Tabs[TabID].SetActive(true);
 
-        foreach (Image im in TabButtons) {
-            im.color = InactiveTabBG;
-            im.rectTransform.sizeDelta = InactiveTabButtonSize;
+        foreach (TextMeshProUGUI tmp in TabText) {
+            tmp.color = InactiveTabTextColour;
+            //im.color = InactiveTabBG;
+            //im.rectTransform.sizeDelta = InactiveTabButtonSize;
         }
-        TabButtons[TabID].color = ActiveTabBG;
-        TabButtons[TabID].rectTransform.sizeDelta = InactiveTabButtonSize;
+        TabText[TabID].color = ActiveTabTextColour;
+        //TabButtons[TabID].rectTransform.sizeDelta = InactiveTabButtonSize;
     }
 }

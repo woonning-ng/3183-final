@@ -46,29 +46,29 @@ public class SliderBinder : MonoBehaviour
 
     // Min and Max ranges given by slider to be displayed in the texts
 
-    void Bind(Slider slider, Func<float> getter, Action<float> setter)
+    void Bind(Slider slider, Func<float> getter, Action<float> setter, string floatingPt = "f0")
     {
+        // cache the label references ONCE, at bind time
+        string sliderName = GetNameOfSliderMinusSlider(slider);
+        TextMeshProUGUI minText = GameObject.Find(sliderName + "MIN").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI maxText = GameObject.Find(sliderName + "MAX").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI currText = GameObject.Find(sliderName + "CURR").GetComponent<TextMeshProUGUI>();
+
+        minText.text = slider.minValue.ToString(floatingPt);
+        maxText.text = slider.maxValue.ToString(floatingPt);
+        currText.text = getter().ToString(floatingPt);
+
         slider.value = getter();
-        slider.onValueChanged.AddListener(v => setter(v));
+        slider.onValueChanged.AddListener(v =>
+        {
+            setter(v);
+            currText.text = v.ToString(floatingPt); // only updates on actual change
+        });
     }
 
     private string GetNameOfSliderMinusSlider(Slider sliderObj) {
         string sliderName = sliderObj.name;
         return sliderName.Replace("Slider", "");
-    }
-
-    private void ReplaceAttributesOfSliderInScene(Slider sliderObj, string floatingPt = "f0") {
-        string sliderName = GetNameOfSliderMinusSlider(sliderObj);
-
-        // get min, max, current values (text)
-        GameObject minObj = GameObject.Find(sliderName + "MIN");
-        minObj.GetComponent<TextMeshProUGUI>().text = sliderObj.minValue.ToString(floatingPt);
-
-        GameObject maxObj = GameObject.Find(sliderName + "MAX");
-        maxObj.GetComponent<TextMeshProUGUI>().text = sliderObj.maxValue.ToString(floatingPt);
-
-        GameObject currObj = GameObject.Find(sliderName + "CURR");
-        currObj.GetComponent<TextMeshProUGUI>().text = sliderObj.value.ToString(floatingPt);
     }
 
     void Start()
@@ -78,123 +78,82 @@ public class SliderBinder : MonoBehaviour
 
         Bind(MaxHungerSlider, () => paramManager.m_human_bt_atts.MaxHunger,
                            v => paramManager.m_human_bt_atts.MaxHunger = v);
-        ReplaceAttributesOfSliderInScene(MaxHungerSlider);
 
         Bind(MaxEnergySlider, () => paramManager.m_human_bt_atts.MaxEnergy,
                                 v => paramManager.m_human_bt_atts.MaxEnergy = v);
-        ReplaceAttributesOfSliderInScene(MaxEnergySlider);
 
         Bind(MaxSafetySlider, () => paramManager.m_human_bt_atts.MaxSafety,
                                 v => paramManager.m_human_bt_atts.MaxSafety = v);
-        ReplaceAttributesOfSliderInScene(MaxSafetySlider);
 
         Bind(SafetyPriorityThresholdSlider, () => paramManager.m_human_bt_atts.SafetyPriorityThreshold,
                                 v => paramManager.m_human_bt_atts.SafetyPriorityThreshold = v);
-        ReplaceAttributesOfSliderInScene(SafetyPriorityThresholdSlider);
 
         Bind(HungerHuntThresholdSlider, () => paramManager.m_human_bt_atts.HungerHuntThreshold,
                                 v => paramManager.m_human_bt_atts.HungerHuntThreshold = v);
-        ReplaceAttributesOfSliderInScene(HungerHuntThresholdSlider);
 
         Bind(HungerDecayRateSlider, () => paramManager.m_human_bt_atts.HungerDecayRate,
-                                v => paramManager.m_human_bt_atts.HungerDecayRate = v);
-        ReplaceAttributesOfSliderInScene(HungerDecayRateSlider, "f1");
+                                v => paramManager.m_human_bt_atts.HungerDecayRate = v, "f1");
 
         Bind(NightSafetyDecaySlider, () => paramManager.m_human_bt_atts.NightSafetyDecay,
-                                v => paramManager.m_human_bt_atts.NightSafetyDecay = v);
-        ReplaceAttributesOfSliderInScene(NightSafetyDecaySlider, "f1");
+                                v => paramManager.m_human_bt_atts.NightSafetyDecay = v, "f1");
 
         Bind(EnergyDecayRateSlider, () => paramManager.m_human_bt_atts.EnergyDecayRate,
-                                v => paramManager.m_human_bt_atts.EnergyDecayRate = v);
-        ReplaceAttributesOfSliderInScene(EnergyDecayRateSlider, "f1");
+                                v => paramManager.m_human_bt_atts.EnergyDecayRate = v, "f1");
 
         Bind(ShelterEnergyRegenSlider, () => paramManager.m_human_bt_atts.ShelterEnergyRegen,
-                                v => paramManager.m_human_bt_atts.ShelterEnergyRegen = v);
-        ReplaceAttributesOfSliderInScene(ShelterEnergyRegenSlider, "f1");
+                                v => paramManager.m_human_bt_atts.ShelterEnergyRegen = v, "f1");
 
         Bind(ShelterSafetyRegenSlider, () => paramManager.m_human_bt_atts.ShelterSafetyRegen,
-                                v => paramManager.m_human_bt_atts.ShelterSafetyRegen = v);
-        ReplaceAttributesOfSliderInScene(ShelterSafetyRegenSlider, "f1");
+                                v => paramManager.m_human_bt_atts.ShelterSafetyRegen = v, "f1");
 
         Bind(SleepEnergyRegenSlider, () => paramManager.m_human_bt_atts.SleepEnergyRegen,
-                                v => paramManager.m_human_bt_atts.SleepEnergyRegen = v);
-        ReplaceAttributesOfSliderInScene(SleepEnergyRegenSlider, "f1");
+                                v => paramManager.m_human_bt_atts.SleepEnergyRegen = v, "f1");
 
         Bind(SafetyRegenSlider, () => paramManager.m_human_bt_atts.SafetyRegen,
-                                v => paramManager.m_human_bt_atts.SafetyRegen = v);
-        ReplaceAttributesOfSliderInScene(SafetyRegenSlider, "f1");
+                                v => paramManager.m_human_bt_atts.SafetyRegen = v, "f1");
 
         Bind(NightZombieSafetyMultiplierSlider, () => paramManager.m_human_bt_atts.NightZombieSafetyMultiplier,
                                 v => paramManager.m_human_bt_atts.NightZombieSafetyMultiplier = v);
-        ReplaceAttributesOfSliderInScene(NightZombieSafetyMultiplierSlider);
 
         Bind(HungerRestoreAmountSlider, () => paramManager.m_human_bt_atts.HungerRestoreAmount,
                                 v => paramManager.m_human_bt_atts.HungerRestoreAmount = v);
-        ReplaceAttributesOfSliderInScene(HungerRestoreAmountSlider);
 
         Bind(ZombieDetectionRadiusSlider, () => paramManager.m_human_bt_atts.ZombieDetectionRadius,
                                 v => paramManager.m_human_bt_atts.ZombieDetectionRadius = v);
-        ReplaceAttributesOfSliderInScene(ZombieDetectionRadiusSlider);
 
         Bind(RepathIntervalSlider, () => paramManager.m_human_bt_atts.RepathInterval,
-                                v => paramManager.m_human_bt_atts.RepathInterval = v);
-        ReplaceAttributesOfSliderInScene(RepathIntervalSlider, "f1");
+                                v => paramManager.m_human_bt_atts.RepathInterval = v, "f1");
 
         Bind(EatDistanceSlider, () => paramManager.m_human_bt_atts.EatDistance,
-                                v => paramManager.m_human_bt_atts.EatDistance = v);
-        ReplaceAttributesOfSliderInScene(EatDistanceSlider, "f1");
+                                v => paramManager.m_human_bt_atts.EatDistance = v, "f1");
 
         Bind(MoveSpeedSlider, () => paramManager.m_human_bt_atts.MoveSpeed,
                                 v => paramManager.m_human_bt_atts.MoveSpeed = v);
-        ReplaceAttributesOfSliderInScene(MoveSpeedSlider);
 
 
+        Bind(ZombieMaxIdleTimeSlider, () => paramManager.m_zombie_bt_atts.MaxIdleTime,
+                                v => paramManager.m_zombie_bt_atts.MaxIdleTime = v, "f1");
 
-        Bind(ZombieMaxIdleTimeSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(ZombieDefaultChaseTimeSlider, () => paramManager.m_zombie_bt_atts.DefaultChaseTime,
+                                v => paramManager.m_zombie_bt_atts.DefaultChaseTime = v, "f1");
 
-        Bind(ZombieDefaultChaseTimeSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(ZombieDefaultChaseCooldownSlider, () => paramManager.m_zombie_bt_atts.DefaultChaseCooldown,
+                                v => paramManager.m_zombie_bt_atts.DefaultChaseCooldown = v, "f1");
 
-        Bind(ZombieDefaultChaseCooldownSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(ZombieRepathIntervalSlider, () => paramManager.m_zombie_bt_atts.RepathInterval,
+                                v => paramManager.m_zombie_bt_atts.RepathInterval = v, "f1");
 
-        Bind(ZombieRepathIntervalSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(ZombieHumanDetectionRadiusSlider, () => paramManager.m_zombie_bt_atts.HumanDetectionRadius,
+                                v => paramManager.m_zombie_bt_atts.HumanDetectionRadius = v);
 
-        Bind(ZombieHumanDetectionRadiusSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
-
-        Bind(ZombieMoveSpeedSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(ZombieMoveSpeedSlider, () => paramManager.m_zombie_bt_atts.MoveSpeed,
+                                v => paramManager.m_zombie_bt_atts.MoveSpeed = v);
 
 
-        Bind(PassiveMobMaxIdleTimeSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
+        Bind(PassiveMobMaxIdleTimeSlider, () => paramManager.m_passivemob_bt_atts.MaxIdleTime,
+                                v => paramManager.m_passivemob_bt_atts.MaxIdleTime = v, "f1");
 
-        Bind(PassiveMobMoveSpeedSlider, () => paramManager.m_human_bt_atts.MaxEnergy,
-                                v => paramManager.m_human_bt_atts.MaxEnergy = v);
-    }
-
-    void Update() {
-        // update slider attribute values. cosntantly
-        ReplaceAttributesOfSliderInScene(MaxHungerSlider);
-        ReplaceAttributesOfSliderInScene(MaxEnergySlider);
-        ReplaceAttributesOfSliderInScene(MaxSafetySlider);
-        ReplaceAttributesOfSliderInScene(SafetyPriorityThresholdSlider);
-        ReplaceAttributesOfSliderInScene(HungerHuntThresholdSlider);
-        ReplaceAttributesOfSliderInScene(HungerDecayRateSlider, "f1");
-        ReplaceAttributesOfSliderInScene(NightSafetyDecaySlider, "f1");
-        ReplaceAttributesOfSliderInScene(EnergyDecayRateSlider, "f1");
-        ReplaceAttributesOfSliderInScene(ShelterEnergyRegenSlider, "f1");
-        ReplaceAttributesOfSliderInScene(ShelterSafetyRegenSlider, "f1");
-        ReplaceAttributesOfSliderInScene(SleepEnergyRegenSlider, "f1");
-        ReplaceAttributesOfSliderInScene(SafetyRegenSlider, "f1");
-        ReplaceAttributesOfSliderInScene(NightZombieSafetyMultiplierSlider);
-        ReplaceAttributesOfSliderInScene(HungerRestoreAmountSlider);
-        ReplaceAttributesOfSliderInScene(ZombieDetectionRadiusSlider);
-        ReplaceAttributesOfSliderInScene(RepathIntervalSlider, "f1");
-        ReplaceAttributesOfSliderInScene(EatDistanceSlider, "f1");
-        ReplaceAttributesOfSliderInScene(MoveSpeedSlider);
+        Bind(PassiveMobMoveSpeedSlider, () => paramManager.m_passivemob_bt_atts.MoveSpeed,
+                                v => paramManager.m_passivemob_bt_atts.MoveSpeed = v);
     }
 }
