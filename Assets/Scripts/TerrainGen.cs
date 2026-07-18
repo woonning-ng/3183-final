@@ -63,6 +63,11 @@ public class TerrainGen : MonoBehaviour
     //To check if the tile contains safehouses
     bool[,] safe = new bool[GlobalParam.max_width, GlobalParam.max_height];
 
+    List<(int x, int z)> objects = new List<(int x, int z)> ();
+    List<Vector2> objectsPlace = new List<Vector2>();
+
+    
+
     public float GetY(float x, float z) {
         return (int)(data[(int)x, (int)z] * 10.0f);
     }
@@ -221,6 +226,107 @@ public class TerrainGen : MonoBehaviour
 
         return Terrain_obj.NONE;
     }
+    
+
+
+    int[,] grid = new int[GlobalParam.max_width, GlobalParam.max_height];
+
+    //Check for if the tile is valid to put a point for object there
+    bool IsValid(int x, int z, ref int[,]grid, ref List<(int,int)> samples, ref int radius)
+    {
+        //Checking the neighbours to see if the point is within the distance 
+        //If it is within the distance, return false to not add the point for spawning object
+        //Else return true to allow the object to spawn
+        for (int di = -2; di <= 2; di++)
+        {
+            for (int dj = -2; dj <= 2; dj++)
+            {
+                int ci = x + di;
+                int cj = z + dj;
+                if (ci < 0 || cj < 0 || ci >= GlobalParam.max_width || cj >= GlobalParam.max_height)
+                {
+                    continue;
+                }
+                //Getting the index
+                int idx = grid[ci, cj];
+                //If index is not a valid value, just continue
+                if (idx == -1)
+                {
+                    continue;
+                }
+
+                (int dx, int dz) = samples[idx];
+
+                dx -= x;
+                dz -= z;
+                //Distance check
+                if (dx * dx + dz * dz < radius * radius)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    void PoissonDisk(int startx, int startz,int radius,int k = 30)
+    {
+        
+        //The active list for the index that was added
+        var active = new List<int>();
+
+
+        void Add(int x, int z)
+        {
+            grid[x, z] = objects.Count;
+            objects.Add((x, z));
+            active.Add(objects.Count - 1);
+        }
+
+        //Early checks to ensure that the starting point is valid to add
+        if (!accessible[startx, startz] || GlobalParam.terrain_map[startx, startz] == Terrain_cus.SAND 
+            || GlobalParam.terrain_map[startx, startz] == Terrain_cus.SNOW || !IsValid(startx, startz, ref grid, ref objects, ref radius))
+        {
+            //Early exit if the point is not valid
+            return;
+        }
+
+        Add(startx, startz);
+
+
+        while (active.Count > 0)
+        {
+            //Randomly access the points in active 
+            int ri = UnityEngine.Random.Range(0, active.Count);
+            (int px,int pz) = objects[active[ri]];
+            bool found = false;
+            for(int n =0; n<k; n++)
+            {
+                float angle = UnityEngine.Random.value * Mathf.PI * 2;
+                float dist = radius + UnityEngine.Random.value * radius;
+                int newx = Mathf.RoundToInt(px + dist * Mathf.Cos(angle));
+                int newz = Mathf.RoundToInt(pz + dist * Mathf.Sin(angle));
+
+                //Checks to ensure that the point is valid and no other points are within distance 
+                if(newx < 0 || newx >= GlobalParam.max_width || newz <0 || newz >= GlobalParam.max_height 
+                    || !accessible[newx, newz] || !IsValid(newx, newz, ref grid, ref objects, ref radius) ||
+                    GlobalParam.terrain_map[newx, newz] == Terrain_cus.SAND || GlobalParam.terrain_map[newx, newz] == Terrain_cus.SNOW)
+                {
+                    continue;
+                }
+                
+                Add(newx, newz);
+                found = true;
+                break;
+
+            }
+            //Remove from active once a point is found and added to objects
+            if (!found) active.RemoveAt(ri);
+
+        }
+    }
+
+    
 
     //By using absolute from noise function to amplify the values
     static float Ridgenoise(float nx, float nz)
@@ -241,7 +347,8 @@ public class TerrainGen : MonoBehaviour
                 {
                     GlobalParam.terrain_map[i, j] = Biome(data[i, j], moisture[i, j]);
                     //Terrain_obj b = Objects(data[i, j], moisture[i, j]);
-                    GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
+                    //GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
+                    GlobalParam.terrain_objs[i, j] = Terrain_obj.NONE;
 
                 }
 
@@ -270,25 +377,54 @@ public class TerrainGen : MonoBehaviour
                 }
 
 
-                //Instantiating objects
-                switch (GlobalParam.terrain_objs[i, j])
-                {
-                    case Terrain_obj.TREE:
-                        accessible[i, j] = false;
-                        //traversal[i, j] = 0;
-                        Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
-                        break;
-                    case Terrain_obj.SHELTER:
-                        
-                        safe[i, j] = true;
-                        Instantiate(shelter_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
-                        break;
-                }
             }
         }
         //Spawn forced shelter here as we need the acessibility 
+        //The whole object instantiating here as accessibility is required
+
         if (GlobalParam.m_random || GlobalParam.simulatedRuns == 0)
         {
+           //Loop through all grids to initiate it to -1
+            for (int i = 0; i < GlobalParam.max_width; i++)
+            {
+                for (int j = 0; j < GlobalParam.max_height; j++)
+                {
+                    grid[i, j] = -1;
+                }
+            }
+            //Loop through all tiles and calling PoissonDisk to ensure that no spots are missed
+            for (int i = 0; i < GlobalParam.max_width; i++)
+            {
+                for (int j = 0; j < GlobalParam.max_height; j++)
+                {
+                    PoissonDisk(i, j, 5);
+                }
+            }
+
+
+            for (int i=0; i< objects.Count; i++)
+            {
+                (int x, int z) = objects[i];
+                
+                Vector3 pos = new Vector3(x, (int)(data[x, z] * 10.0f), z);
+                int rand = UnityEngine.Random.Range(0, 1000);
+                if(rand == 5)
+                {
+                    if(shelter_count < max_shelter)
+                    {
+                        safe[x, z] = true;
+                        GlobalParam.terrain_objs[x, z] = Terrain_obj.SHELTER;
+                        shelter_count++;
+                        Instantiate(shelter_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
+                        continue;
+                    }
+                    
+                }
+                accessible[x, z] = false;
+                GlobalParam.terrain_objs[x, z] = Terrain_obj.TREE;
+                Instantiate(tree_prefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity);
+
+            }
 
             //if shelter count is zero, force spawn in a shelter at a random location
             if (shelter_count == 0)
@@ -310,6 +446,8 @@ public class TerrainGen : MonoBehaviour
             }
         }
     }
+
+    
 
     void Awake(){ // awake
         
