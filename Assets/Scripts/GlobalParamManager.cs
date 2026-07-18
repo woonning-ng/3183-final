@@ -45,6 +45,8 @@ public struct HumanBTAttributes {
 
     float RepathInterval;
     float EatDistance;
+
+    float MoveSpeed;
 }
 
 [System.Serializable]
@@ -54,11 +56,13 @@ public struct ZombieBTAttributes {
     float DefaultChaseCooldown;
     float RepathInterval;
     float HumanDetectionRadius;
+    float MoveSpeed;
 }
 
 [System.Serializable]
 public struct PassiveMobBTAttributes {
     float MaxIdleTime;
+    float MoveSpeed;
 }
 
 
@@ -254,9 +258,7 @@ public class GlobalParamManager : MonoBehaviour
         
        
         GlobalParam.m_grassWeight = grassWeight;
-        
         GlobalParam.m_sandWeight = sandWeight;
-   
         GlobalParam.m_snowWeight = snowWeight;
 
         SimRunsText.text = GetSimRuns().ToString();
