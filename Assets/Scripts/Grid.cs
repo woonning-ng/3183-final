@@ -25,8 +25,8 @@ public struct GridPos
 public class Grid : MonoBehaviour
 {
     [Header("Grid Size")]
-    public int max_row = 128;
-    public int max_col = 128;
+    public int max_row = GlobalParam.max_height;
+    public int max_col = GlobalParam.max_width;
 
     [Header("World Size")]
     public float blockSize = 1f;
