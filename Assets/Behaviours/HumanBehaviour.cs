@@ -368,9 +368,9 @@ public class HumanBehaviour : MonoBehaviour
         Terrain_cus terrainType = GlobalParam.terrain_map[(int)transform.position.x, (int)transform.position.z];
 
         // uh i will update this to the proper vars later so using temp vals for now
-        return terrainType == Terrain_cus.GRASS ? 1.0f :
-            terrainType == Terrain_cus.SAND ? 2.0f :
-            terrainType == Terrain_cus.SNOW ? 3.0f :
+        return terrainType == Terrain_cus.GRASS ? GlobalParam.m_grassWeight :
+            terrainType == Terrain_cus.SAND ? GlobalParam.m_sandWeight :
+            terrainType == Terrain_cus.SNOW ? GlobalParam.m_snowWeight :
             1.0f;
     }
 
