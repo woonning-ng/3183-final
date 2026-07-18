@@ -49,12 +49,16 @@ public struct HumanBTAttributes {
 
 [System.Serializable]
 public struct ZombieBTAttributes {
-    float MaxIdleTime; 
+    float MaxIdleTime;
+    float DefaultChaseTime;
+    float DefaultChaseCooldown;
+    float RepathInterval;
+    float HumanDetectionRadius;
 }
 
 [System.Serializable]
-public struct PassiveMobBTAttributes { 
-
+public struct PassiveMobBTAttributes {
+    float MaxIdleTime;
 }
 
 
@@ -81,9 +85,9 @@ public static class GlobalParam
     public static Vector3 cameraDir = new Vector3(90.0f, 0.0f, 0.0f);
 
     // BT related items here
-    public static HumanBTAttributes m_human_bt_globals;
-    public static ZombieBTAttributes m_zombie_bt_globals;
-    public static PassiveMobBTAttributes m_passivemob_bt_globals;
+    public static HumanBTAttributes human_bt_globals;
+    public static ZombieBTAttributes zombie_bt_globals;
+    public static PassiveMobBTAttributes passivemob_bt_globals;
 }
 
 
@@ -105,7 +109,9 @@ public class GlobalParamManager : MonoBehaviour
     [SerializeField] private float sandWeight = 2.0f;
     [SerializeField] private float snowWeight = 3.0f;
 
-    [SerializeField] 
+    [SerializeField] public HumanBTAttributes m_human_bt_atts;
+    [SerializeField]  public ZombieBTAttributes m_zombie_bt_atts;
+    [SerializeField]  public PassiveMobBTAttributes m_passivemob_bt_atts;
 
     public int GetSimRuns() { return GlobalParam.simulatedRuns; }
 
