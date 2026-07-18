@@ -47,6 +47,8 @@ public class RandomSelector : BTNode
             // Failure -> try next in shuffled order
         }
 
+        // if we got to this point runningchild was null anyway, but just in case
+        runningChild = null;
         return NodeResult.Failure;
     }
 

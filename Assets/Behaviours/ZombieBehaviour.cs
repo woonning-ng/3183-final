@@ -2,78 +2,41 @@ using UnityEngine;
 
 public class ZombieBehaviour : MonoBehaviour
 {
-    [SerializeField] public Pathfinding pathfinding;
-    [SerializeField] public Grid grid;
-    [SerializeField] private int maxPlacementAttempts = 30;
+    // Pathfinding and grid items
+    [SerializeField] public Pathfinding pathfinding;         // Pathfinding GO needed for pathing
+    [SerializeField] public Grid grid;                       // Grid GO needed for querying the current step
+    [SerializeField] private int maxPlacementAttempts = 30;  // How many times to try and place zombie at spawn
 
+    // Zombie BT related items
     private BTNode root;
 
-    public float idleTime = 5.0f;
-    public float maxIdleTime = 5.0f;
-
-    public float zombieChaseTimer = 5.0f;
-    public float zombieChaseDuration = 5.0f;
-
-    public float zombieChaseCooldown = 4.0f;
-    public float zombieChaseCurrentCooldown = 4.0f;
-
-    public float repathTimer = 10.0f;
-    public float repathInterval = 10.0f;
-
-    // bool markedForDeath = false; // unused field for now
-
-    // actions: wander, idle, chase(?)
+    // Zombie's state enums and current state
     public enum ZombieState { None, Wandering, Idling, Chasing }
     [SerializeField] private ZombieState currentState;
 
+    // Zombie Idle Time
+    public float idleTime = 0.0f;    // current idle time
+    public float maxIdleTime = 5.0f; // how long should zombie idle for
+
+    // Zombie Chase Time
+    public float zombieChaseTimer = 5.0f;           // current chase time
+    public float zombieChaseCurrentDuration = 5.0f; // how long should zombie chase human for
+
+    // Zombie Chase Cooldown
+    public float zombieChaseCooldown = 4.0f;        // current chase cooldown
+    public float zombieChaseCurrentCooldown = 4.0f; // how long should zombie's chase cooldown for
+
+    // Zombie's repathing attribtues
+    public float repathTimer = 0.0f;      // current repath time
+    public float repathInterval = 10.0f;  // base repath interval timing
+
+    // Zombie's human targeting related attributes
     public GameObject humanTarget;
     public float humanDetectionRadius = 55.0f;
 
-    private void Awake()
+    // ---------------------------- ACTIONS ----------------------------
+    private bool IsNearHuman()
     {
-        //root = new ActionNode(() => Wander());
-
-        // the zombie will wander, and stay still, looking around at times
-        // unless a human is within a certain radius of it, in which it will then give chase for about 5s
-        // give zombie a timeout for chasing
-
-        // zombie has no markedfordeath or cancull because system will automatically remove every zombie upon daytime
-        root = new Selector(
-            // zombie priorities
-            // 1. only chase human if it is near one and duration is more than 0.0f.
-            new Sequence(
-                new ConditionNode(() => {
-                    bool ready = zombieChaseCurrentCooldown <= 0.0f && IsNearHuman() && zombieChaseDuration >= 0.0f;
-                    //Debug.Log("chase condition: " + ready);
-                    return ready;
-                }),
-                new ActionNode(ChaseHuman)
-            ),
-
-            // 2. otherwise, choose to idle or wander
-            new RandomSelector(
-                new ActionNode(Wander),
-                new ActionNode(Idle)
-            )
-        );
-    }
-
-    private void Start()
-    {
-        if (grid == null) grid = Grid.Instance;
-    }
-
-    private void Update()
-    {
-        if (currentState == ZombieState.Idling) idleTime -= SimulationManager.Instance.GetDNC().SimDeltaTime;
-        if (currentState == ZombieState.Chasing) zombieChaseDuration -= SimulationManager.Instance.GetDNC().SimDeltaTime;
-        if (zombieChaseCurrentCooldown >= 0.0f) zombieChaseCurrentCooldown -= SimulationManager.Instance.GetDNC().SimDeltaTime;
-
-        root.Tick();
-        pathfinding.Tick();
-    }
-
-    private bool IsNearHuman() {
         // pure condition no state
         Vector3 humanPosFlat = new Vector3(humanTarget.transform.position.x, 0.0f, humanTarget.transform.position.z);
         Vector3 thisPosFlat = new Vector3(transform.position.x, 0.0f, transform.position.z);
@@ -86,11 +49,11 @@ public class ZombieBehaviour : MonoBehaviour
         if (currentState != ZombieState.Chasing)
         {
             currentState = ZombieState.Chasing;
-            zombieChaseDuration = zombieChaseTimer; // start the timer fresh
+            zombieChaseCurrentDuration = zombieChaseTimer; // start the timer fresh
             pathfinding.SetGoal(humanTarget.transform.position); // TODO logic replaced
         }
 
-        if (zombieChaseDuration <= 0.0f)
+        if (zombieChaseCurrentDuration <= 0.0f)
         {
             zombieChaseCurrentCooldown = zombieChaseCooldown; // arm cooldown only when chase actually ends
             return NodeResult.Success;
@@ -104,6 +67,25 @@ public class ZombieBehaviour : MonoBehaviour
             repathTimer = repathInterval;
         }
         return NodeResult.Running;
+    }
+
+    private bool TryGetRandomWalkableTile(out GridPos result)
+    {
+        for (int i = 0; i < maxPlacementAttempts; i++)
+        {
+            int row = UnityEngine.Random.Range(0, grid.max_row);
+            int col = UnityEngine.Random.Range(0, grid.max_col);
+            GridPos candidate = new GridPos(row, col);
+
+            if (grid.IsValid(candidate) && !grid.IsWall(candidate))
+            {
+                result = candidate;
+                return true;
+            }
+        }
+
+        result = default;
+        return false;
     }
 
     private NodeResult Wander()
@@ -144,22 +126,43 @@ public class ZombieBehaviour : MonoBehaviour
         return NodeResult.Running;
     }
 
-    private bool TryGetRandomWalkableTile(out GridPos result)
+
+    // ------------ AWAKE, START, UPDATE ------------
+    private void Awake()
     {
-        for (int i = 0; i < maxPlacementAttempts; i++)
-        {
-            int row = UnityEngine.Random.Range(0, grid.max_row);
-            int col = UnityEngine.Random.Range(0, grid.max_col);
-            GridPos candidate = new GridPos(row, col);
+        // zombie has no markedfordeath or cancull because system will automatically remove every zombie upon daytime
+        root = new Selector(
+            // zombie priorities
+            // 1. only chase human if it is near one and duration is more than 0.0f.
+            new Sequence(
+                new ConditionNode(() => {
+                    bool ready = zombieChaseCurrentCooldown <= 0.0f && IsNearHuman() && zombieChaseCurrentDuration >= 0.0f;
+                    //Debug.Log("chase condition: " + ready);
+                    return ready;
+                }),
+                new ActionNode(ChaseHuman)
+            ),
 
-            if (grid.IsValid(candidate) && !grid.IsWall(candidate))
-            {
-                result = candidate;
-                return true;
-            }
-        }
+            // 2. otherwise, choose to idle or wander
+            new RandomSelector(
+                new ActionNode(Wander),
+                new ActionNode(Idle)
+            )
+        );
+    }
 
-        result = default;
-        return false;
+    private void Start()
+    {
+        if (grid == null) grid = Grid.Instance;
+    }
+
+    private void Update()
+    {
+        if (currentState == ZombieState.Idling) idleTime -= SimulationManager.Instance.GetDNC().SimDeltaTime;
+        if (currentState == ZombieState.Chasing) zombieChaseCurrentDuration -= SimulationManager.Instance.GetDNC().SimDeltaTime;
+        if (zombieChaseCurrentCooldown >= 0.0f) zombieChaseCurrentCooldown -= SimulationManager.Instance.GetDNC().SimDeltaTime;
+
+        root.Tick();
+        pathfinding.Tick();
     }
 }

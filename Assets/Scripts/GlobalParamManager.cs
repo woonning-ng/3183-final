@@ -23,6 +23,18 @@ using UnityEngine.Assertions.Must;
 
 //If we want, the GlobalParamManager can be converted to singleton and use DontDestroyOnLoad
 
+public struct HumanBTAttributes { 
+
+}
+
+public struct ZombieBTAttributes { 
+
+}
+
+public struct PassiveMobBTAttributes { 
+
+}
+
 
 public static class GlobalParam
 {
@@ -46,6 +58,10 @@ public static class GlobalParam
     public static Vector3 cameraPos = new Vector3(64.0f, 120.0f, 64.0f);
     public static Vector3 cameraDir = new Vector3(90.0f, 0.0f, 0.0f);
 
+    // BT related items here
+    public static HumanBTAttributes m_human_bt_globals;
+    public static ZombieBTAttributes m_zombie_bt_globals;
+    public static PassiveMobBTAttributes m_passivemob_bt_globals;
 }
 
 
