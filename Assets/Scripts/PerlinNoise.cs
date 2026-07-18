@@ -93,8 +93,19 @@ public class PerlinNoise
 
     static public void Randomize_permutation()
     {
+        //if (GlobalParam.m_seed_tog)
+        //{
+        UnityEngine.Random.InitState(GlobalParam.m_seed);
+        //}
+        
+
+        for (int i = 0; i < 256; i++)
+        {
+            p[i] = permutation[i];
+        }
+
         //Shuffling algorithm to shuffle P array 
-        for(int i=0; i< 256; i++)
+        for (int i=0; i< 256; i++)
         {
             int tmp = p[i];
             
@@ -102,6 +113,11 @@ public class PerlinNoise
 
             p[i] = p[randomIndex];
             p[randomIndex] = tmp;
+        }
+
+        for (int i = 0; i < 256; i++)
+        {
+            p[256 + i] = p[i];
         }
     }
     static void Init()

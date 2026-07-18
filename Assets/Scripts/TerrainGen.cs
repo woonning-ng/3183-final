@@ -198,6 +198,7 @@ public class TerrainGen : MonoBehaviour
         //Checking the neighbours to see if the point is within the distance 
         //If it is within the distance, return false to not add the point for spawning object
         //Else return true to allow the object to spawn
+
         for (int di = -2; di <= 2; di++)
         {
             for (int dj = -2; dj <= 2; dj++)
@@ -424,13 +425,16 @@ public class TerrainGen : MonoBehaviour
 
     void Awake(){ // awake
         
-        //Check if rnadom toggle is on
+        //Check if random toggle is on
         if (m_random)
         {
-            //Shuffle the permuatation array if it is on
-            Randomize_permutation();
+            
+            GlobalParam.m_seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
             
         }
+        //Shuffling the permutation
+        Randomize_permutation();
+
         GenerateRandomMap();
 
         InstantiateTerrain();

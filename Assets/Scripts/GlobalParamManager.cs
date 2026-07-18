@@ -79,6 +79,7 @@ public static class GlobalParam
     public static float m_sandWeight = 2.0f;
     public static float m_snowWeight = 3.0f;
 
+    public static int m_seed = 0;
 
     public static int max_width = 128;
     public static int max_height = 128;
@@ -122,6 +123,8 @@ public class GlobalParamManager : MonoBehaviour
     [SerializeField] public HumanBTAttributes m_human_bt_atts;
     [SerializeField] public ZombieBTAttributes m_zombie_bt_atts;
     [SerializeField] public PassiveMobBTAttributes m_passivemob_bt_atts;
+
+    [SerializeField] private int seed = 0;
 
     public int GetSimRuns() { return GlobalParam.simulatedRuns; }
 
@@ -189,6 +192,8 @@ public class GlobalParamManager : MonoBehaviour
         m_human_bt_atts = GlobalParam.human_bt_globals;
         m_zombie_bt_atts = GlobalParam.zombie_bt_globals;
         m_passivemob_bt_atts = GlobalParam.passivemob_bt_globals;
+
+        seed = GlobalParam.m_seed;
 
         GlobalParam.simulatedRuns++; // just testing
 
@@ -271,6 +276,8 @@ public class GlobalParamManager : MonoBehaviour
         GlobalParam.human_bt_globals = m_human_bt_atts;
         GlobalParam.zombie_bt_globals = m_zombie_bt_atts;
         GlobalParam.passivemob_bt_globals = m_passivemob_bt_atts;
+
+        GlobalParam.m_seed = seed;
 
         SimRunsText.text = GetSimRuns().ToString();
 
