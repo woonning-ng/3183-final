@@ -49,6 +49,7 @@ public class HumanBTAttributes {
     public float EatDistance = 5.0f;
 
     public float MoveSpeed = 20.0f;
+
 }
 
 [System.Serializable]
@@ -96,9 +97,9 @@ public static class GlobalParam
     public static Vector3 cameraDir = new Vector3(90.0f, 0.0f, 0.0f);
 
     // BT related items here
-    public static HumanBTAttributes human_bt_globals;
-    public static ZombieBTAttributes zombie_bt_globals;
-    public static PassiveMobBTAttributes passivemob_bt_globals;
+    public static HumanBTAttributes human_bt_globals = new HumanBTAttributes();
+    public static ZombieBTAttributes zombie_bt_globals = new ZombieBTAttributes();
+    public static PassiveMobBTAttributes passivemob_bt_globals = new PassiveMobBTAttributes();
 }
 
 
@@ -120,9 +121,9 @@ public class GlobalParamManager : MonoBehaviour
     [SerializeField] private float sandWeight = 2.0f;
     [SerializeField] private float snowWeight = 3.0f;
 
-    [SerializeField] public HumanBTAttributes m_human_bt_atts;
-    [SerializeField] public ZombieBTAttributes m_zombie_bt_atts;
-    [SerializeField] public PassiveMobBTAttributes m_passivemob_bt_atts;
+    [SerializeField] public HumanBTAttributes m_human_bt_atts = new HumanBTAttributes();
+    [SerializeField] public ZombieBTAttributes m_zombie_bt_atts = new ZombieBTAttributes();
+    [SerializeField] public PassiveMobBTAttributes m_passivemob_bt_atts = new PassiveMobBTAttributes();
 
     [SerializeField] private int seed = 0;
 
