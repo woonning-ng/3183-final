@@ -75,7 +75,7 @@ public class HumanBehaviour : MonoBehaviour
     // ---------------------------- GLOBAL PARAM INITIALISATION ----------------------------
     public void InitialiseVariablesFromGlobalParams() {
         // first initialise the items THIS script needs
-        maxHunger = GlobalParam.human_bt_globals.MaxHunger;
+        maxHunger = GlobalParam.human_bt_globals.MaxHunger;;
         maxEnergy = GlobalParam.human_bt_globals.MaxEnergy;
         maxSafety = GlobalParam.human_bt_globals.MaxSafety;
 
@@ -403,14 +403,6 @@ public class HumanBehaviour : MonoBehaviour
     // ------------ AWAKE, START, UPDATE, TICKSTATS ------------
     private void Awake()
     {
-        //Debug.Log("HUMANBEHAVIOUR AWAKE - VERSION CHECK X");
-
-        hunger = maxHunger;
-        energy = maxEnergy;
-        safety = maxSafety;
-        repathTimer = 0.0f;
-        currentShelterTarget = NoShelter;
-
         // Priority order, top to bottom:
         // 1. Emergency sleep — set by TickStats BEFORE this tree ticks, so it always wins the same frame energy hits 0.
         // 2. Shelter at night, UNLESS in danger (low safety) — always overrides wandering/hunting
@@ -452,6 +444,13 @@ public class HumanBehaviour : MonoBehaviour
 
             // also initialise the stats from global params here
             InitialiseVariablesFromGlobalParams();
+
+            // moved stats setup here instead
+            hunger = maxHunger;
+            energy = maxEnergy;
+            safety = maxSafety;
+            repathTimer = 0.0f;
+            currentShelterTarget = NoShelter;
         }
 
         // Ignore Update() if human is dead
