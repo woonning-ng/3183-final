@@ -55,6 +55,7 @@ public class TerrainGen : MonoBehaviour
     //For object placements
     int shelter_count = 0;
     static int max_shelter = 3;
+    static int radius_poisson = 3;
 
     //2d array to store the perlin noise values
     //The 2d array is [x, z] and the float within is the y value
@@ -207,10 +208,10 @@ public class TerrainGen : MonoBehaviour
         //Checking the neighbours to see if the point is within the distance 
         //If it is within the distance, return false to not add the point for spawning object
         //Else return true to allow the object to spawn
-
-        for (int di = -2; di <= 2; di++)
+        //Directly check based on the radius and not a fixed number
+        for (int di = -radius; di <= radius; di++)
         {
-            for (int dj = -2; dj <= 2; dj++)
+            for (int dj = -radius; dj <= radius; dj++)
             {
                 int ci = x + di;
                 int cj = z + dj;
@@ -317,8 +318,7 @@ public class TerrainGen : MonoBehaviour
                 if (GlobalParam.m_random || GlobalParam.simulatedRuns == 0)
                 {
                     GlobalParam.terrain_map[i, j] = Biome(data[i, j], moisture[i, j]);
-                    //Terrain_obj b = Objects(data[i, j], moisture[i, j]);
-                    //GlobalParam.terrain_objs[i, j] = Objects(data[i, j], moisture[i, j]);
+                    //Set all to none first
                     GlobalParam.terrain_objs[i, j] = Terrain_obj.NONE;
 
                 }
@@ -369,7 +369,7 @@ public class TerrainGen : MonoBehaviour
                 for (int j = 0; j < GlobalParam.max_height; j++)
                 {
                     //Call PoissonDisk for all tiles to ensure that all tiles are covered
-                    PoissonDisk(i, j, 5);
+                    PoissonDisk(i, j, radius_poisson);
                 }
             }
 
@@ -379,7 +379,7 @@ public class TerrainGen : MonoBehaviour
                 (int x, int z) = objects[i];
                 
                 Vector3 pos = new Vector3(x, (int)(data[x, z] * 10.0f), z);
-                int rand = UnityEngine.Random.Range(0, 1000);
+                int rand = UnityEngine.Random.Range(0, 500);
                 if(rand == 5)
                 {
                     if(shelter_count < max_shelter)
