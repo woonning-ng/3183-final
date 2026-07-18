@@ -1,3 +1,11 @@
+/*
+* @file      TerrainGen.cs
+* @author    Lim Le Min (lemin.lim@digipen.edu)
+* @brief
+*   This file contains the Terrain Generation algorithm for the simulation.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+*/
 using System.Collections.Generic;
 using UnityEngine;
 using static GlobalParam;
@@ -64,16 +72,16 @@ public class TerrainGen : MonoBehaviour
     List<(int x, int z)> objects = new List<(int x, int z)> ();
 
     
-
+    //Function to get y values from data array
     public float GetY(float x, float z) {
         return (int)(data[(int)x, (int)z] * 10.0f);
     }
-
+    //Function to get accessibility of a tile
     public bool GetAccessible(float x, float z)
     {
         return accessible[(int)x, (int)z];
     }
-
+    //Function to get if a tile is safe/contains shelter
     public bool GetSafe(float x, float z)
     {
         return safe[(int)x, (int)z];
@@ -132,7 +140,8 @@ public class TerrainGen : MonoBehaviour
                             data[i, j] += octaveOffset[k] * Noise(nx * octaveInv, ny * octaveInv);
 
                         }
-                            octaveTotal += octaveOffset[k];
+                        
+                        octaveTotal += octaveOffset[k];
                     }
 
                     data[i, j] /= octaveTotal;
@@ -165,8 +174,9 @@ public class TerrainGen : MonoBehaviour
     Terrain_cus Biome(float height, float moist){
         //Values can be customizable
         //-1 to 1 range
+        //Simplified version of Whittaker Biome Diagram with height and moisture
 
-        if(height < -0.3f)
+        if (height < -0.3f)
         {
             
             return Terrain_cus.WATER;
@@ -185,11 +195,10 @@ public class TerrainGen : MonoBehaviour
 ;
         }
 
-        
-        
         return Terrain_cus.GRASS;
     }
 
+    //Grid for Poisson Disc Sampling
     int[,] grid = new int[GlobalParam.max_width, GlobalParam.max_height];
 
     //Check for if the tile is valid to put a point for object there
@@ -237,7 +246,7 @@ public class TerrainGen : MonoBehaviour
         //The active list for the index that was added
         var active = new List<int>();
 
-
+        //Add helper function to help adding the points to both objects and active list
         void Add(int x, int z)
         {
             grid[x, z] = objects.Count;
@@ -252,7 +261,7 @@ public class TerrainGen : MonoBehaviour
             //Early exit if the point is not valid
             return;
         }
-
+        //Add the starting x and z
         Add(startx, startz);
 
 
@@ -276,7 +285,7 @@ public class TerrainGen : MonoBehaviour
                 {
                     continue;
                 }
-                
+                //Add new point if it is valid
                 Add(newx, newz);
                 found = true;
                 break;
@@ -350,6 +359,7 @@ public class TerrainGen : MonoBehaviour
             {
                 for (int j = 0; j < GlobalParam.max_height; j++)
                 {
+                    //Initiate grid value to -1 (invalid)
                     grid[i, j] = -1;
                 }
             }
@@ -358,6 +368,7 @@ public class TerrainGen : MonoBehaviour
             {
                 for (int j = 0; j < GlobalParam.max_height; j++)
                 {
+                    //Call PoissonDisk for all tiles to ensure that all tiles are covered
                     PoissonDisk(i, j, 5);
                 }
             }

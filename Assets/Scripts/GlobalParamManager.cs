@@ -1,3 +1,11 @@
+/*
+* @file      GlobalParamManager.cs
+* @author    Lim Le Min (lemin.lim@digipen.edu)
+* @brief
+*   This file contains the GlobalParamManager and Global Parameters for the simulation.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+*/
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

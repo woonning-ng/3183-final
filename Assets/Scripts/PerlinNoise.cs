@@ -1,3 +1,12 @@
+/*
+* @file      PerlinNoise.cs
+* @author    Lim Le Min (lemin.lim@digipen.edu)
+* @brief
+*   This file contains the Perlin Noise algorithm used for 
+*   terrain generation for the simulation.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+*/
 using UnityEngine;
 
 //It has to have 2 noises
@@ -54,11 +63,12 @@ public class PerlinNoise
     {
         return t * t * t * (t * (t * 6 - 15) + 10);
     }
-
+    //Linear interpolation function
     static float Lerp(float t, float a, float b)
     {
         return a + t * (b - a);
     }
+    //Gradient function
     static float Grad(int hash, float x, float z)
     {
         int h = hash & 3;
@@ -91,14 +101,12 @@ public class PerlinNoise
    138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
    };
 
+    //Function to shuffle and randomize with seed
     static public void Randomize_permutation()
     {
-        //if (GlobalParam.m_seed_tog)
-        //{
         UnityEngine.Random.InitState(GlobalParam.m_seed);
-        //}
-        
 
+        //Reset the p array with permutation
         for (int i = 0; i < 256; i++)
         {
             p[i] = permutation[i];
@@ -114,7 +122,7 @@ public class PerlinNoise
             p[i] = p[randomIndex];
             p[randomIndex] = tmp;
         }
-
+        //Copy over for the second half of p array
         for (int i = 0; i < 256; i++)
         {
             p[256 + i] = p[i];
