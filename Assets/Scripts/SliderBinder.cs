@@ -98,31 +98,31 @@ public class SliderBinder : MonoBehaviour
 
         Bind(HungerDecayRateSlider, () => paramManager.m_human_bt_atts.HungerDecayRate,
                                 v => paramManager.m_human_bt_atts.HungerDecayRate = v);
-        ReplaceAttributesOfSliderInScene(HungerDecayRateSlider);
+        ReplaceAttributesOfSliderInScene(HungerDecayRateSlider, "f1");
 
         Bind(NightSafetyDecaySlider, () => paramManager.m_human_bt_atts.NightSafetyDecay,
                                 v => paramManager.m_human_bt_atts.NightSafetyDecay = v);
-        ReplaceAttributesOfSliderInScene(NightSafetyDecaySlider);
+        ReplaceAttributesOfSliderInScene(NightSafetyDecaySlider, "f1");
 
         Bind(EnergyDecayRateSlider, () => paramManager.m_human_bt_atts.EnergyDecayRate,
                                 v => paramManager.m_human_bt_atts.EnergyDecayRate = v);
-        ReplaceAttributesOfSliderInScene(EnergyDecayRateSlider);
+        ReplaceAttributesOfSliderInScene(EnergyDecayRateSlider, "f1");
 
         Bind(ShelterEnergyRegenSlider, () => paramManager.m_human_bt_atts.ShelterEnergyRegen,
                                 v => paramManager.m_human_bt_atts.ShelterEnergyRegen = v);
-        ReplaceAttributesOfSliderInScene(ShelterEnergyRegenSlider);
+        ReplaceAttributesOfSliderInScene(ShelterEnergyRegenSlider, "f1");
 
         Bind(ShelterSafetyRegenSlider, () => paramManager.m_human_bt_atts.ShelterSafetyRegen,
                                 v => paramManager.m_human_bt_atts.ShelterSafetyRegen = v);
-        ReplaceAttributesOfSliderInScene(ShelterSafetyRegenSlider);
+        ReplaceAttributesOfSliderInScene(ShelterSafetyRegenSlider, "f1");
 
         Bind(SleepEnergyRegenSlider, () => paramManager.m_human_bt_atts.SleepEnergyRegen,
                                 v => paramManager.m_human_bt_atts.SleepEnergyRegen = v);
-        ReplaceAttributesOfSliderInScene(SleepEnergyRegenSlider);
+        ReplaceAttributesOfSliderInScene(SleepEnergyRegenSlider, "f1");
 
         Bind(SafetyRegenSlider, () => paramManager.m_human_bt_atts.SafetyRegen,
                                 v => paramManager.m_human_bt_atts.SafetyRegen = v);
-        ReplaceAttributesOfSliderInScene(SafetyRegenSlider);
+        ReplaceAttributesOfSliderInScene(SafetyRegenSlider, "f1");
 
         Bind(NightZombieSafetyMultiplierSlider, () => paramManager.m_human_bt_atts.NightZombieSafetyMultiplier,
                                 v => paramManager.m_human_bt_atts.NightZombieSafetyMultiplier = v);
@@ -138,11 +138,11 @@ public class SliderBinder : MonoBehaviour
 
         Bind(RepathIntervalSlider, () => paramManager.m_human_bt_atts.RepathInterval,
                                 v => paramManager.m_human_bt_atts.RepathInterval = v);
-        ReplaceAttributesOfSliderInScene(RepathIntervalSlider);
+        ReplaceAttributesOfSliderInScene(RepathIntervalSlider, "f1");
 
         Bind(EatDistanceSlider, () => paramManager.m_human_bt_atts.EatDistance,
                                 v => paramManager.m_human_bt_atts.EatDistance = v);
-        ReplaceAttributesOfSliderInScene(EatDistanceSlider);
+        ReplaceAttributesOfSliderInScene(EatDistanceSlider, "f1");
 
         Bind(MoveSpeedSlider, () => paramManager.m_human_bt_atts.MoveSpeed,
                                 v => paramManager.m_human_bt_atts.MoveSpeed = v);
@@ -183,18 +183,18 @@ public class SliderBinder : MonoBehaviour
         ReplaceAttributesOfSliderInScene(MaxSafetySlider);
         ReplaceAttributesOfSliderInScene(SafetyPriorityThresholdSlider);
         ReplaceAttributesOfSliderInScene(HungerHuntThresholdSlider);
-        ReplaceAttributesOfSliderInScene(HungerDecayRateSlider);
-        ReplaceAttributesOfSliderInScene(NightSafetyDecaySlider);
-        ReplaceAttributesOfSliderInScene(EnergyDecayRateSlider);
-        ReplaceAttributesOfSliderInScene(ShelterEnergyRegenSlider);
-        ReplaceAttributesOfSliderInScene(ShelterSafetyRegenSlider);
-        ReplaceAttributesOfSliderInScene(SleepEnergyRegenSlider);
-        ReplaceAttributesOfSliderInScene(SafetyRegenSlider);
+        ReplaceAttributesOfSliderInScene(HungerDecayRateSlider, "f1");
+        ReplaceAttributesOfSliderInScene(NightSafetyDecaySlider, "f1");
+        ReplaceAttributesOfSliderInScene(EnergyDecayRateSlider, "f1");
+        ReplaceAttributesOfSliderInScene(ShelterEnergyRegenSlider, "f1");
+        ReplaceAttributesOfSliderInScene(ShelterSafetyRegenSlider, "f1");
+        ReplaceAttributesOfSliderInScene(SleepEnergyRegenSlider, "f1");
+        ReplaceAttributesOfSliderInScene(SafetyRegenSlider, "f1");
         ReplaceAttributesOfSliderInScene(NightZombieSafetyMultiplierSlider);
         ReplaceAttributesOfSliderInScene(HungerRestoreAmountSlider);
         ReplaceAttributesOfSliderInScene(ZombieDetectionRadiusSlider);
-        ReplaceAttributesOfSliderInScene(RepathIntervalSlider);
-        ReplaceAttributesOfSliderInScene(EatDistanceSlider);
+        ReplaceAttributesOfSliderInScene(RepathIntervalSlider, "f1");
+        ReplaceAttributesOfSliderInScene(EatDistanceSlider, "f1");
         ReplaceAttributesOfSliderInScene(MoveSpeedSlider);
     }
 }
