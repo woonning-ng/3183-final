@@ -36,14 +36,14 @@ public struct PathRequest
 
 public class Astar
 {
-    private const int GRID_SIZE = 128;   // terrain is 128
+
     private const int CLUSTER_SIZE = 10;
 
-    private Grid grid;
+    public Grid grid;
 
-    private Node[,] nodes = new Node[GRID_SIZE, GRID_SIZE];
+    private Node[,] nodes = new Node[GlobalParam.max_width, GlobalParam.max_height];
 
-    private readonly List<Node> openHeap = new List<Node>(GRID_SIZE * GRID_SIZE);
+    private readonly List<Node> openHeap = new List<Node>(GlobalParam.max_width * GlobalParam.max_height);
 
     private GridPos startPos;
     private GridPos goalPos;
@@ -58,11 +58,12 @@ public class Astar
     {
         openHeap.Clear();
 
-        for (int row = 0; row < GRID_SIZE; row++)
+        for (int row = 0; row < GlobalParam.max_height; row++)
         {
-            for (int col = 0; col < GRID_SIZE; col++)
+            for (int col = 0; col < GlobalParam.max_width; col++)
             {
-                nodes[row, col] = new Node();
+                
+                nodes[row, col] = new Node(GlobalParam.terrain_map[row, col]);
                 nodes[row, col].Init(row, col);
             }
         }
@@ -77,9 +78,9 @@ public class Astar
     {
         openHeap.Clear();
 
-        for (int row = 0; row < GRID_SIZE; row++)
+        for (int row = 0; row < GlobalParam.max_height; row++)
         {
-            for (int col = 0; col < GRID_SIZE; col++)
+            for (int col = 0; col < GlobalParam.max_width; col++)
             {
                 nodes[row, col].Clear();
             }
@@ -464,8 +465,25 @@ public class Astar
                     if (!CanMove(current.gridPos, neighbourPos)) continue;
 
                     Node neighbour = nodes[neighbourPos.row, neighbourPos.col];
+                    float weight;
+                    switch (nodes[neighbourPos.row, neighbourPos.col].terrainType)
+                    {
+                        case Terrain_cus.SAND:
+                            weight = GlobalParam.m_sandWeight;
+                            break;
+                        case Terrain_cus.GRASS:
+                            weight = GlobalParam.m_grassWeight;
+                            break;
+                        case Terrain_cus.SNOW:
+                            weight = GlobalParam.m_snowWeight;
+                            break;
+                        default:
+                            weight = 0.0f;
+                            break;
 
-                    float givenCost =current.givenCost + MovementCost(current.gridPos, neighbourPos);
+                    }
+
+                    float givenCost =current.givenCost + MovementCost(current.gridPos, neighbourPos) * weight;
 
                     if (neighbour.nodeState == NodeState.NONE || givenCost < neighbour.givenCost)
                     {
