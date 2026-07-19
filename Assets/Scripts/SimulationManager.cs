@@ -1,3 +1,12 @@
+/*
+* @file      SimulationManager.cs
+* @author    Ng Woon Ning (woonning.ng@digipen.edu)
+* @brief
+*   This file contains the implementation of our Simulation Manager.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+ */
+
 using System;
 using UnityEngine;
 
@@ -13,20 +22,16 @@ public class SimulationManager : MonoBehaviour
     public float SpeedMultiplier => baseCycleLength / currentCycleLength;
 
     public event Action<float> OnSpeedChanged;
-    // -------- handling sim time stuff here --------
 
+    // -------- How many Runs has it been --------
     public int SimulatedRunNo = 1;
 
-    // stats related stuff here for information?
+    // -- stats related stuff here for information --
     private bool paused = false;
-
-    private int currentDay = 0;
     private float timeElapsedRun = 0.0f;
-    //private float totalTimeElapsed = 0.0f;
 
-    // need to get the other managers and relevant stuff for pausing
-
-    public DayNightCycle GetDNC() { return dayNightCycle.GetComponent<DayNightCycle>(); }
+    // --- unused --
+    // private int currentDay = 0;
 
     public void FinishRun() {
         SimulatedRunNo++;
@@ -35,11 +40,22 @@ public class SimulationManager : MonoBehaviour
     public void StartNewSimulation() { 
         // reset various stuff here
     }
+    // --- unused --
 
+    // These are just the functions that were used...
     public void SetPaused(bool p) { paused = p; }
     public float GetTimeElapsedRun() { return timeElapsedRun; }
     public float GetTimeElapsedRunInDays() { return timeElapsedRun / 24.0f; }
 
+    // access the DNC object
+    public DayNightCycle GetDNC() { return dayNightCycle.GetComponent<DayNightCycle>(); }
+
+    // set the cycle length of the sim
+    public void SetCycleLength(float newLength)
+    {
+        currentCycleLength = newLength;
+        OnSpeedChanged?.Invoke(SpeedMultiplier);
+    }
 
     private void Awake()
     {
@@ -48,13 +64,6 @@ public class SimulationManager : MonoBehaviour
         timeElapsedRun = 0.0f;
         paused = false;
     }
-
-    public void SetCycleLength(float newLength)
-    {
-        currentCycleLength = newLength;
-        OnSpeedChanged?.Invoke(SpeedMultiplier);
-    }
-
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -66,6 +75,6 @@ public class SimulationManager : MonoBehaviour
     void Update()
     {
         if (paused) return;
-        timeElapsedRun += GetDNC().SimDeltaTime;
+        timeElapsedRun += GetDNC().SimDeltaTime; // increase timeElapsed for this run
     }
 }

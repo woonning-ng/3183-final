@@ -193,7 +193,6 @@ public class Pathfinding : MonoBehaviour
             }
         }
 
-        //UnityEngine.Debug.Log("ABBABABABBABBAB"); // IT'S NOT EVEN BEING CALLED?
 
         result = default;
         return false;
@@ -209,7 +208,6 @@ public class Pathfinding : MonoBehaviour
             currentPath.Clear(); return; 
         }
 
-        // so......what's up. why does the flat not flat
 
         // need to flatten y here
         Vector3 waypoint = currentPath[currentWaypointIndex];
@@ -238,15 +236,6 @@ public class Pathfinding : MonoBehaviour
             currentWaypointIndex++;
         }
 
-        //Vector3 waypoint = currentPath[currentWaypointIndex];
-
-        // i don't think i can use their innate moretowwards here? i think i need a custom movetowards for y disp
-        //transform.position = Vector3.MoveTowards(transform.position, waypoint, moveSpeed * Time.deltaTime);
-
-        //if (Vector3.Distance(transform.position, waypoint) <= waypointReachDistance)
-        //{
-        //    currentWaypointIndex++;
-        //}
     }
 
     private void OnDrawGizmos()

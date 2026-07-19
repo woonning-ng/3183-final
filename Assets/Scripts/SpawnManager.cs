@@ -1,16 +1,25 @@
+/*
+* @file      SpawnManager.cs
+* @author    Ng Woon Ning (woonning.ng@digipen.edu)
+* @brief
+*   This file contains the implementation of the Spawn Manager.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+ */
+
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    // this needs to be tied to the sim manager/astar right
-
+    // Zombie and Mob cap, and respawn times
     [SerializeField] public int maxMobs = 10;
     [SerializeField] public int maxZombies = 10;
 
     [SerializeField] public float passiveMobRespawnTimer = 5.0f;
     [SerializeField] public float zombieRespawnTimer = 10.0f;
 
+    // Cooldown
     public float pmRespawn = 0.0f;
     public float zbRespawn = 0.0f;
 
@@ -20,17 +29,20 @@ public class SpawnManager : MonoBehaviour
     // container of zombies (only active if IsNight == true)
     public List<GameObject> zombies;
 
+    // Reference to prefbas for instantiation
     public GameObject passiveMobPrefab;
     public GameObject zombiePrefab;
 
+    // Reference to human object (needed by zombie)
     public GameObject human;
 
+    // Singleton pattern
     public static SpawnManager Instance;
 
-    // spawn passive mob fn
+    // Spawn passive mob function
     public void SpawnPassiveMob() {
         if (passiveMobs.Count < maxMobs) {
-            // spawn it at 0 0 0 for now
+            // roll a spawn point
             Vector3 spawnPt = Grid.Instance.TryGetValidSpawn();
             GameObject mob = Instantiate(passiveMobPrefab, spawnPt, Quaternion.identity);
 
@@ -42,15 +54,15 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    // spawn zombie fn
+    // Spawn zombie function
     public void SpawnZombie() {
         if (zombies.Count < maxZombies)
         {
-            // spawn it at 0 0 0 for now
+            // roll a spawn point
             Vector3 spawnPt = Grid.Instance.TryGetValidSpawn();
             GameObject mob = Instantiate(zombiePrefab, spawnPt, Quaternion.identity);
 
-            // set script specific fields sobs
+            // set script specific fields
             mob.GetComponent<ZombieBehaviour>().pathfinding = mob.GetComponent<Pathfinding>();
             mob.GetComponent<ZombieBehaviour>().humanTarget = human; // set human as target so that it can detect if human is nearbby
             mob.GetComponent<Pathfinding>().SetGrid(Grid.Instance);
@@ -59,7 +71,7 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    // kill all zombies fn
+    // Kill all zombies function
     public void KillAllZombies() {
         foreach (GameObject go in zombies) {
             Destroy(go);
@@ -70,7 +82,7 @@ public class SpawnManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) // what if i kill myself right now
+        if (Instance == null) // set instance to this if not null
         {
             Instance = this;
         }
@@ -78,32 +90,29 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
+        // Give cooldown for zombie and PM respawn
         zbRespawn = 2.0f;
         pmRespawn = 2.0f;
     }
 
     private void Update()
     {
-        // should be managing entities here
+        // Decrement respawn cooldowns by simDeltaTime
         zbRespawn -= SimulationManager.Instance.GetDNC().SimDeltaTime;
         pmRespawn -= SimulationManager.Instance.GetDNC().SimDeltaTime;
 
-
-        // check if a passive mob has been marked for death by player
-        // despawn the passive mob if needed
-
+        // No prior condition to respawn passive mob; capacity check handled in fn
         if (pmRespawn <= 0.0f)
         {
             SpawnPassiveMob();
             pmRespawn = passiveMobRespawnTimer;
         }
 
-        // zombie checks
-        // check 1: check if it's night
-        // if it is nighttime, allwo zombies to spawn at an interval
-        // otherwise if it is daytime
-        // check to see if the size of the zombie vector is > 0. if it is, kill all zombies
-
+        // Zombie checks
+        // Check 1: check if it's night
+        // If it is nighttime, allwo zombies to spawn at an interval
+        // Otherwise if it is daytime
+        // Check to see if the size of the zombie vector is > 0. if it is, kill all zombies
         if (SimulationManager.Instance.GetDNC().IsNight())
         {
             if (zbRespawn <= 0.0f) {
@@ -117,7 +126,10 @@ public class SpawnManager : MonoBehaviour
             }
         }
 
-        // flag dead ones here first
+        // Check if a passive mob has been marked for death by player
+        // Despawn the passive mob if needed
+        // Because of possible ordering issues, query the list and add to the
+        // deadMobs list first.
         List<int> deadMobs = new List<int>();
 
         for (int i = 0; i < passiveMobs.Count; i++) {

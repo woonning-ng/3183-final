@@ -1,3 +1,12 @@
+/*
+* @file      HumanBehaviour.cs
+* @author    Ng Woon Ning (woonning.ng@digipen.edu)
+* @brief
+*   This file contains the Behaviour Tree implementation of the
+*   Human entity.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+*/
 using System.Collections.Generic;
 using UnityEngine;
 

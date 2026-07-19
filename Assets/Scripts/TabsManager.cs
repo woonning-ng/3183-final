@@ -1,21 +1,31 @@
-// from: https://www.youtube.com/watch?v=9ey4isouocQ
+/*
+* @file      TabsManager.cs
+* @author    Ng Woon Ning (woonning.ng@digipen.edu)
+* @brief
+*   This file contains the implementation of the TabsManager, used for the
+*   Behaviour Tree Editor in the demo's UI.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+ */
 
-using System.Collections;
-using System.Collections.Generic;
+// Resource: https://www.youtube.com/watch?v=9ey4isouocQ
+
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class TabsManager : MonoBehaviour
 {
+    // Array of Tabs and their Text
     public GameObject[] Tabs;
     public TextMeshProUGUI[] TabText;
+
+    // Active and Inactive Tab Colours
     public Color InactiveTabTextColour, ActiveTabTextColour; // using color instead
     //public Vector2 InactiveTabButtonSize, ActiveTabButtonSize;
 
     public void Start()
     {
-        // default
+        // Default is Tab number 0
         TabText[0].color = ActiveTabTextColour;
 
         foreach (GameObject go in Tabs)
@@ -25,6 +35,7 @@ public class TabsManager : MonoBehaviour
         Tabs[0].SetActive(true);
     }
 
+    // Called by the Buttons' OnClick events
     public void SwitchToTab(int TabID) {
         foreach (GameObject go in Tabs) {
             go.SetActive(false);
