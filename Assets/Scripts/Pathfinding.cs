@@ -140,40 +140,6 @@ public class Pathfinding : MonoBehaviour
         // currentPath stays empty, so we'll try a new random tile next frame
     }
 
-    private void MoveToCoordinate(Vector3 pos)
-    {
-        GridPos goalGridPos = grid.Get_GridPos(pos);
-        if (!grid.IsValid(goalGridPos) || !grid.IsWall(goalGridPos)) { // do not
-            return;
-        }
-
-        GridPos startGridPos = grid.Get_GridPos(transform.position);
-
-        request.start = transform.position;
-        request.goal = grid.Get_WorldPos(goalGridPos);
-
-        request.heuristic = heuristic;
-        request.weight = weight;
-        request.smoothing = smoothing;
-        request.rubberBanding = rubberBanding;
-        request.singleStep = singleStep;
-        request.debugColoring = debugColoring;
-        request.newRequest = true;
-
-        PathResult result = astar.ComputePath(ref request);
-
-        if (result == PathResult.COMPLETE)
-        {
-            currentPath.Clear();
-            currentPath.AddRange(request.path);
-
-            currentWaypointIndex = 0;
-            request.newRequest = false;
-        }
-        // IMPOSSIBLE just means we picked an unreachable tile —
-        // currentPath stays empty, so we'll try a new random tile next frame
-    }
-
     // add in a move target here? but how do you consider IF the target moves? (for chasing down passive mobs)
 
     private bool TryGetRandomWalkableTile(out GridPos result)
@@ -196,10 +162,6 @@ public class Pathfinding : MonoBehaviour
 
         result = default;
         return false;
-    }
-
-    private void MoveTargetTowards(Vector3 currentPos, Vector3 targetPos, float speed) { 
-        // so basically its a movetowards BUT factoring in the y displacement due to the heightmap
     }
 
     private void FollowPath()
