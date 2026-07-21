@@ -31,6 +31,7 @@ public class GlobalParamsDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI humanSafety;
     [SerializeField] private TextMeshProUGUI humanState;
     [SerializeField] private TextMeshProUGUI daysElapsedForRun;
+    [SerializeField] private TextMeshProUGUI daysElapsedForRunScreen;
 
     [SerializeField] private GameObject humanDiedScreen;
 
@@ -85,6 +86,8 @@ public class GlobalParamsDisplay : MonoBehaviour
                 daysElapsedForRun.text = SimulationManager.Instance.GetTimeElapsedRunInDays().ToString("f2");
             }
         }
+
+        daysElapsedForRunScreen.text = SimulationManager.Instance.GetTimeElapsedRunInDays().ToString("f2");
 
         // nvm this caused auto reloads when it was not needed
         //if (humanDiedScreen.GetComponentInChildren<Toggle>().isOn) { ReloadScene(); } // auto reload if checked
