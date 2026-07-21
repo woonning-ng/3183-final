@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEditorInternal;
 
 public class Pathfinding : MonoBehaviour
 {
@@ -12,16 +14,20 @@ public class Pathfinding : MonoBehaviour
     [SerializeField] private float waypointReachDistance = 0.1f;
 
     [Header("Path Settings")]
-    [SerializeField] private Heuristic heuristic = Heuristic.OCTILE;
+    //[SerializeField]
+    public Heuristic heuristic = Heuristic.OCTILE;
     [SerializeField] private float weight = 1.0f;
     [SerializeField] private bool smoothing = true;
     [SerializeField] private bool rubberBanding = true;
     [SerializeField] private bool singleStep = false;
-    [SerializeField] private bool debugColoring = false;
 
     [Header("Wander Settings")]
     [SerializeField] private bool autoWander = true;
     [SerializeField] private int maxPlacementAttempts = 30;
+
+    [Header("Heuristic Dropdown")]
+    [SerializeField] private TMP_Dropdown heuristicDrop;
+
 
     // Terrain Gen GO needed for displacing person upwards
     //public TerrainGen terrainGen;
@@ -39,10 +45,19 @@ public class Pathfinding : MonoBehaviour
     private void Awake()
     {
         if (grid == null)
+        {
             grid = Grid.Instance;
+        }
 
         astar = new Astar(grid);
+        //used for the UI dropdown
+        if (heuristicDrop == null)
+        {
+            heuristicDrop = GameObject.Find("HeuristicSelection").GetComponent<TMP_Dropdown>();
+        }
 
+        heuristic = heuristicDrop.GetComponent<HeuristicSelection>().heuristicVal;
+        
         request = new PathRequest
         {
             path = new List<Vector3>(),
@@ -51,7 +66,6 @@ public class Pathfinding : MonoBehaviour
             smoothing = smoothing,
             rubberBanding = rubberBanding,
             singleStep = singleStep,
-            debugColoring = debugColoring,
             newRequest = true
         };
     }
@@ -60,12 +74,18 @@ public class Pathfinding : MonoBehaviour
 
     private void Start()
     {
-        if (grid == null) grid = Grid.Instance;
+        if (grid == null)
+        {
+            grid = Grid.Instance;
+        }
         astar = new Astar(grid);
     }
 
     public bool TrySetGoal(Vector3 goal)
     {
+        //update heuristic value based on dropdown
+        heuristic = heuristicDrop.GetComponent<HeuristicSelection>().heuristicVal;
+        //create new path
         PathRequest request = new PathRequest
         {
             start = transform.position,
@@ -98,7 +118,8 @@ public class Pathfinding : MonoBehaviour
     private void Update()
     {
         if (grid == null) return;
-
+        heuristic = heuristicDrop.GetComponent<HeuristicSelection>().heuristicVal;
+        
         if (autoWander && currentPath.Count == 0)
         {
             RequestWanderPath();
@@ -123,7 +144,6 @@ public class Pathfinding : MonoBehaviour
         request.smoothing = smoothing;
         request.rubberBanding = rubberBanding;
         request.singleStep = singleStep;
-        request.debugColoring = debugColoring;
         request.newRequest = true;
 
         PathResult result = astar.ComputePath(ref request);
@@ -223,4 +243,6 @@ public class Pathfinding : MonoBehaviour
             }
         }
     }
+
+   
 }

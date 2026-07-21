@@ -9,7 +9,7 @@ public class AStarManager : MonoBehaviour {
     private Astar astar;
     private readonly Queue<PathRequest> pending = new Queue<PathRequest>();
 
-    [SerializeField] private int maxRequestsPerFrame = 2;
+    //[SerializeField] private int maxRequestsPerFrame = 2;
     // or a time budget: [SerializeField] private float maxMillisecondsPerFrame = 2f;
 
     private void Awake() => astar = new Astar(Grid.Instance);
