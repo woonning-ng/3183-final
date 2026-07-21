@@ -1,15 +1,26 @@
+/*
+* @file      SldierBinder.cs
+* @author    Ng Woon Ning (woonning.ng@digipen.edu)
+* @brief
+*   This file contains the slider bindings for the variables associated with
+*   the Behaviour Tree Editor in the demo's UI.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+ */
+
 using System;
 using UnityEngine;
 using UnityEngine.UI;       // for Slider
 using TMPro;                // for Slider's min and max (and current)
 
-// wei shen me
+// Resources
 // https://discussions.unity.com/t/get-an-objects-name/424256
 // https://docs.unity3d.com/ScriptReference/UI.Slider-onValueChanged.html
 // https://nagachiang.github.io/tutorial-pass-parameter-with-sliders-onvaluechanged-in-unity/
 
 public class SliderBinder : MonoBehaviour
 {
+    // Get reference to GlobalParamManager for the values
     public GlobalParamManager paramManager;
 
     // HumanBTAttributes sliders
@@ -45,10 +56,11 @@ public class SliderBinder : MonoBehaviour
     public Slider PassiveMobMoveSpeedSlider;
 
     // Min and Max ranges given by slider to be displayed in the texts
-
+    // Bind Getter and Setter to the Sliders, and display floating points for min max curr values as needed
     void Bind(Slider slider, Func<float> getter, Action<float> setter, string floatingPt = "f0")
     {
         // cache the label references ONCE, at bind time
+        // doing this in update caused te FPS to tank so
         string sliderName = GetNameOfSliderMinusSlider(slider);
         TextMeshProUGUI minText = GameObject.Find(sliderName + "MIN").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI maxText = GameObject.Find(sliderName + "MAX").GetComponent<TextMeshProUGUI>();
@@ -66,6 +78,8 @@ public class SliderBinder : MonoBehaviour
         });
     }
 
+    // Since they are all named similarly in the scene, the base name can be found from the
+    // Slider's name itself
     private string GetNameOfSliderMinusSlider(Slider sliderObj) {
         string sliderName = sliderObj.name;
         return sliderName.Replace("Slider", "");
@@ -74,8 +88,7 @@ public class SliderBinder : MonoBehaviour
     void Start()
     {
         // UI event listener and closures capturing ref...
-        // i'm not doing this bye i can just bind the min max curr to the same names
-
+        // HUMAN
         Bind(MaxHungerSlider, () => paramManager.m_human_bt_atts.MaxHunger,
                            v => paramManager.m_human_bt_atts.MaxHunger = v);
 
@@ -130,7 +143,7 @@ public class SliderBinder : MonoBehaviour
         Bind(MoveSpeedSlider, () => paramManager.m_human_bt_atts.MoveSpeed,
                                 v => paramManager.m_human_bt_atts.MoveSpeed = v);
 
-
+        // ZOMBIE
         Bind(ZombieMaxIdleTimeSlider, () => paramManager.m_zombie_bt_atts.MaxIdleTime,
                                 v => paramManager.m_zombie_bt_atts.MaxIdleTime = v, "f1");
 
@@ -149,7 +162,7 @@ public class SliderBinder : MonoBehaviour
         Bind(ZombieMoveSpeedSlider, () => paramManager.m_zombie_bt_atts.MoveSpeed,
                                 v => paramManager.m_zombie_bt_atts.MoveSpeed = v);
 
-
+        // PASSIVE MOB
         Bind(PassiveMobMaxIdleTimeSlider, () => paramManager.m_passivemob_bt_atts.MaxIdleTime,
                                 v => paramManager.m_passivemob_bt_atts.MaxIdleTime = v, "f1");
 

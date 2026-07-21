@@ -1,3 +1,13 @@
+/*
+* @file      ZombieBehaviour.cs
+* @author    Ng Woon Ning (woonning.ng@digipen.edu)
+* @brief
+*   This file contains the Behaviour Tree implementation of the
+*   Zombie entity.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+*/
+
 using UnityEngine;
 
 public class ZombieBehaviour : MonoBehaviour

@@ -37,8 +37,6 @@ public struct PathRequest
 public class Astar
 {
 
-    private const int CLUSTER_SIZE = 10;
-
     public Grid grid;
 
     private Node[,] nodes = new Node[GlobalParam.max_width, GlobalParam.max_height];
@@ -173,9 +171,9 @@ public class Astar
         openHeap[b].heapIndex = b;
     }
 
-    private void HeapifyUp(Node node)
+    private void HeapifyUp(int index)
     {
-        int index = node.heapIndex;
+        //int index = node.heapIndex;
 
         while (index > 0)
         {
@@ -189,9 +187,9 @@ public class Astar
         }
     }
 
-    private void HeapifyDown(Node node)
+    private void HeapifyDown(int index)
     {
-        int index = node.heapIndex;
+        //int index = node.heapIndex;
 
         while (true)
         {
@@ -225,7 +223,7 @@ public class Astar
         node.heapIndex = openHeap.Count;
 
         openHeap.Add(node);
-        HeapifyUp(node);
+        HeapifyUp(node.heapIndex);
     }
 
     private Node PopCheapestNode()
@@ -242,7 +240,7 @@ public class Astar
         {
             openHeap[0] = last;
             openHeap[0].heapIndex = 0;
-            HeapifyDown(openHeap[0]);
+            HeapifyDown(openHeap[0].heapIndex);
         }
 
         cheapest.heapIndex = -1;
@@ -250,24 +248,6 @@ public class Astar
         return cheapest;
     }
 
-    private void UpdateHeap(Node node)
-    {
-        HeapifyUp(node);
-    }
-
-    private GridPos GetClusterCenter(GridPos pos)
-    {
-        int clusterRow = pos.row / CLUSTER_SIZE;
-        int clusterCol = pos.col / CLUSTER_SIZE;
-
-        int centerRow = clusterRow * CLUSTER_SIZE + CLUSTER_SIZE / 2;
-        int centerCol = clusterCol * CLUSTER_SIZE + CLUSTER_SIZE / 2;
-
-        centerRow = Mathf.Clamp(centerRow, 0, grid.max_row - 1);
-        centerCol = Mathf.Clamp(centerCol, 0, grid.max_col - 1);
-
-        return new GridPos(centerRow, centerCol);
-    }
 
     private void BuildPath(Node goalNode, ref PathRequest request)
     {
@@ -431,9 +411,6 @@ public class Astar
 
             if (grid.IsWall(startPos) || grid.IsWall(goalPos)) return PathResult.IMPOSSIBLE;
 
-            GridPos startCluster = GetClusterCenter(startPos);
-            GridPos goalCluster = GetClusterCenter(goalPos);
-
             Node startNode = nodes[startPos.row, startPos.col];
 
             startNode.parent = null;
@@ -490,11 +467,11 @@ public class Astar
                         neighbour.parent = current;
                         neighbour.givenCost = givenCost;
 
-                        neighbour.finalCost = givenCost + CalculateHeuristic(neighbourPos, goalPos,request.heuristic) *request.weight;
+                        neighbour.finalCost = givenCost + CalculateHeuristic(neighbourPos, goalPos, request.heuristic) * request.weight;
 
                         if (neighbour.nodeState == NodeState.OPEN)
                         {
-                            UpdateHeap(neighbour);
+                            HeapifyUp(neighbour.heapIndex);
                         }
                         else
                         {

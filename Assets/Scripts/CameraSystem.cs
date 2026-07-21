@@ -1,6 +1,16 @@
+/*
+* @file      CameraSystem.cs
+* @author    Ng Woon Ning (woonning.ng@digipen.edu)
+* @brief
+*   This file contains the Behaviour Tree implementation of the
+*   Human entity.
+*
+* @copyright Copyright (C) 2026 DigiPen Institute of Technology
+*/
+
 using UnityEngine;
 
-
+// Resources:
 // https://discussions.unity.com/t/enum-as-a-function-param-in-a-button-onclick/214010
 // https://dev.to/matthewodle/simple-3d-camera-movement-1lcj
 // https://gist.github.com/david-hodgetts/aee82a4e9f22b14b1b63
@@ -15,6 +25,7 @@ using UnityEngine;
 public class CameraSystem : MonoBehaviour
 {
 
+    // Camera Mode Enums
     public enum CameraMode { 
         TOPDOWN = 0,    // top down mode to view the map
         FREE    = 1,    // allowing user to move around
@@ -23,9 +34,12 @@ public class CameraSystem : MonoBehaviour
 
     CameraMode mode = CameraMode.TOPDOWN; // default is top down
 
+    // Game Object references for Camera settings
     public GameObject terrainGen;         // need this for sizing (camera)
     public GameObject humanTarget;        // follow human here
 
+
+    // Fields that can be modified in the Editor (per camera mode)
     [Header("------- Top Down Camera Parameters -------")]
     [SerializeField, Header("Speed when Moving")]
     private float camSpeed = 5.0f;
@@ -35,6 +49,8 @@ public class CameraSystem : MonoBehaviour
 
     [SerializeField, Header("Speed when Scrolling")]
     private float scrollSpeed = 80.0f;
+
+    private bool shiftPressed = false;
 
 
     [Header(" ------- Free Camera Parameters -------")]
@@ -46,6 +62,11 @@ public class CameraSystem : MonoBehaviour
 
     [SerializeField, Header("Maximum Speed when Running")]
     private float maxShift = 100.0f;
+
+    private bool isRotating = false;
+    private float rotationY = 0.0f;
+    private float speedMultiplier = 0.0f;
+
 
     [Header(" ------- Follow Camera Parameters -------")]
     [SerializeField, Header("Speed when Looking Around")]
@@ -61,18 +82,14 @@ public class CameraSystem : MonoBehaviour
     private float lookHeight = 5.0f;
 
 
-    // params like zoom, moving, etc here idk
-    private bool shiftPressed = false;
-    private Vector3 lastMouse = new Vector3(255, 255, 255);
-    private bool isRotating = false;
-    private float rotationY = 0.0f;
-    private float speedMultiplier = 0.0f;
-
-    // direction vector for rotating camera
-
+    // Used to retain the camera's last transform before sim is
+    // rerun or a different camera mode is used
     public bool bypassModeDefaults = false;
     private bool previousBypass = false;
 
+    // ------------ CAMERA MODE DEFAULT BYPASS FUNCTIONS ------------
+    // Both SetBypass and ReturnPreviousBypass are actually called by the
+    // Camera mode toggles (helper functions to retain data)
     public void SetBypass(bool bypass) {
         previousBypass = bypassModeDefaults;
         bypassModeDefaults = bypass;
@@ -82,6 +99,7 @@ public class CameraSystem : MonoBehaviour
         bypassModeDefaults = previousBypass;
     }
 
+    // ------------ RESET FUNCTIONS ------------
     public void ResetWhenTopDown() {
         if (!bypassModeDefaults)
         {
@@ -125,6 +143,7 @@ public class CameraSystem : MonoBehaviour
         }
     }
 
+    // ------------ MODE SETTER AND GETTER FUNCTIONS ------------
     public void SetMode(int newMode) {
         //UnityEngine.Debug.Log(newMode);
         switch (newMode)
@@ -162,31 +181,8 @@ public class CameraSystem : MonoBehaviour
 
     public int GetModeInt() { return (int)mode; }
 
-    private Vector3 GetBaseInput() {
-        Vector3 baseVel = new Vector3(0.0f, 0.0f, 0.0f);
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            baseVel += new Vector3(0, 0, 1);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            baseVel += new Vector3(0, 0, -1);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            baseVel += new Vector3(-1, 0, 0);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            baseVel += new Vector3(1, 0, 0);
-        }
-
-        return baseVel;
-    }
-
+    // ------------ TOP DOWN CAMERA MODE FUNCTIONS ------------
     private void TopDownCameraMode() {
-        //UnityEngine.Debug.Log("in top down camera mode");
         // at least allow for zooming here and moving UDLR if needed
         if (Input.GetKey(KeyCode.LeftShift))
         {
@@ -196,7 +192,7 @@ public class CameraSystem : MonoBehaviour
             shiftPressed = false;
         }
 
-            float totalSpd = camSpeed * (shiftPressed ? runMultiplier : 1.0f);
+        float totalSpd = camSpeed * (shiftPressed ? runMultiplier : 1.0f);
         float horizontal = 0.0f; float vertical = 0.0f;
 
         // change z
@@ -228,6 +224,31 @@ public class CameraSystem : MonoBehaviour
         position.x = position.x + (totalSpd * horizontal) * Time.deltaTime;
         position.z = position.z + (totalSpd * vertical) * Time.deltaTime;
         transform.position = position;
+    }
+
+    // ------------ FREE CAMERA MODE FUNCTIONS ------------
+    private Vector3 GetBaseInput()
+    {
+        Vector3 baseVel = new Vector3(0.0f, 0.0f, 0.0f);
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            baseVel += new Vector3(0, 0, 1);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            baseVel += new Vector3(0, 0, -1);
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            baseVel += new Vector3(-1, 0, 0);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            baseVel += new Vector3(1, 0, 0);
+        }
+
+        return baseVel;
     }
 
     // mimics the unity editor cam sans any obj picking
@@ -293,6 +314,7 @@ public class CameraSystem : MonoBehaviour
         transform.position = newPosition;
     }
 
+    // ------------ FOLLOW CAMERA MODE FUNCTIONS ------------
     public void FollowCameraMode() {
         // needs to check for zoom AND moving around
 
@@ -325,6 +347,7 @@ public class CameraSystem : MonoBehaviour
         transform.LookAt(humanTarget.transform);
     }
 
+    // ------------ RESET CAMERA ------------
     // to put the camera back where it should be by default
     public void ResetCamera() {
         switch (mode)
@@ -343,15 +366,18 @@ public class CameraSystem : MonoBehaviour
         }
     }
 
+    // ------------ START, UPDATE, FIXEDUPDATE ------------
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // call reset camera once
         ResetCamera();
     }
 
     // Update is called once per frame
     void Update()
     {
+        // call the corresponding mode's update function
         switch (mode) {
             case CameraMode.TOPDOWN:
                 TopDownCameraMode();
@@ -370,6 +396,7 @@ public class CameraSystem : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // only follow needs this since it is the only one following a target
         switch (mode) {
             case CameraMode.TOPDOWN:
             case CameraMode.FREE:
@@ -386,60 +413,3 @@ public class CameraSystem : MonoBehaviour
         }
     }
 }
-
-// {
-//if (Input.GetMouseButton(2))
-//{
-//    float translateX = 0;
-//    float translateY = 0;
-
-//    translateY = Input.GetAxis("Mouse Y") * moveSpeed;
-//    translateX = Input.GetAxis("Mouse X") * moveSpeed;
-
-//    float zoom = Input.GetAxis("Mouse ScrollWheel") * scrollSpeed;
-//    transform.Translate(-translateX, -translateY, zoom);
-//}
-//else
-//{
-//    // WASD check here for freecam
-//    // get direction vectors for camera (forward, right)
-
-//    // girl help why am i getting further
-//    Vector3 camForward = transform.forward.normalized;
-//    Vector3 camRight = transform.right.normalized;
-
-//    if (Input.GetKey(KeyCode.W))
-//    {
-//        transform.Translate(-camForward);
-//    }
-//    else if (Input.GetKey(KeyCode.S))
-//    {
-//        transform.Translate(camForward);
-//    }
-
-//    // change x
-//    if (Input.GetKey(KeyCode.A))
-//    {
-//        transform.Translate(-camRight);
-//    }
-//    else if (Input.GetKey(KeyCode.D))
-//    {
-//        transform.Translate(camRight);
-//    }
-//}
-
-
-//// rotation
-
-//float rotationX = 0;
-//float rotationY = 0;
-
-//if (Input.GetMouseButton(1))
-//{
-//    rotationX = Input.GetAxis("Mouse Y") * lookSpeed;
-//    rotationY = Input.GetAxis("Mouse X") * lookSpeed;
-//}
-
-//transform.Rotate(0, rotationY, 0, Space.World);
-//transform.Rotate(-rotationX, 0, 0);
-// }

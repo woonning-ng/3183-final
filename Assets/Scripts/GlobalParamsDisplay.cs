@@ -1,5 +1,5 @@
 /*
-* @file      SpeedDisplay.cs
+* @file      GlobalParamsDisplay.cs
 * @author    Ng Woon Ning (woonning.ng@digipen.edu)
 * @brief
 *   This file handles the displaying of global variables on the scene
@@ -15,11 +15,12 @@ using UnityEngine.UI;
 
 public class GlobalParamsDisplay : MonoBehaviour
 {
-    [SerializeField] private GameObject globalManager;
-    [SerializeField] private CameraSystem cameraSys;
+    // GOs the display needs to reference
+    [SerializeField] private GameObject globalManager; 
+    [SerializeField] private CameraSystem cameraSys;   
     [SerializeField] private HumanBehaviour human;
 
-    // items to update
+    // UI Elements to update
     [SerializeField] private TextMeshProUGUI simSpeedText;
     [SerializeField] private TextMeshProUGUI cameraText;
     [SerializeField] private TextMeshProUGUI currentTimeText;
@@ -33,7 +34,9 @@ public class GlobalParamsDisplay : MonoBehaviour
 
     [SerializeField] private GameObject humanDiedScreen;
 
-    public void ReloadScene() { // can probably look into how to save data across scenes (singleton/instance? - a gameobj)
+    // Reload Scene function
+    public void ReloadScene() { 
+        // can probably look into how to save data across scenes (singleton/instance? - a gameobj)
         string currentSceneName = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(currentSceneName);
     }
@@ -41,13 +44,14 @@ public class GlobalParamsDisplay : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // screen resolution setting
+        // Force 1920 x 1080
         Screen.SetResolution(1920, 1080, false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Update Day Night Cycle related UI elements
         DayNightCycle dnc = globalManager.GetComponent<DayNightCycle>();
         if (dnc != null)
         {
@@ -60,25 +64,29 @@ public class GlobalParamsDisplay : MonoBehaviour
             currentTimeText.text = currentTime.x.ToString("00") + ":" + currentTime.y.ToString("00") + ":" + currentTime.z.ToString("00");
         }
 
+        // Update Camera System related UI elements
         if (cameraSys != null) {
             cameraText.text = cameraSys.GetMode();
         }
 
+        // Update Human related UI Elements
         if (human != null) {
             humanHunger.text = human.hunger.ToString("f2") + "/" + human.maxHunger.ToString("f2");
             humanEnergy.text = human.energy.ToString("f2") + "/" + human.maxEnergy.ToString("f2");
             humanSafety.text = human.safety.ToString("f2") + "/" + human.maxSafety.ToString("f2");
             humanState.text = human.GetHumanState();
 
+            // Human is dead screen
             humanDiedScreen.SetActive(human.IsHumanDead());
             if (human.IsHumanDead())
             {
+                // Pause the sim and display the number of days the human survived
                 SimulationManager.Instance.SetPaused(true);
                 daysElapsedForRun.text = SimulationManager.Instance.GetTimeElapsedRunInDays().ToString("f2");
             }
         }
 
-        // nvm
+        // nvm this caused auto reloads when it was not needed
         //if (humanDiedScreen.GetComponentInChildren<Toggle>().isOn) { ReloadScene(); } // auto reload if checked
     }
 }
