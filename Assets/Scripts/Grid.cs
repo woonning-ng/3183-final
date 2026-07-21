@@ -1,6 +1,7 @@
 using UnityEngine;
 public struct GridPos
 {
+    
     public int row;
     public int col;
 
@@ -24,6 +25,8 @@ public struct GridPos
 
 public class Grid : MonoBehaviour
 {
+   //The Grid class uses a singleton pattern to ensure that all the data is managed by 1 instances and is used by the different parts of the
+   //programme to avoid conflicts between multiple unnnecessary copies of data
     [Header("Grid Size")]
     public int max_row = GlobalParam.max_height;
     public int max_col = GlobalParam.max_width;
@@ -40,6 +43,7 @@ public class Grid : MonoBehaviour
 
     private void Awake()
     {
+        //creates a singleton to manage the grid that will be used in terrain generation and pathfinding
         Instance = this;
 
         positions = new Vector3[max_row, max_col];
@@ -63,6 +67,7 @@ public class Grid : MonoBehaviour
 
     public void GeneratePositions()
     {
+       
         float offset = mapSizeInWorld / max_row * 0.5f;
 
         float xOffset = mapSizeInWorld / max_row;
@@ -83,11 +88,13 @@ public class Grid : MonoBehaviour
 
     public Vector3 Get_WorldPos(int row, int col)
     {
+        //used to convert from grid coordinates to world
         return positions[row, col];
     }
 
     public Vector3 Get_WorldPos(GridPos pos)
     {
+        //used to convert from grid coordinates to world
         return positions[pos.row, pos.col];
     }
 
@@ -102,7 +109,14 @@ public class Grid : MonoBehaviour
 
     public bool IsWall(GridPos pos)
     {
+        if (!IsValid(pos))
+        {
+            return true;
+        }
+        
         return walls[pos.row, pos.col];
+        
+        
     }
 
     public bool IsWall(int row, int col)
@@ -112,6 +126,7 @@ public class Grid : MonoBehaviour
 
     public void SetWall(int row, int col, bool wall)
     {
+        //used in terrain generation
         walls[row, col] = wall;
     }
 
