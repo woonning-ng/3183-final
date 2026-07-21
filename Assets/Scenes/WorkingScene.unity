@@ -38680,6 +38680,10 @@ PrefabInstance:
       propertyPath: daysElapsedForRun
       value: 
       objectReference: {fileID: 1476196027}
+    - target: {fileID: 582826660538450089, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
+      propertyPath: daysElapsedForRunScreen
+      value: 
+      objectReference: {fileID: 1154233113}
     - target: {fileID: 965791060599800071, guid: 1be708ac18c86834ebe68655815696fe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
