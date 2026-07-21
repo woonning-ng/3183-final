@@ -17,7 +17,6 @@ using UnityEngine;
 //https://www.redblobgames.com/maps/terrain-from-noise/
 //https://www.cs.umd.edu/class/fall2019/cmsc425/handouts/lect14-perlin.pdf
 //https://thewizardapprentice.com/2025/10/27/breaking-down-perlin-noise-reference-implementation/
-//https://grokipedia.com/page/Perlin_noise
 //https://cs.nyu.edu/~perlin/noise/
 ////https://docs.unity3d.com/2021.3/Documentation/Manual/class-Random.html
 
